@@ -1,6 +1,6 @@
 /**
  * Polygon offsetting and boolean operations on integer micrometres.
- * This is the ONLY file that imports clipper2-ts (see STACK.md: exact pin, single entry point).
+ * This is the ONLY file that imports clipper2-ts (see docs/STACK.md: exact pin, single entry point).
  *
  * Results are canonical, so the same input always gives the same bytes:
  *  - `outer` rings are counter-clockwise, `holes` are clockwise;

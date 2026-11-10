@@ -2,7 +2,7 @@
  * The real catalog seed: products of New Horizon Fixture as stated on newhorizonfixture.com,
  * read on 2026-11-09.
  *
- * RULES (see TEAM_RULES.md):
+ * RULES (see docs/TEAM_RULES.md):
  * - Only values written on the website. No dimension here is invented, guessed or adjusted.
  * - Nothing is confirmed by the owner yet, so every product is "unverified" (prices included),
  *   or "unknown" when the page states no dimensions. Unknown products cannot be auto-placed.

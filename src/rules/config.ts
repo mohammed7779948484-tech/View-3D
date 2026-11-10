@@ -1,7 +1,7 @@
 /**
  * Planning numbers used by the validation rules and the auto-layout engine.
  * Every number is named here; none is written inline elsewhere. `configSources` says where
- * each one comes from (see NOTES.md, "Retail planning numbers").
+ * each one comes from (see docs/NOTES.md, "Retail planning numbers").
  */
 import { toUm } from '../core/index';
 

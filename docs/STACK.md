@@ -15,6 +15,7 @@ GitHub API access was not available, so maintenance is judged from publish dates
 | Polygon offset / boolean | clipper2-ts | 2.0.1-19 (2026-11-07) | BSL-1.0 | spike: exact inset and boolean areas on integer µm | Integer coordinates, offsetting, actively published |
 | SVG to PNG | @resvg/resvg-js | 2.6.2 (2024-03) | MPL-2.0 | spike | Renders in Node without a browser; stable |
 | Package manager | pnpm | 10.28 | MIT | lockfile install | One package, no monorepo tooling |
+| Node type definitions | @types/node | 22.20.5 (pinned exactly) | MIT | `pnpm typecheck` passes | Types for the Node APIs used by tests and `src/render-svg/png.ts`; matches the Node 22 used in CI |
 
 ### Alternatives considered
 

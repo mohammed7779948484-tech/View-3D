@@ -42,10 +42,11 @@ Running log and decisions. Checkpointed after every step so work survives a rest
 | Rule | Value | Source |
 |---|---|---|
 | Main aisle | ≥ 1200 mm | Owner requirement |
-| Secondary aisle | ≥ 900 mm | Owner requirement (ADA 2010 §403.5.1 minimum is 915 mm; flagged for the owner) |
+| Secondary aisle | ≥ 915 mm | Owner decision 2026-11-10 (ADA 2010 §403.5.1) |
 | Staff space behind counter | ≥ 915 mm (36 in) | POS vendor guidance (koronapos.com cash-wrap guide); not a code |
 | Door approach, pull side | 1525 mm deep, 455 mm beyond latch | ADA 2010 §404.2.4 |
-| Entrance decompression zone | first 1.5 m kept clear | Retail convention (5–15 ft); our own conservative value |
+| Entrance decompression zone | door wide, a third of the shop depth, 3 m at most | Owner decision 2026-11-10 |
+| Window rule | a fixture higher than the sill may not stand in front of that window | Owner decision 2026-11-10 (replaces the 54 in threshold) |
 | Showcase supervision | near the counter | No published number found; our own rule, flagged |
 
 ### Catalog facts (newhorizonfixture.com, read 2026-11-09)
@@ -63,7 +64,7 @@ Running log and decisions. Checkpointed after every step so work survives a rest
   display stand, Dip and cigarettes rack.
 - No "tower" category exists on the site today.
 
-### Auto-layout: what is and is not in V1
+### Auto-layout: what is and is not in V1 (superseded by `decisions/0003-rule-based-layout-engine.md`)
 - Counter candidates are parallel to a wall with staff space behind. A counter standing free in
   the room (island cash wrap) is not tried.
 - Showcases go in one line with the counter; an L-shaped counter line is not tried.
@@ -76,13 +77,18 @@ Running log and decisions. Checkpointed after every step so work survives a rest
   counter, 10 gondolas in rows, 5 open entrance) are our own first guess, to be tuned with the owner.
 
 ## Open questions for the owner
-4. Tall-unit threshold: we treat fixtures taller than 54 in (1372 mm) as tall (not allowed in
-   front of windows). Our own rule; confirm.
-5. Cigarette display stand and dip rack: category and placement type are not stated on the site;
-   assumed wall units.
-1. Secondary aisle: 900 mm as specified, or 915 mm to meet ADA?
-2. "4 FT FULL VIEW" showcase: is it 48 in or 72 in long?
-3. Stand showcase 48*20*72: confirm which number is width, depth and height.
+1. Wood gondola ("Gondola wood 4 feet"): what is the OUTER width? The site gives only the inside
+   width (48 in), so it cannot be placed.
+2. "4 FT FULL VIEW" showcase: 72 in is used, pending your final confirmation.
+3. Cigarette display stand, dip rack, "Showcase 6 feet": no sizes on the site.
+4. Clearances per product (front, back, side) are not specified; planning aisles are used.
+5. Prices are website prices, unverified.
+6. Score weights and the ranking rule (more fixtures placed first, then score): tune after you
+   have looked at the gallery.
+7. Hosting, editing layer: see `plans/M2-M4-plan.md`.
+
+Answered on 2026-11-10: secondary aisle 915 mm; window rule by sill height; stand showcase is
+W48 × D20 × H72 in; single-sided units go on walls or back to back; entrance decompression zone.
 
 ## Log
 - 2026-11-10 Plan approved with changes. Initial README commit pushed to `main`.
@@ -99,3 +105,11 @@ Running log and decisions. Checkpointed after every step so work survives a rest
   SVG and the document: 0.64 um (tolerance 1 mm).
 - 2026-11-10 Issues 7-9: auto-layout engine, 30 tests + 15 layout snapshots. Each scenario runs
   in under 1 s. Suite: 261 tests green.
+- 2026-11-10 Independent review: "don't merge yet". Round 2, tests first, one pair of commits per
+  finding: Windows line endings and CI matrix; room validation; no-entrance and ghost placements
+  as errors; owner's rule decisions; back-to-back rule; engine rework (checkout block, one island
+  grid, pairs, search, rotation-safe, dominant cause, speed); independent oracle; import-direction
+  test; docs moved under `docs/` with decision records; plan for Milestones 2 to 4.
+- 2026-11-10 Measured after round 2: benchmark 15 × 10 m, 35 fixtures about 2.2 s (target 3 s);
+  rotation by 17, 33.3, 45 and 123.5 degrees gives the same fixtures, rows and ranking, scores
+  within 0.5; the oracle caught a deliberately broken walking rule with 7 failing tests.

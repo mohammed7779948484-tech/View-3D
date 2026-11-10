@@ -11,12 +11,12 @@ Milestone 1: the headless auto-layout engine. No user interface yet.
 - `src/core` - units (integer micrometres) and the design-document schema
 - `src/geometry` - exact polygon and rectangle geometry
 - `src/catalog` - product model and seed data (website sizes, unverified)
-- `src/rules` - planning numbers and layout validation
+- `src/rules` - planning numbers, room checks and layout validation
 - `src/layout` - deterministic automatic layout with ranked, explained options
 - `src/render-svg` - 2D plan as SVG, PNG export
 
 See the layouts: [snapshots/README.md](snapshots/README.md).
-Decisions and research: [NOTES.md](NOTES.md), [STACK.md](STACK.md). Working rules: [TEAM_RULES.md](TEAM_RULES.md).
+Documentation: [docs/README.md](docs/README.md) (architecture, decisions, stack, rules, plans).
 
 ## Run
 
@@ -26,8 +26,14 @@ pnpm typecheck
 pnpm test
 ```
 
-Regenerate the snapshot images after an intended change, then review them:
+Regenerate the snapshot drawings after an intended change, then review them:
 
 ```bash
 pnpm snapshots:update
+```
+
+Render them to PNG for viewing (not committed):
+
+```bash
+pnpm snapshots:png
 ```

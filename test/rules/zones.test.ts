@@ -14,7 +14,7 @@ const bounds = (polygon: readonly { x: number; y: number }[]) => ({
 });
 
 describe('config', () => {
-  it('has the planning numbers from NOTES.md, each with a source', () => {
+  it('has the planning numbers from docs/NOTES.md, each with a source', () => {
     expect(defaultConfig.mainAisleUm).toBe(mm(1200));
     expect(defaultConfig.secondaryAisleUm).toBe(mm(915));
     expect(defaultConfig.staffSpaceUm).toBe(mm(915));

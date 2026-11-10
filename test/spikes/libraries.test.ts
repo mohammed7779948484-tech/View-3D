@@ -1,5 +1,5 @@
 /**
- * Scout spikes: one working proof per adopted library (see STACK.md).
+ * Scout spikes: one working proof per adopted library (see docs/STACK.md).
  * If a library upgrade breaks one of these, the upgrade is rejected.
  */
 import { describe, expect, it } from 'vitest';

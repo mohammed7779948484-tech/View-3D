@@ -32,12 +32,11 @@ Every agent reads this file before acting. Source: the owner's intake answers an
 - No refactors beyond the issue. No over-engineering: one package with internal folders; split
   only when a real need appears.
 - Stuck for 20 minutes: write one question, park the issue, move on.
-- Milestone 1 ships as one draft PR from `claude/sleepy-wright-wno1ub`, one commit per issue.
+- Milestone 1 ships as one draft PR from `claude/sleepy-wright-wno1ub`. From the first review on,
+  tests and implementation go in separate commits, test first.
 - Reports go to the owner at the end of each milestone and whenever a decision is needed.
 
-- Subagents (owner, 2026-11-10): do not use them, they cost too many tokens. If one is ever
-  unavoidable it runs on Sonnet 5.5. The Lead writes the code; the Prover step is a fresh-clone
-  run of every check.
+- Subagents (owner, 2026-11-10): do not use them. See "Who does the work" below.
 
 ## Product principles
 
@@ -55,8 +54,19 @@ Every agent reads this file before acting. Source: the owner's intake answers an
   cannot run Blender, so the engine and exports stay pure functions of the JSON document with no
   browser-only dependencies, compatible with a later Tauri wrapper or a small local helper.
 
-## Crew and handoffs
+## Who does the work
 
-Lead (plans, verifies, only one who messages the owner), Scout (research), Breaker (failing
-tests), Builders (one per module), Prover (fresh read-only re-run; rejection is final), Reviewer
-(hostile diff review). Every handoff uses: ISSUE, TEST, EVIDENCE, NEXT STEP.
+The owner's first brief described a crew of subagents (Scout, Breaker, Builders, Prover,
+Reviewer). He withdrew that on 2026-11-10 because of token cost: **no subagents** (Sonnet 5.5 if
+one is ever unavoidable). One agent now does the work in the main session and keeps the same
+discipline in a different form:
+
+| Was a role | Is now a step |
+|---|---|
+| Scout | Research before building, written into `STACK.md` with a spike test |
+| Breaker | The failing test, committed on its own before the change |
+| Builder | The change, in the folder `ARCHITECTURE.md` names |
+| Prover | A fresh clone, clean install, full suite, on Ubuntu and Windows CI |
+| Reviewer | An independent review in a separate session, arranged by the owner; its findings are fixed test-first |
+
+Reports to the owner use: ISSUE, TEST, EVIDENCE, NEXT STEP.
