@@ -92,12 +92,12 @@ describe('document store', () => {
     const start = bytes(s.getState().document);
     for (let i = 0; i < 100; i++) {
       const r = s.edit((d) => {
-        d.room.ceilingHeightUm = 3_000_000 + i * 1000;
+        d.room.ceilingHeightUm = 3_001_000 + i * 1000;
       });
       expect(r.ok).toBe(true);
     }
     const end = bytes(s.getState().document);
-    expect(s.getState().document?.room.ceilingHeightUm).toBe(3_099_000);
+    expect(s.getState().document?.room.ceilingHeightUm).toBe(3_100_000);
     for (let i = 0; i < 100; i++) expect(s.undo()).toBe(true);
     expect(bytes(s.getState().document)).toBe(start);
     expect(s.undo()).toBe(false);
