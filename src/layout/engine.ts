@@ -228,7 +228,7 @@ function note(state: State, unit: Unit, code: ReasonCode): void {
 }
 
 /** Why `unit` cannot stand at `pose`, or null when it can. Cheap checks first, then every rule. */
-function obstacle(state: State, unit: Unit, pose: Pose, placement: Placement): ReasonCode | null {
+function obstacle(state: State, unit: Unit, placement: Placement): ReasonCode | null {
   const { room, config } = state;
   const rect = footprint(placement, unit.variant);
   if (!rectInsidePolygon(rect, room.outline)) return 'outside-room';
@@ -251,7 +251,6 @@ function obstacle(state: State, unit: Unit, pose: Pose, placement: Placement): R
   for (const other of state.placed) {
     for (const zone of other.zones) if (rectsOverlap(zone.rect, rect)) return 'blocks-access';
   }
-  void pose;
   const violations = validateLayout(buildDocument(state, [...state.placed.map((p) => p.placement), placement]), config);
   if (violations.length === 0) return null;
   const rule = violations[0]!.rule;
@@ -267,7 +266,7 @@ function tryPlace(state: State, unit: Unit, pose: Pose): boolean {
     center: pose.center,
     rotationUdeg: normUdeg(pose.rotationUdeg),
   };
-  const why = obstacle(state, unit, pose, placement);
+  const why = obstacle(state, unit, placement);
   if (why !== null) {
     note(state, unit, why);
     return false;
