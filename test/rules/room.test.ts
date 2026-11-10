@@ -1,0 +1,142 @@
+/** A bad room must be named as the problem, never answered with "0 fixtures fit". */
+import { describe, expect, it } from 'vitest';
+import type { Opening, Room } from '../../src/core/index';
+import { autoLayout } from '../../src/layout/index';
+import { normalizeOutline, validateLayout, validateRoom } from '../../src/rules/index';
+import { testCounterLong, testGondolaDouble, testProducts, testWallShelf } from '../fixtures/products';
+import { makeDoc, mm, place, pt, rectRoom } from './helpers';
+
+const good = rectRoom(6000, 6000); // entrance x 2500..3500 on wall 0
+const door = (id: string, wallIndex: number, offsetMm: number, widthMm: number, isEntrance: boolean): Opening => ({
+  id, kind: 'door', wallIndex, offsetUm: mm(offsetMm), widthUm: mm(widthMm), heightUm: mm(2100), sillHeightUm: 0,
+  door: { isEntrance, swing: 'in', hinge: 'start' },
+});
+const codes = (room: Room): string[] => validateRoom(room).map((p) => p.code);
+const items = [{ product: testCounterLong, variantId: 'default', quantity: 1 }, { product: testWallShelf, variantId: 'default', quantity: 2 }];
+const layout = (room: Room) => autoLayout({ id: 'r', name: 'r', room, items });
+
+describe('validateRoom', () => {
+  it('accepts a sound room', () => {
+    expect(validateRoom(good)).toEqual([]);
+  });
+
+  it('clockwise outline', () => {
+    const room = { ...good, outline: [...good.outline].reverse() };
+    expect(codes(room)).toEqual(['clockwise']);
+    expect(validateRoom(room)[0]!.message).toMatch(/clockwise/i);
+  });
+
+  it('duplicate corner', () => {
+    const room = { ...good, outline: [pt(0, 0), pt(6000, 0), pt(6000, 0), pt(6000, 6000), pt(0, 6000)] };
+    expect(codes(room)).toEqual(['zero-length-edge']);
+  });
+
+  it('bow-tie (self-intersecting) outline', () => {
+    const room = { ...good, outline: [pt(0, 0), pt(6000, 6000), pt(6000, 0), pt(0, 6000)] };
+    expect(codes(room)).toContain('self-intersection');
+  });
+
+  it('entrance overhanging the end of its wall', () => {
+    const room = { ...good, openings: [door('entrance', 0, 5500, 1000, true)] };
+    const problems = validateRoom(room);
+    expect(problems.map((p) => p.code)).toEqual(['opening-off-wall']);
+    expect(problems[0]!.openingId).toBe('entrance');
+    expect(problems[0]!.message).toMatch(/500 mm/); // by how much it overhangs
+  });
+
+  it('opening wider than its wall', () => {
+    const room = { ...good, openings: [door('entrance', 0, 0, 7000, true)] };
+    expect(codes(room)).toEqual(['opening-off-wall']);
+  });
+
+  it('overlapping doors on one wall', () => {
+    const room = { ...good, openings: [door('entrance', 0, 2500, 1000, true), door('side', 0, 3200, 900, false)] };
+    const problems = validateRoom(room);
+    expect(problems.map((p) => p.code)).toEqual(['openings-overlap']);
+    expect([problems[0]!.openingId, problems[0]!.otherOpeningId]).toEqual(['entrance', 'side']);
+  });
+
+  it('doors that only touch do not overlap', () => {
+    const room = { ...good, openings: [door('entrance', 0, 2500, 1000, true), door('side', 0, 3500, 900, false)] };
+    expect(validateRoom(room)).toEqual([]);
+  });
+
+  it('no entrance', () => {
+    const room = { ...good, openings: [door('side', 0, 2500, 1000, false)] };
+    expect(codes(room)).toEqual(['no-entrance']);
+    expect(validateRoom(room)[0]!.message).toMatch(/entrance/i);
+  });
+
+  it('several entrances are allowed', () => {
+    const room = { ...good, openings: [door('entrance', 0, 2500, 1000, true), door('second', 2, 2500, 1000, true)] };
+    expect(validateRoom(room)).toEqual([]);
+  });
+});
+
+describe('normalizeOutline', () => {
+  it('reverses a clockwise outline and drops repeated corners, keeping the first corner first', () => {
+    const messy = [pt(0, 0), pt(0, 6000), pt(0, 6000), pt(6000, 6000), pt(6000, 0), pt(0, 0)];
+    expect(normalizeOutline(messy)).toEqual([pt(0, 0), pt(6000, 0), pt(6000, 6000), pt(0, 6000)]);
+  });
+
+  it('leaves a sound outline untouched', () => {
+    expect(normalizeOutline(good.outline)).toEqual(good.outline);
+  });
+});
+
+describe('a bad room is reported, never laid out', () => {
+  const bad: [string, Room][] = [
+    ['clockwise', { ...good, outline: [...good.outline].reverse() }],
+    ['bow-tie', { ...good, outline: [pt(0, 0), pt(6000, 6000), pt(6000, 0), pt(0, 6000)] }],
+    ['entrance off the wall', { ...good, openings: [door('entrance', 0, 5500, 1000, true)] }],
+    ['no entrance', { ...good, openings: [] }],
+  ];
+  it.each(bad)('%s: autoLayout returns the problem and no options', (_name, room) => {
+    const result = layout(room);
+    expect(result.options).toEqual([]);
+    expect(result.problems.length).toBeGreaterThan(0);
+    expect(result.problems[0]!.message.length).toBeGreaterThan(15);
+  });
+
+  it.each(bad)('%s: validateLayout reports invalid-room and never "no violations"', (_name, room) => {
+    const violations = validateLayout(makeDoc(room, testProducts, [place('g', testGondolaDouble, 3000, 4000)]));
+    expect(violations.length).toBeGreaterThan(0);
+    expect(violations.every((v) => v.rule === 'invalid-room' && v.severity === 'error')).toBe(true);
+  });
+
+  it('a sound room has no problems and gets options', () => {
+    const result = layout(good);
+    expect(result.problems).toEqual([]);
+    expect(result.options.length).toBeGreaterThan(0);
+  });
+});
+
+describe('several entrances', () => {
+  // A wall of gondolas splits the room; each half has its own entrance. Everything is reachable
+  // from its own side, but a fixture must be reachable from EVERY entrance.
+  const room: Room = { ...rectRoom(6000, 8000), openings: [door('entrance', 0, 2500, 1000, true), door('second', 2, 2500, 1000, true)] };
+  it('keeps a clear zone inside each entrance', () => {
+    const top = validateLayout(makeDoc(room, testProducts, [place('g', testGondolaDouble, 3000, 6200)]));
+    expect(top.map((v) => [v.rule, v.openingId])).toContainEqual(['blocked-door', 'second']);
+  });
+
+  it('a fixture reachable from one entrance only is reported', () => {
+    const barrier = [0, 1, 2, 3, 4].map((i) => place(`b${i}`, testGondolaDouble, 600 + i * 1200, 4000));
+    const violations = validateLayout(makeDoc(room, testProducts, barrier));
+    expect(violations.some((v) => v.rule === 'unreachable')).toBe(true);
+  });
+});
+
+describe('ghost placements', () => {
+  it('a placement whose product is missing is an error, not silently dropped', () => {
+    const doc = makeDoc(good, [testWallShelf], [place('ghost', testGondolaDouble, 3000, 4000)]);
+    const violations = validateLayout(doc);
+    expect(violations.map((v) => [v.rule, v.placementIds])).toEqual([['unknown-product', ['ghost']]]);
+  });
+
+  it('a placement of a variant with unknown size is an error, not a crash', () => {
+    const unsized = { ...testGondolaDouble, variants: [{ ...testGondolaDouble.variants[0]!, widthUm: null }] };
+    const violations = validateLayout(makeDoc(good, [unsized], [place('x', unsized, 3000, 4000)]));
+    expect(violations.map((v) => v.rule)).toEqual(['unknown-product']);
+  });
+});
