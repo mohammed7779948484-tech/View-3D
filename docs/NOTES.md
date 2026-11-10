@@ -29,13 +29,13 @@ Running log and decisions. Checkpointed after every step so work survives a rest
 - 2D plan: x to the right, y up, counter-clockwise room outline, origin chosen by the document.
 - Rotations: quarter turns relative to a wall direction (V1).
 
-### Architecture (proposal, hosting undecided until before Milestone 2)
-- One web app installed as a PWA on laptop and phone; all compute on the laptop's own CPU/GPU.
-- At $0 every Windows installer (Electron, Tauri) shows a SmartScreen warning; a PWA does not.
-- Projects are JSON files in a Documents folder; backup is copying the folder.
-- Phone to laptop: store-and-forward inbox (candidate: Cloudflare Worker + D1, free), encrypted
-  on the phone; zero-server fallback by link, QR or file.
-- Later Blender photoreal rendering needs a Tauri wrapper or local helper, so the engine and
+### Architecture (owner decision 2026-11-11, `decisions/0007`)
+- V1 is a laptop-only, fully local Electron desktop app; all compute on the laptop's CPU/GPU.
+- Unsigned installer: the one-time SmartScreen warning is accepted by the owner.
+- Projects are JSON files opened and saved through native dialogs.
+- No phone screen, PWA, sync or hosting in V1 (listed as "Future" in the plan).
+- Room scans come as files from a separate iPhone scan app (not chosen yet), via an importer.
+- Later Blender photoreal rendering can be started by Electron's main process; the engine and
   exports stay free of browser-only APIs.
 
 ### Retail planning numbers (config values, with sources)
@@ -83,9 +83,13 @@ Running log and decisions. Checkpointed after every step so work survives a rest
 3. Cigarette display stand, dip rack, "Showcase 6 feet": no sizes on the site.
 4. Clearances per product (front, back, side) are not specified; planning aisles are used.
 5. Prices are website prices, unverified.
-6. Score weights and the ranking rule (more fixtures placed first, then score): tune after you
-   have looked at the gallery.
-7. Hosting, editing layer: see `plans/M2-M4-plan.md`.
+6. Score weights: tune with the owner on the gallery (M3 issue 10g).
+7. Which iPhone scan app to use (RoomTrace or another); its export becomes a test fixture.
+
+Answered on 2026-11-11: own editor (not Pascal packages); hosting cancelled, V1 is a local Electron
+app; ranking keeps fixtures placed first, except a complete checkout block wins when options differ
+by one fixture (M3 issue 10b); wood gondola stays unplaceable; "4 FT FULL VIEW" stays 72 in pending
+confirmation.
 
 Answered on 2026-11-10: secondary aisle 915 mm; window rule by sill height; stand showcase is
 W48 × D20 × H72 in; single-sided units go on walls or back to back; entrance decompression zone.
@@ -113,3 +117,4 @@ W48 × D20 × H72 in; single-sided units go on walls or back to back; entrance d
 - 2026-11-10 Measured after round 2: benchmark 15 × 10 m, 35 fixtures about 2.2 s (target 3 s);
   rotation by 17, 33.3, 45 and 123.5 degrees gives the same fixtures, rows and ranking, scores
   within 0.5; the oracle caught a deliberately broken walking rule with 7 failing tests.
+- 2026-11-11 Scope change (owner): laptop-only local Electron app; phone, PWA, sync and hosting moved to Future; scan importer added as the last issue of M2; PDF via Chromium printToPDF. Plan, STACK, ARCHITECTURE, TEAM_RULES and decision 0007 updated (docs only).

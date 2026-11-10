@@ -130,20 +130,38 @@ used as sort keys in whole millimetres, so a sub-micrometre difference never dec
 
 ## 9. How the app will sit on the engine (Milestones 2 to 4)
 
-Decided in outline; details in `plans/M2-M4-plan.md`. Nothing here exists yet.
+Decided in outline (owner, 2026-11-11, `decisions/0007-local-electron-desktop-app.md`); details
+in `plans/M2-M4-plan.md`. Nothing here exists yet.
+
+V1 is a laptop-only, fully local **Electron** desktop app (electron-vite + electron-builder).
 
 ```
-app/                      the web app (UI, state, storage)       imports ->  src/*
-  state/                  the open document + undo history (the only mutable copy)
-  editor-2d/              plan editor (room capture, manual layout)
-  view-3d/                3D view of the same document
-  worker/                 runs src/layout (and later exports) off the UI thread
-  storage/                project files on disk
-src/                      the engine (this document)             never imports app/
+app/                          the desktop app                         imports ->  src/*
+  main/                       Electron main process: windows, native open/save dialogs,
+                              all disk access, printToPDF (M4)
+  preload/                    the narrow, typed API the renderer may call (no Node in the renderer)
+  renderer/                   the UI (React)
+    state/                    the open document + undo history (the only mutable copy)
+    editor-2d/                plan editor (room capture, manual layout)
+    view-3d/                  3D view of the same document
+    worker/                   runs src/layout off the UI thread
+    catalog/  storage/  i18n/ owner's catalog, project files (via preload), Arabic/English
+src/                          the engine (this document)              never imports app/
+  capture/        (M2)        wall-by-wall entry, closure and diagonal checks   -> core, geometry
+  import-scan/    (M2)        one adapter per scan app -> one scan model -> shared normalization
+                              -> core, geometry, rules
+  export-bom/     (M4)        bill of materials and quote                       -> core
+  export-sheet/   (M4)        dimensioned plan sheet as HTML + SVG              -> core, geometry, render-svg
+  model-contract/ (M3)        validator for product 3D files                    -> core
 ```
 
+- The renderer never touches the disk: file access goes through `app/main` behind the preload API.
 - The app holds one document in memory and replaces it on every edit; views read it.
 - `validateLayout` runs on every edit (36 ms for 40 fixtures today); `autoLayout` runs in a
   worker (`decisions/0006-engine-speed-and-worker.md`).
-- Exports are new `src/export-*` folders so they also run outside the browser, which a later
-  headless-Blender renderer needs (`decisions/0002-local-web-app-pwa.md`).
+- The planned `src/` folders above are portable like the rest of `src/`. Each one's import arrow is
+  added to section 3 and to `test/architecture/imports.test.ts` in the issue that creates it.
+- PDF: the sheet content is portable (`src/export-sheet`); only the final `printToPDF` step lives
+  in `app/main`.
+- Later (not V1): headless Blender or Python tools can be started by `app/main`; they read the
+  same design document and the model contract, nothing else.

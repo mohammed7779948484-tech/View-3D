@@ -3,7 +3,8 @@
 A 3D store-layout planner for New Horizon Fixture (a store-fixture shop). One user: the shop
 owner. He plans a customer's shop (any polygon), places real fixtures by hand or automatically,
 and exports plans and quotes. Today the repo holds the headless engine; the app comes in
-Milestones 2 to 4 (`docs/plans/M2-M4-plan.md`).
+Milestones 2 to 4 (`docs/plans/M2-M4-plan.md`). V1 is a laptop-only, fully local Electron
+desktop app (no phone, PWA, sync or hosting; `docs/decisions/0007-local-electron-desktop-app.md`).
 
 ## Principles (non-negotiable)
 

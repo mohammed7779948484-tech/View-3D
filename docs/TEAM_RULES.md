@@ -13,8 +13,8 @@ Every agent reads this file before acting. Source: the owner's intake answers an
 
 ## Never without the owner's explicit yes
 
-1. Hosting or any online service (relay, database, domain, update server). Hosting is undecided
-   until just before Milestone 2.
+1. Hosting or any online service (relay, database, domain, update server). V1 has none: it is a
+   laptop-only, fully local Electron app (owner decision 2026-11-11).
 2. Anything that costs money. Budget is $0: free and open-source only.
 3. Merging pull requests. We open draft PRs; the owner merges.
 4. Product data and prices. Website values are `unverified` until the owner confirms them.
@@ -50,9 +50,12 @@ Every agent reads this file before acting. Source: the owner's intake answers an
 ## Context for later milestones
 
 - Owner's computer: Windows, integrated graphics. Keep 3D light.
-- Photoreal rendering with headless Blender on the owner's machine is planned after V1. A PWA
-  cannot run Blender, so the engine and exports stay pure functions of the JSON document with no
-  browser-only dependencies, compatible with a later Tauri wrapper or a small local helper.
+- V1 is a laptop-only, fully local Electron desktop app (unsigned installer; one-time SmartScreen
+  warning accepted). No phone screen, PWA, sync or hosting in V1 (`decisions/0007`).
+- Room input: numeric wall-by-wall entry and the 2D editor on the laptop, plus import of files
+  exported by a separate iPhone scan app (app not chosen yet; one adapter per app).
+- Photoreal rendering with headless Blender, and any Python tooling, come after V1. Electron's main
+  process can start them later; the engine and exports stay pure functions of the JSON document.
 
 ## Who does the work
 

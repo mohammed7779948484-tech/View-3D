@@ -1,6 +1,6 @@
 # 0002 A local-first web app installed as a PWA
 
-**Status:** proposed; the hosting part waits for the owner (needed before Milestone 2)
+**Status:** superseded on 2026-11-11 by `0007-local-electron-desktop-app.md`. Kept as the record of the earlier proposal (including the Cloudflare Pages + Worker + D1 idea for phone sync).
 
 **Decision (proposed).** One web app, installed as a PWA on the owner's Windows laptop and on
 his phone. All computing (layout, 3D, exports) runs in the browser on his own machine and works

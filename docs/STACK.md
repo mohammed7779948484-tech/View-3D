@@ -68,7 +68,10 @@ express non-overlap), `javascript-lp-solver` 1.0.3, `glpk.js` 5.0.0 (GPL), `high
 | 2D editor | Plain SVG + React | react-konva 19.3 (fallback), pixi.js 8 (258 kB gz), fabric 7, tldraw 5 (not free in production) |
 | 3D | three r187 + @react-three/fiber 9.8, WebGL renderer | WebGPURenderer: no benefit for placeholder boxes on integrated graphics |
 | State / undo | zustand 5.1 + immer 11 patches | zundo 2.3.0 (stale since 2024-11), jotai 3, redux toolkit |
-| PDF | pdfkit 0.20 + bidi-js + embedded Arabic font | jspdf 4.2 + svg2pdf.js, pdfmake 0.3, pdf-lib 1.17 (abandoned 2021) |
+| Desktop app | Electron + electron-vite + electron-builder (unsigned NSIS installer for Windows) | Tauri v2 (smaller, but needs Rust; main process also keeps later local tools such as Blender open) |
+| PDF | Electron/Chromium `printToPDF` from our own HTML + SVG sheet (Chromium shapes Arabic and handles RTL) | Fallback only: pdfkit 0.20 + bidi-js + embedded Arabic font, or jspdf 4.2 + svg2pdf.js |
+| End-to-end tests | Playwright driving the Electron app | — |
+| Scan import (DXF fallback) | a DXF reader, chosen by spike in M2 | — |
 | i18n / UI | react-i18next 18, shadcn + Radix + Tailwind 4 logical properties | lingui, react-intl, Mantine 9, MUI 9 |
-| PWA | vite-plugin-pwa 2.0 + own IndexedDB outbox | serwist 9.5 |
-| Desktop wrapper (optional) | Tauri v2 | Electron 45 (about 100+ MB) |
+
+Removed from V1 on 2026-11-11 (owner decision, see `decisions/0007-local-electron-desktop-app.md`): vite-plugin-pwa / serwist, IndexedDB outbox, File System Access API, a QR library, any hosting.
