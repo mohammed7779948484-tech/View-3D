@@ -36,9 +36,26 @@ pnpm snapshots:png      # render the snapshots to snapshots-png/ (not committed)
 - Lengths are integer micrometres. No floating-point products of coordinates: use `src/geometry`.
 - No new dependency without a reason in the PR and an entry in `docs/STACK.md`.
 - No refactors beyond the issue. No speculative structure.
-- No subagents (owner's rule; Sonnet 5.5 if one is ever unavoidable).
+- One subagent only: test-writer (Sonnet 5.5) writes the failing tests; the main agent reviews
+  them, then writes the implementation. No other subagents.
 - Synthetic products live only in `test/fixtures`, marked `testOnly`.
 - CI must be green on Ubuntu and Windows (the owner uses Windows).
+
+## Skills (`.claude/skills/`, sources in `docs/STACK.md`)
+
+- `test-driven-development`: red, green, refactor discipline
+- `systematic-debugging`: find the root cause before fixing
+- `verification-before-completion`: evidence from a tool run before claiming done
+- `ponytail`: the smallest complete change
+- `electron-best-practices`: Electron main/preload/renderer, IPC, security
+- `vercel-react-best-practices`: React performance patterns
+- `frontend-design`: UI design quality
+- `shadcn`: shadcn/ui components
+- `playwright-best-practices`: Playwright tests, incl. Electron
+- `threejs-react-three-fiber`: three.js with React Three Fiber
+
+Project docs win over skills: electron-builder (not Forge); our TDD flow uses the test-writer
+subagent; ponytail must never remove validation, tests or the accuracy rules.
 
 ## Where things are
 

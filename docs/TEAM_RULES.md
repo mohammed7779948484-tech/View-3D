@@ -36,7 +36,8 @@ Every agent reads this file before acting. Source: the owner's intake answers an
   tests and implementation go in separate commits, test first.
 - Reports go to the owner at the end of each milestone and whenever a decision is needed.
 
-- Subagents (owner, 2026-11-10): do not use them. See "Who does the work" below.
+- One subagent only: test-writer (Sonnet 5.5) writes the failing tests; the main agent reviews
+  them, then writes the implementation. No other subagents. See "Who does the work" below.
 
 ## Product principles
 
@@ -60,14 +61,15 @@ Every agent reads this file before acting. Source: the owner's intake answers an
 ## Who does the work
 
 The owner's first brief described a crew of subagents (Scout, Breaker, Builders, Prover,
-Reviewer). He withdrew that on 2026-11-10 because of token cost: **no subagents** (Sonnet 5.5 if
-one is ever unavoidable). One agent now does the work in the main session and keeps the same
-discipline in a different form:
+Reviewer). He withdrew that on 2026-11-10 because of token cost. Now: **one subagent only:
+test-writer (Sonnet 5.5) writes the failing tests; the main agent reviews them, then writes the
+implementation. No other subagents** (`.claude/agents/test-writer.md`). The main agent keeps the
+same discipline in a different form:
 
 | Was a role | Is now a step |
 |---|---|
 | Scout | Research before building, written into `STACK.md` with a spike test |
-| Breaker | The failing test, committed on its own before the change |
+| Breaker | The failing test, written by the test-writer subagent, reviewed by the main agent, committed on its own before the change |
 | Builder | The change, in the folder `ARCHITECTURE.md` names |
 | Prover | A fresh clone, clean install, full suite, on Ubuntu and Windows CI |
 | Reviewer | An independent review in a separate session, arranged by the owner; its findings are fixed test-first |

@@ -60,6 +60,17 @@ express non-overlap), `javascript-lp-solver` 1.0.3, `glpk.js` 5.0.0 (GPL), `high
 4 MB; kept as a later option for "how many gondola rows fit a zone"), `z3-solver` 5.3.3 (39 MB),
 `minizinc` 4.5.2 (19.6 MB), `logic-solver` 2.0.1 (2016).
 
+## Agent skills (not code dependencies)
+
+Copied as plain files into `.claude/skills/` on 2026-11-10 (git commit of each source):
+obra/superpowers `22f0b46` (test-driven-development, systematic-debugging,
+verification-before-completion); DietrichGebert/ponytail `96608e0` (ponytail);
+jwynia/agent-skills `e02ec7e` (electron-best-practices); vercel-labs/agent-skills `1a2c79d`
+(react-best-practices, named vercel-react-best-practices); anthropics/skills `2c5958e`
+(frontend-design); shadcn-ui/ui `8ab2771` (skills/shadcn); currents-dev/playwright-best-practices-skill
+`0b75b58`; CloudAI-X/threejs-skills `0e18186` (threejs-react-three-fiber). Instructions for the
+agent only; nothing is imported by `src/` or `test/`. Project docs win over them (`CLAUDE.md`).
+
 ## Proposed for later milestones (not adopted until spiked)
 
 | Capability | Proposal | Alternatives |
