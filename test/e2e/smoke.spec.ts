@@ -94,8 +94,9 @@ test('it works offline: only local files load', async () => {
   expect(csp).toContain("default-src 'self'");
   expect(csp).toContain("connect-src 'self'");
 
+  // no-cors: without a CSP this resolves (opaque response); only connect-src 'self' makes it reject.
   const outcome = await page.evaluate(() =>
-    (globalThis as unknown as { fetch(u: string): Promise<unknown> }).fetch('https://example.com/').then(
+    (globalThis as unknown as { fetch(u: string, o: { mode: string }): Promise<unknown> }).fetch('https://example.com/', { mode: 'no-cors' }).then(
       () => 'reached',
       () => 'blocked',
     ),
