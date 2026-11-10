@@ -10,7 +10,8 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "snapshots": "vitest run test/snapshots"
+    "snapshots:update": "vitest run --config vitest.update.config.ts",
+    "snapshots:png": "vitest run --config vitest.png.config.ts"
   },
   "dependencies": {
     "clipper2-ts": "2.0.1-19",
@@ -18,7 +19,7 @@
   },
   "devDependencies": {
     "@resvg/resvg-js": "2.6.2",
-    "@types/node": "^22.20.5",
+    "@types/node": "22.20.5",
     "fast-check": "4.10.2",
     "typescript": "7.0.2",
     "vitest": "5.1.0"

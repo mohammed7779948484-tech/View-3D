@@ -29,5 +29,5 @@ pnpm test
 Regenerate the snapshot images after an intended change, then review them:
 
 ```bash
-UPDATE_SNAPSHOTS=1 pnpm test
+pnpm snapshots:update
 ```

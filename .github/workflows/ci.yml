@@ -5,8 +5,13 @@ on:
   pull_request:
 jobs:
   test:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
+      # Windows runners check out with CRLF by default, like the owner's machine; .gitattributes must cope.
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
@@ -16,3 +21,10 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
       - run: pnpm test
+      - if: matrix.os == 'ubuntu-latest'
+        run: pnpm snapshots:png
+      - if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: snapshot-images
+          path: snapshots-png

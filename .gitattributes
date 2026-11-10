@@ -1,0 +1,8 @@
+# One line-ending convention on every machine, including Git for Windows (core.autocrlf=true).
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.glb binary
+*.pdf binary
+*.ttf binary
+*.woff2 binary
