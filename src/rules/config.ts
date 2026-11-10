@@ -61,3 +61,38 @@ export const configSources: Record<keyof PlanningConfig, string> = {
   staffPassageUm: 'Our own rule; no published number found.',
   aisleToleranceUm: 'Our own rule: 0.1 mm, far below the 1 mm accuracy tolerance.',
 };
+
+/** Checks on a room typed wall by wall (src/capture). */
+export type CaptureConfig = {
+  /** The walls close when the last one ends at most this far from the start. */
+  closureToleranceUm: number;
+  /** ... and the corner angles add up to (n - 2) x 180 degrees within this. */
+  angleSumToleranceUdeg: number;
+  /** A measured diagonal agrees with the drawing when it differs by at most this. */
+  diagonalToleranceUm: number;
+  /** A wall shorter than this is probably a typing mistake. */
+  shortWallUm: number;
+  /** A wall longer than this is probably a typing mistake. */
+  longWallUm: number;
+  /** A corner sharper than this (or this close to 360 degrees) is probably a typing mistake. */
+  sharpCornerUdeg: number;
+};
+
+export const captureConfig: CaptureConfig = {
+  closureToleranceUm: toUm(10, 'mm'),
+  angleSumToleranceUdeg: 500_000,
+  diagonalToleranceUm: toUm(20, 'mm'),
+  shortWallUm: toUm(100, 'mm'),
+  longWallUm: toUm(30, 'm'),
+  sharpCornerUdeg: 15_000_000,
+};
+
+const FIRST_GUESS = 'Our own first guess, owner to confirm (docs/NOTES.md, open questions).';
+export const captureConfigSources: Record<keyof CaptureConfig, string> = {
+  closureToleranceUm: `${FIRST_GUESS} 10 mm.`,
+  angleSumToleranceUdeg: `${FIRST_GUESS} 0.5 degrees.`,
+  diagonalToleranceUm: `${FIRST_GUESS} 20 mm.`,
+  shortWallUm: `${FIRST_GUESS} 100 mm.`,
+  longWallUm: `${FIRST_GUESS} 30 m.`,
+  sharpCornerUdeg: `${FIRST_GUESS} 15 degrees.`,
+};
