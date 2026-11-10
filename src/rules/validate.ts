@@ -197,6 +197,35 @@ export function flushWall(room: Room, corners: readonly Point[], config: Plannin
   return undefined;
 }
 
+/** Points checked along a back edge to decide whether it is fully covered. */
+const BACK_COVER_SAMPLES = 9;
+
+/**
+ * True when the whole back edge of a single-sided unit lies against the back edges of other
+ * single-sided units that face the opposite way (a back-to-back pair or run).
+ */
+export function backIsCovered(f: PlacedFixture, all: readonly PlacedFixture[], config: PlanningConfig): boolean {
+  const [backLeft, backRight] = f.corners as [Point, Point];
+  const partners = all.filter(
+    (o) =>
+      o !== f &&
+      o.product.placement === 'wall' &&
+      (((o.rect.rotationUdeg - f.rect.rotationUdeg) % 360_000_000) + 360_000_000) % 360_000_000 === 180_000_000,
+  );
+  if (partners.length === 0) return false;
+  for (let i = 0; i < BACK_COVER_SAMPLES; i++) {
+    // Sample just inside the ends, so two partners meeting at a point still cover it.
+    const t = (i + 0.5) / BACK_COVER_SAMPLES;
+    const p = { x: backLeft.x + (backRight.x - backLeft.x) * t, y: backLeft.y + (backRight.y - backLeft.y) * t };
+    const covered = partners.some((o) => {
+      const [a, b] = o.corners as [Point, Point];
+      return distancePointToSegment(p, a, b) <= config.wallSnapMaxGapUm;
+    });
+    if (!covered) return false;
+  }
+  return true;
+}
+
 export type WallSnap = { center: Point; rotationUdeg: number; wallIndex: number };
 
 /** The pose of `rect` flush against wall `wall`, slid along so it stays on the wall, or null if the wall is too short. */
@@ -362,13 +391,17 @@ export function validateLayout(doc: DesignDocument, config: PlanningConfig = def
       }
     }
 
-    // 6. wall-unit-not-on-wall
-    if (f.product.placement === 'wall' && flushWall(room, f.corners, config) === undefined) {
+    // 6. wall-unit-not-on-wall: single-sided units stand against a wall or back to back.
+    if (
+      f.product.placement === 'wall' &&
+      flushWall(room, f.corners, config) === undefined &&
+      !backIsCovered(f, fixtures, config)
+    ) {
       out.push({
         rule: 'wall-unit-not-on-wall',
         severity: 'error',
         placementIds: [id],
-        message: `${label(f)} is a wall unit: its back must stand flush against a wall, clear of doors.`,
+        message: `${label(f)} is single-sided: its back must stand against a wall (clear of doors) or against the back of another single-sided unit.`,
       });
     }
 
