@@ -34,6 +34,45 @@ Risk recorded: `clipper2-ts` carries a prerelease-style version tag and the pack
 old. Mitigation: exact version pin, all use goes through `src/geometry`, and the spike tests
 exact areas so a bad upgrade fails loudly.
 
+## Adopted in Milestone 2
+
+Versions and release dates read from the npm registry on 2026-11-11. All are dev dependencies:
+the app is bundled by electron-vite, so nothing but `out/` and `package.json` goes into the
+installer. Spikes: `test/spikes/libraries.test.ts` (Vitest) and `test/spikes/electron.spec.ts`
+(Playwright).
+
+| Capability | Choice | Version (released) | Licence | Evidence | Why this one |
+|---|---|---|---|---|---|
+| Desktop shell | Electron | 45.3.0 (2026-11-10) | MIT | spike `electron.spec.ts`: sandboxed window, contextBridge, locked-down preferences; smoke test of the packaged app | Owner decision 0007; Chromium gives native dialogs, `printToPDF` and Arabic shaping |
+| Build | electron-vite | 6.0.0 (2026-10-14) | MIT | spike: builds main (ESM), preload (CJS, required for a sandboxed preload) and renderer with relative `./assets/` paths | One config for the three Electron processes on top of Vite |
+| Bundler | Vite | 8.3.7 (2026-11-09) | MIT | spike + `pnpm build` | Required by electron-vite 6 (peer ^6 to ^8) |
+| React transform | @vitejs/plugin-react | 6.3.0 (2026-11-09) | MIT | spike | Official React plugin for Vite 8 |
+| UI | React, react-dom | 19.3.1 (2026-10-14) | MIT | spike + smoke test | Plan decision; the skills and shadcn assume it |
+| UI types | @types/react, @types/react-dom | 19.3.0 (2026-09-09) | MIT | `pnpm typecheck` | Types for React 19.3 |
+| Packaging | electron-builder | 26.18.0 (2026-10-20) | MIT | local `--dir` build passes the smoke test; Windows NSIS build, silent install and smoke test on the `package-windows` CI job | Unsigned NSIS installer without extra tooling; Electron fuses in the same config |
+| End-to-end tests | @playwright/test | 1.65.0 (2026-11-05) | Apache-2.0 | spike `electron.spec.ts`; `test/e2e/smoke.spec.ts` | Drives Electron directly (`_electron.launch`), also the installed `.exe` |
+| Translation | i18next, react-i18next | 27.1.1 (2026-11-10), 18.0.1 (2026-11-08) | MIT | spike: synchronous init (`initAsync: false`), `useTranslation` render, `dir('ar') === 'rtl'` | Every string through `t()` from issue 1; `dir()` drives RTL in issue 9 |
+
+### Alternatives considered (Milestone 2)
+
+| Capability | Alternative | Why not |
+|---|---|---|
+| Packaging | Electron Forge | Owner decision: electron-builder (one config for NSIS and fuses) |
+| Desktop shell | Tauri v2 | Needs Rust; decision 0007 |
+| Translation | lingui 5, react-intl 7 | i18next has `dir()` for RTL and loads plain JSON; either would also work |
+| End-to-end tests | WebdriverIO + wdio-electron-service | Playwright is already the planned tool and has a project skill |
+
+Risks recorded:
+- Electron 45.3.0 was one day old when pinned. A new Electron major arrives about every 8 weeks;
+  upgrades are made on purpose, with the smoke test on the installed app.
+- `webContents.getLastWebPreferences()` works at runtime but is missing from Electron 45's types;
+  the tests cast to a small local type.
+- electron-vite is maintained mainly by one person. Fallback: three plain Vite builds.
+- pnpm reports `electron-winstaller`'s install script as ignored. That package only builds
+  Squirrel installers; we build NSIS, so the script is not needed.
+- Electron fuses: `runAsNode` and `NODE_OPTIONS` are off (checked: the packaged app ignores
+  `ELECTRON_RUN_AS_NODE`); the inspector flags stay on so Playwright can drive the installed app.
+
 ## Built ourselves (and why)
 
 | Capability | Why build |
@@ -75,14 +114,11 @@ agent only; nothing is imported by `src/` or `test/`. Project docs win over them
 
 | Capability | Proposal | Alternatives |
 |---|---|---|
-| App | Vite 8.3 + React 19.3 SPA | Next.js 16.4, TanStack Start (server features we do not need) |
 | 2D editor | Plain SVG + React | react-konva 19.3 (fallback), pixi.js 8 (258 kB gz), fabric 7, tldraw 5 (not free in production) |
 | 3D | three r187 + @react-three/fiber 9.8, WebGL renderer | WebGPURenderer: no benefit for placeholder boxes on integrated graphics |
-| State / undo | zustand 5.1 + immer 11 patches | zundo 2.3.0 (stale since 2024-11), jotai 3, redux toolkit |
-| Desktop app | Electron + electron-vite + electron-builder (unsigned NSIS installer for Windows) | Tauri v2 (smaller, but needs Rust; main process also keeps later local tools such as Blender open) |
+| State / undo | zustand 5.1 + immer 11, undo as a stack of whole-document snapshots (owner 2026-11-11) | zundo 2.3.0 (stale since 2024-11), jotai 3, redux toolkit |
 | PDF | Electron/Chromium `printToPDF` from our own HTML + SVG sheet (Chromium shapes Arabic and handles RTL) | Fallback only: pdfkit 0.20 + bidi-js + embedded Arabic font, or jspdf 4.2 + svg2pdf.js |
-| End-to-end tests | Playwright driving the Electron app | — |
 | Scan import (DXF fallback) | Deferred (owner 2026-11-11): no DXF reader until a real DXF sample from a chosen scan app exists | dxf-parser 1.1.2 (last published 2022-06) |
-| i18n / UI | react-i18next 18, shadcn + Radix + Tailwind 4 logical properties | lingui, react-intl, Mantine 9, MUI 9 |
+| UI kit | shadcn + Radix + Tailwind 4 logical properties (react-i18next adopted above) | lingui, react-intl, Mantine 9, MUI 9 |
 
 Removed from V1 on 2026-11-11 (owner decision, see `decisions/0007-local-electron-desktop-app.md`): vite-plugin-pwa / serwist, IndexedDB outbox, File System Access API, a QR library, any hosting.

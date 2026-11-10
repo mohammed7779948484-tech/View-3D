@@ -131,7 +131,8 @@ used as sort keys in whole millimetres, so a sub-micrometre difference never dec
 ## 9. How the app will sit on the engine (Milestones 2 to 4)
 
 Decided in outline (owner, 2026-11-11, `decisions/0007-local-electron-desktop-app.md`); details
-in `plans/M2-M4-plan.md`. Nothing here exists yet.
+in `plans/M2-M4-plan.md`. Built so far: `app/main` (the window, locked down) and `app/renderer`
+(the start screen and `i18n/`). The rest below is still planned.
 
 V1 is a laptop-only, fully local **Electron** desktop app (electron-vite + electron-builder).
 
@@ -156,6 +157,16 @@ src/                          the engine (this document)              never impo
 ```
 
 - The renderer never touches the disk: file access goes through `app/main` behind the preload API.
+- Enforced by `test/architecture/imports.test.ts` ("architecture: app/"): `app/` holds only
+  `main`, `preload` and `renderer`; the renderer imports no Node built-in and no `electron`, and
+  nothing from `main` or `preload`; only `main` and `preload` import `electron`; only the preload
+  uses `contextBridge` or `ipcRenderer`; `main` never imports the renderer; `src/` never imports `app/`.
+- The window: `contextIsolation`, `sandbox`, no `nodeIntegration`; popups, navigation,
+  permission requests and every `http(s)`/`ws(s)` request are refused; the renderer has a
+  local-only Content Security Policy. `test/e2e/smoke.spec.ts` proves each of these.
+- Build: `electron.vite.config.ts` (main and renderer into `out/`); packaging:
+  `electron-builder.yml` (unsigned NSIS, fuses). Type checking: `tsconfig.node.json` (main and
+  tool configs) and `tsconfig.web.json` (renderer, DOM and JSX), run by `pnpm typecheck`.
 - The app holds one document in memory and replaces it on every edit; views read it.
 - `validateLayout` runs on every edit (36 ms for 40 fixtures today); `autoLayout` runs in a
   worker (`decisions/0006-engine-speed-and-worker.md`).

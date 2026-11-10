@@ -20,7 +20,9 @@ desktop app (no phone, PWA, sync or hosting; `docs/decisions/0007-local-electron
 ```bash
 pnpm install
 pnpm typecheck
-pnpm test               # everything; must be green before any push
+pnpm test               # the Vitest suite; must be green before any push
+pnpm test:e2e           # builds the app, then Playwright drives it (Linux: xvfb-run -a pnpm test:e2e); must be green too
+pnpm package:win        # the unsigned Windows installer in release/ (the CI job builds and installs it)
 pnpm snapshots:update   # rewrite the SVG snapshots after an intended change, then review them
 pnpm snapshots:png      # render the snapshots to snapshots-png/ (not committed) to look at them
 ```
