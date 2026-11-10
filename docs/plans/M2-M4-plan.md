@@ -40,20 +40,20 @@ or imports a room scan, and gets a correct room in a design document saved as a 
 - a room scan exported by a scan app can be imported, and the app shows what is missing or
   assumed so the owner completes it in the editor.
 
-**Issues, in order**
+**Issues, in order** (owner ruling 2026-11-11: worked in the order 1, 2, 3, 4, 5, 8, 10, 6, 7, 9, 11, numbers unchanged, because issue 6 needs the parser of issue 8 and proves itself through the save of issue 10)
 
 | # | Issue | Proving test | Lives in |
 |---|---|---|---|
-| 1 | Electron shell: electron-vite, main + renderer, build, Windows installer with electron-builder, CI job | spike tests for each library; Playwright-for-Electron smoke test: the packaged app starts and shows an empty project; installer builds on the Windows CI job | `app/main`, `app/renderer` |
+| 1 | Electron shell: electron-vite, main + renderer, build, Windows installer with electron-builder, CI job | spike tests for each library; Playwright-for-Electron smoke test: the packaged app starts and shows the start screen (no document until a room exists); installer builds on the Windows CI job | `app/main`, `app/renderer` |
 | 2 | Document state with undo/redo | unit tests: every edit yields a schema-valid document; undo restores the exact previous JSON | `app/renderer/state` |
 | 3 | Wall-by-wall capture model (length + angle → polygon) | property tests: entered walls reproduce the polygon within 1 µm per vertex; round trip with `normalizeOutline` | `src/capture` (pure, portable) |
-| 4 | Closure check that points at the suspect wall | hand-built cases: one wall mistyped by 100 mm or 5°; the check must name that wall and its likely correction | `src/capture` |
-| 5 | Diagonal check and sanity warnings | cases: a wrong diagonal flags the room; a 30 mm wall, a 40 m wall, a 2° corner give warnings | `src/capture` |
+| 4 | Closure check that points at the suspect walls | hand-built cases: one wall mistyped by 100 mm or one corner by 5°; the check returns the smallest set of walls (or corners) that closes the room exactly, each with its correction, and the mistyped one is in that set (walls with a parallel partner cannot be told apart from lengths alone; the diagonal of issue 5 decides) | `src/capture` |
+| 5 | Diagonal check and sanity warnings | cases: a wrong diagonal flags the room; the diagonal picks the right wall from issue 4's suspect set; a 30 mm wall, a 40 m wall, a 2° corner give warnings | `src/capture`, thresholds in `src/rules/config.ts` |
+| 8 | Units and number entry (mm, cm, m, in, ft-in, fractions) | table tests of the parser; what was typed is kept (`Entered`) | `src/core` (parser), `app/renderer` (fields) |
+| 10 | Open, save, save-as and duplicate projects as JSON files via native dialogs | round trip is byte-identical; a file from Milestone 1 loads; a broken file gives a readable error; the renderer never touches the disk directly (main process only, through a narrow preload API) | `app/main` (dialogs, file access), `app/renderer/storage` |
 | 6 | 2D editor: draw and edit the outline with numeric length and angle fields | Playwright: type lengths and angles for the L-shaped fixture room, compare the saved document with the fixture exactly | `app/renderer/editor-2d` |
 | 7 | Doors, windows, columns, ceiling height | Playwright + `validateRoom`: openings that overhang or overlap are refused with the owner-readable message | `app/renderer/editor-2d` |
-| 8 | Units and number entry (mm, cm, m, in, ft-in, fractions) | table tests of the parser; what was typed is kept (`Entered`) | `src/core` (parser), `app/renderer` (fields) |
 | 9 | Arabic and RTL | Playwright in `ar`: screenshots, mirrored layout, numbers still left-to-right; no untranslated key | `app/renderer/i18n` |
-| 10 | Open, save, save-as and duplicate projects as JSON files via native dialogs | round trip is byte-identical; a file from Milestone 1 loads; a broken file gives a readable error; the renderer never touches the disk directly (main process only, through a narrow preload API) | `app/main` (dialogs, file access), `app/renderer/storage` |
 | 11 | Scan import (last issue of M2), see below | per-adapter fixture files → the same internal scan model; normalization tests on hand-built messy scans; the RoomTrace sample imports and lists exactly what is missing or assumed | `src/import-scan` (portable), `app/renderer` (review screen) |
 
 **Issue 11 in detail: room-scan importer.** The scan app is **not chosen yet**, and formats
@@ -61,7 +61,8 @@ differ per app, so the importer has two layers:
 
 1. **One adapter per scan app**, each mapping that app's file to one internal scan model
    (walls as segments with height, openings with whatever the file knows, source and units).
-   Formats: **JSON primary, DXF fallback, no USDZ.**
+   Formats: **JSON only in M2, no USDZ.** A DXF adapter waits until a real DXF sample from a
+   chosen scan app exists (owner ruling 2026-11-11); no DXF reader is spiked or added before then.
 2. **Shared normalization** from the scan model to a room for the editor:
    - order the walls and join them into a closed outline;
    - close small gaps and report each one;
@@ -80,8 +81,23 @@ becomes a test fixture. Other apps will need their own adapter and their own fix
 **Spikes before use** (each a small passing test, then a `STACK.md` entry): electron-vite with
 React 19; electron-builder producing an unsigned NSIS installer on the Windows CI job;
 Playwright driving the Electron app; SVG-in-React editing with pointer events on a 200-vertex
-room at 60 fps on integrated graphics; zustand + immer patches for undo; react-i18next with
-`dir="rtl"`; Tailwind 4 logical properties with Radix; a DXF reader for the scan fallback.
+room at 60 fps on integrated graphics; zustand + immer with a stack of whole-document snapshots for undo (owner ruling 2026-11-11, instead of patches); react-i18next with
+`dir="rtl"`; Tailwind 4 logical properties with Radix. (The DXF reader spike is dropped until a
+real DXF sample exists.)
+
+**Detail rulings (owner, 2026-11-11)**
+- Every UI string goes through `t()` from issue 1; English only until issue 9 adds Arabic.
+- No document exists until a room does: the app starts on a start screen (`document: null`).
+- Scan windows with an unknown sill height stay "pending" until the owner types it; no schema change.
+- Room checks added in issue 7: a window whose top is above the ceiling, a column outside the
+  room. `RoomProblem` gains numeric fields so messages can be translated by code (issue 9).
+- Issue 10 asks "Save changes?" before closing with unsaved edits.
+- Columns are rectangles only in V1. Default unit cm, switchable. Digits 0-9 in both languages;
+  Eastern Arabic digits are accepted as input.
+- `pnpm test` stays Vitest; `pnpm test:e2e` builds and runs Playwright; both must be green.
+- Capture thresholds are our own first guess until the owner confirms them (`../NOTES.md`).
+- The Windows packaging CI job runs only when `app/`, `package.json`, the lockfile or
+  `electron-builder.yml` change.
 
 **Risks**
 - Unsigned installer: SmartScreen warns once. Accepted by the owner; the install note must show

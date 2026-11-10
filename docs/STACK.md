@@ -82,7 +82,7 @@ agent only; nothing is imported by `src/` or `test/`. Project docs win over them
 | Desktop app | Electron + electron-vite + electron-builder (unsigned NSIS installer for Windows) | Tauri v2 (smaller, but needs Rust; main process also keeps later local tools such as Blender open) |
 | PDF | Electron/Chromium `printToPDF` from our own HTML + SVG sheet (Chromium shapes Arabic and handles RTL) | Fallback only: pdfkit 0.20 + bidi-js + embedded Arabic font, or jspdf 4.2 + svg2pdf.js |
 | End-to-end tests | Playwright driving the Electron app | — |
-| Scan import (DXF fallback) | a DXF reader, chosen by spike in M2 | — |
+| Scan import (DXF fallback) | Deferred (owner 2026-11-11): no DXF reader until a real DXF sample from a chosen scan app exists | dxf-parser 1.1.2 (last published 2022-06) |
 | i18n / UI | react-i18next 18, shadcn + Radix + Tailwind 4 logical properties | lingui, react-intl, Mantine 9, MUI 9 |
 
 Removed from V1 on 2026-11-11 (owner decision, see `decisions/0007-local-electron-desktop-app.md`): vite-plugin-pwa / serwist, IndexedDB outbox, File System Access API, a QR library, any hosting.
