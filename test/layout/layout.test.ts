@@ -2,7 +2,6 @@ import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
 import { parseDesignDocument } from '../../src/core/index';
 import type { DesignDocument, Placement } from '../../src/core/index';
-import { isTall } from '../../src/catalog/index';
 import { rectsOverlap } from '../../src/geometry/index';
 import { autoLayout } from '../../src/layout/index';
 import type { LayoutOption, LayoutRequest } from '../../src/layout/index';
@@ -81,11 +80,6 @@ describe.each(scenarios.map((s) => [s.id, s] as const))('auto layout: %s', (_id,
     for (const f of fixtures.filter((x) => x.product.placement === 'wall')) {
       expect(flushWall(doc.room, f.corners, defaultConfig), f.placement.id).toBeDefined();
     }
-    // Tall units never stand in the open floor unless they are islands.
-    for (const f of fixtures.filter((x) => isTall(x.variant) && x.product.placement !== 'island')) {
-      expect(f.product.placement).toBe('wall');
-    }
-
     // Gondolas form rows: all islands share one direction (mod 180 degrees).
     const islands = fixtures.filter((x) => x.product.placement === 'island');
     const directions = new Set(islands.map((f) => f.placement.rotationUdeg % 180_000_000));
@@ -134,11 +128,11 @@ describe('auto layout: what did not fit', () => {
     }
   });
 
-  it('real catalog sizes: everything with known dimensions fits in the 7 m x 5 m shop', () => {
+  it('real catalog sizes: everything with known dimensions fits in the 7 m x 5 m shop; the rest is named', () => {
     const request = scenarios.find((s) => s.id === 'protected-doorway-real-products')!;
     const best = run(request)[0]!;
-    expect(best.unplaced.map((u) => u.productId)).toEqual(['nhf-s']);
-    expect(best.document.placements.length).toBe(10);
+    expect(best.unplaced.map((u) => u.productId)).toEqual(['nhf-jan', 'nhf-s']); // both have unknown sizes
+    expect(best.document.placements.length).toBe(9);
   });
 });
 

@@ -15,7 +15,6 @@
  *     the reason that the closest attempts failed on.
  */
 import type { DesignDocument, Placement, Product, Room, Variant } from '../core/index';
-import { isTall } from '../catalog/index';
 import {
   rectCorners,
   rectInsidePolygon,
@@ -171,7 +170,7 @@ function reasonText(code: ReasonCode, config: PlanningConfig): string {
     case 'overlap':
       return 'another fixture is already there';
     case 'window-blocked':
-      return 'it is too tall to stand in front of a window';
+      return 'it is higher than the window sill it would stand in front of';
     case 'own-access':
       return `there is not enough aisle space left in front of it (at least ${mm(config.secondaryAisleUm)})`;
     case 'blocks-access':
@@ -241,7 +240,7 @@ function obstacle(state: State, unit: Unit, placement: Placement): ReasonCode | 
   for (const column of room.columns) if (rectIntersectsPolygon(rect, column.outline)) return 'column';
   for (const zone of state.keepClear) if (rectIntersectsPolygon(rect, zone.polygon)) return 'blocked-door';
   for (const other of state.placed) if (rectsOverlap(rect, other.rect)) return 'overlap';
-  if (isTall(unit.variant) && unit.variant.heightUm !== null) {
+  if (unit.variant.heightUm !== null) {
     for (const opening of room.openings) {
       if (opening.kind !== 'window' || unit.variant.heightUm <= opening.sillHeightUm) continue;
       const band = openingBand(room, opening, config.windowBandDepthUm);

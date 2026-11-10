@@ -6,19 +6,20 @@
 <polygon data-role="room-outline" data-plan-points="0.000,0.000 8000.000,0.000 8000.000,2000.000 6000.000,6000.000 0.000,6000.000" points="727.273,7600.000 8727.273,7600.000 8727.273,5600.000 6727.273,1600.000 727.273,1600.000" fill="#fbfaf7" stroke="none"/>
 <polygon data-access-zone="f01" points="2242.3,5800.0 2242.3,7600.0 3442.3,7600.0 3442.3,5800.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
 <polygon data-access-zone="f01" points="727.3,5800.0 727.3,7600.0 1642.3,7600.0 1642.3,5800.0" fill="#8e7cc3" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f02" points="2142.3,4300.0 2142.3,5800.0 3042.3,5800.0 3042.3,4300.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f03" points="2142.3,2800.0 2142.3,4300.0 3042.3,4300.0 3042.3,2800.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f04" points="6727.3,2000.0 5527.3,2000.0 5527.3,2900.0 6727.3,2900.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f05" points="5527.3,2000.0 4327.3,2000.0 4327.3,2900.0 5527.3,2900.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f06" points="4327.3,2000.0 3127.3,2000.0 3127.3,2900.0 4327.3,2900.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f07" points="8369.5,5778.9 7832.8,4705.6 7027.9,5108.1 7564.5,6181.4" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f08" points="7832.8,4705.6 7296.2,3632.3 6491.2,4034.8 7027.9,5108.1" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f09" points="3127.3,2950.0 4327.3,2950.0 4327.3,2050.0 3127.3,2050.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f09" points="3127.3,4750.0 4327.3,4750.0 4327.3,3850.0 3127.3,3850.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f10" points="4327.3,2950.0 5527.3,2950.0 5527.3,2050.0 4327.3,2050.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f10" points="4327.3,4750.0 5527.3,4750.0 5527.3,3850.0 4327.3,3850.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f11" points="5527.3,2950.0 6727.3,2950.0 6727.3,2050.0 5527.3,2050.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f11" points="5527.3,4750.0 6727.3,4750.0 6727.3,3850.0 5527.3,3850.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f02" points="2142.3,4300.0 2142.3,5800.0 3057.3,5800.0 3057.3,4300.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f03" points="2142.3,2800.0 2142.3,4300.0 3057.3,4300.0 3057.3,2800.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f04" points="6727.3,2000.0 5527.3,2000.0 5527.3,2915.0 6727.3,2915.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f05" points="5527.3,2000.0 4327.3,2000.0 4327.3,2915.0 5527.3,2915.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f06" points="4327.3,2000.0 3127.3,2000.0 3127.3,2915.0 4327.3,2915.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f07" points="8369.5,5778.9 7832.8,4705.6 7014.4,5114.8 7551.1,6188.1" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f08" points="7832.8,4705.6 7296.2,3632.3 6477.8,4041.5 7014.4,5114.8" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f09" points="3127.3,2950.0 4327.3,2950.0 4327.3,2035.0 3127.3,2035.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f09" points="3127.3,4765.0 4327.3,4765.0 4327.3,3850.0 3127.3,3850.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f10" points="4327.3,2950.0 5527.3,2950.0 5527.3,2035.0 4327.3,2035.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f10" points="4327.3,4765.0 5527.3,4765.0 5527.3,3850.0 4327.3,3850.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f11" points="5527.3,2950.0 6727.3,2950.0 6727.3,2035.0 5527.3,2035.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f11" points="5527.3,4765.0 6727.3,4765.0 6727.3,3850.0 5527.3,3850.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-zone-id="entrance:decompression" points="3727.3,7600.0 4727.3,7600.0 4727.3,5600.0 3727.3,5600.0" fill="#f6e58d" fill-opacity="0.22" stroke="#f6e58d" stroke-width="11.6" stroke-dasharray="58.2 43.6"/>
 <polygon data-zone-id="entrance:door-swing" points="3727.3,7600.0 4727.3,7600.0 4727.3,7501.5 4688.8,7308.3 4613.5,7126.3 4504.0,6962.5 4364.7,6823.2 4201.0,6713.8 4019.0,6638.4 3825.8,6600.0 3727.3,6600.0" fill="#e4572e" fill-opacity="0.22" stroke="#e4572e" stroke-width="11.6" stroke-dasharray="58.2 43.6"/>
 <polygon data-zone-id="entrance:entrance-clear" points="3727.3,7600.0 5182.3,7600.0 5182.3,6075.0 3727.3,6075.0" fill="#f6c445" fill-opacity="0.22" stroke="#f6c445" stroke-width="11.6" stroke-dasharray="58.2 43.6"/>
 <polygon points="727.3,7600.0 8727.3,7600.0 8727.3,5600.0 6727.3,1600.0 727.3,1600.0" fill="none" stroke="#2b2b2b" stroke-width="80.0" stroke-linejoin="miter"/>
@@ -106,19 +107,21 @@
 <text x="9687.3" y="3061.8" font-size="109.1" fill="#666666">1200 × 400 × 2100 mm [TEST]</text>
 <text x="9454.5" y="3250.9" font-size="109.1" fill="#666666">Dark band = front (customer side). Sizes are width × depth × height.</text>
 <text x="9454.5" y="3490.9" font-size="138.2" font-weight="bold" fill="#1b1b1b">Keep clear</text>
-<rect x="9454.5" y="3585.5" width="160.0" height="116.4" fill="#e4572e" fill-opacity="0.35" stroke="#333333" stroke-width="7.3"/>
-<text x="9687.3" y="3687.3" font-size="109.1" fill="#333333">Door swing (keep clear)</text>
-<rect x="9454.5" y="3738.2" width="160.0" height="116.4" fill="#f6c445" fill-opacity="0.35" stroke="#333333" stroke-width="7.3"/>
-<text x="9687.3" y="3840.0" font-size="109.1" fill="#333333">Entrance clear zone</text>
-<rect x="9454.5" y="3890.9" width="160.0" height="116.4" fill="#4a90d9" fill-opacity="0.2" stroke="#333333" stroke-width="7.3"/>
-<text x="9687.3" y="3992.7" font-size="109.1" fill="#333333">Aisle / access space in front of fixtures</text>
-<text x="9454.5" y="4232.7" font-size="138.2" font-weight="bold" fill="#1b1b1b">Why this option</text>
-<text x="9454.5" y="4429.1" font-size="109.1" fill="#333333">50.0 / 50 Fixtures placed: 11 of 11 placed</text>
-<text x="9454.5" y="4581.8" font-size="109.1" fill="#333333">11.3 / 15 Counter near the entrance: 2456 mm from the entrance</text>
-<text x="9454.5" y="4734.5" font-size="109.1" fill="#333333">9.3 / 10 Counter faces the entrance: the counter looks at the entrance</text>
-<text x="9454.5" y="4887.3" font-size="109.1" fill="#333333">7.6 / 10 Showcases near the counter: on average 2401 mm from the</text>
-<text x="9454.5" y="5040.0" font-size="109.1" fill="#333333">counter</text>
-<text x="9454.5" y="5192.7" font-size="109.1" fill="#333333">10.0 / 10 Gondolas in rows: 3 gondolas in 1 row</text>
-<text x="9454.5" y="5345.5" font-size="109.1" fill="#333333">3.1 / 5 Open view from the entrance: 3750 mm clear straight ahead of</text>
-<text x="9454.5" y="5498.2" font-size="109.1" fill="#333333">the door</text>
+<rect x="9454.5" y="3585.5" width="160.0" height="116.4" fill="#f6e58d" fill-opacity="0.35" stroke="#333333" stroke-width="7.3"/>
+<text x="9687.3" y="3687.3" font-size="109.1" fill="#333333">Entrance decompression zone (keep clear)</text>
+<rect x="9454.5" y="3738.2" width="160.0" height="116.4" fill="#e4572e" fill-opacity="0.35" stroke="#333333" stroke-width="7.3"/>
+<text x="9687.3" y="3840.0" font-size="109.1" fill="#333333">Door swing (keep clear)</text>
+<rect x="9454.5" y="3890.9" width="160.0" height="116.4" fill="#f6c445" fill-opacity="0.35" stroke="#333333" stroke-width="7.3"/>
+<text x="9687.3" y="3992.7" font-size="109.1" fill="#333333">Entrance clear zone</text>
+<rect x="9454.5" y="4043.6" width="160.0" height="116.4" fill="#4a90d9" fill-opacity="0.2" stroke="#333333" stroke-width="7.3"/>
+<text x="9687.3" y="4145.5" font-size="109.1" fill="#333333">Aisle / access space in front of fixtures</text>
+<text x="9454.5" y="4385.5" font-size="138.2" font-weight="bold" fill="#1b1b1b">Why this option</text>
+<text x="9454.5" y="4581.8" font-size="109.1" fill="#333333">50.0 / 50 Fixtures placed: 11 of 11 placed</text>
+<text x="9454.5" y="4734.5" font-size="109.1" fill="#333333">11.3 / 15 Counter near the entrance: 2456 mm from the entrance</text>
+<text x="9454.5" y="4887.3" font-size="109.1" fill="#333333">9.3 / 10 Counter faces the entrance: the counter looks at the entrance</text>
+<text x="9454.5" y="5040.0" font-size="109.1" fill="#333333">7.6 / 10 Showcases near the counter: on average 2401 mm from the</text>
+<text x="9454.5" y="5192.7" font-size="109.1" fill="#333333">counter</text>
+<text x="9454.5" y="5345.5" font-size="109.1" fill="#333333">10.0 / 10 Gondolas in rows: 3 gondolas in 1 row</text>
+<text x="9454.5" y="5498.2" font-size="109.1" fill="#333333">3.1 / 5 Open view from the entrance: 3750 mm clear straight ahead of</text>
+<text x="9454.5" y="5650.9" font-size="109.1" fill="#333333">the door</text>
 </svg>

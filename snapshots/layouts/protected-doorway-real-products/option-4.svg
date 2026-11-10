@@ -1,24 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12409.1 7227.3" width="12409.1mm" height="7227.3mm" font-family="DejaVu Sans, Arial, sans-serif">
 <rect x="0" y="0" width="12409.1" height="7227.3" fill="#ffffff"/>
 <text x="636.4" y="305.5" font-size="190.9" font-weight="bold" fill="#111111">Option 4 — Shop with a back-room door (real catalog sizes, unverified)</text>
-<text x="636.4" y="521.8" font-size="108.2" fill="#444444">Floor area 35.00 m²  ·  9 fixtures  ·  Score 73.5 / 100  ·  Counter at wall 2; gondola rows run parallel to the entrance wall.</text>
+<text x="636.4" y="521.8" font-size="108.2" fill="#444444">Floor area 35.00 m²  ·  9 fixtures  ·  Score 66.0 / 100  ·  Counter at wall 4; gondola rows run parallel to the entrance wall.</text>
 <polygon data-role="room-outline" data-plan-points="0.000,0.000 7000.000,0.000 7000.000,5000.000 0.000,5000.000" points="636.364,6400.000 7636.364,6400.000 7636.364,1400.000 636.364,1400.000" fill="#fbfaf7" stroke="none"/>
-<polygon data-access-zone="f01" points="6213.4,6400.0 6213.4,5790.4 5013.4,5790.4 5013.4,6400.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f01" points="7636.4,6400.0 7636.4,5790.4 6721.4,5790.4 6721.4,6400.0" fill="#8e7cc3" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f02" points="6162.6,5790.4 6162.6,3961.6 5262.6,3961.6 5262.6,5790.4" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f03" points="636.4,5841.2 2465.2,5841.2 2465.2,4941.2 636.4,4941.2" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f04" points="7636.4,1908.0 6417.2,1908.0 6417.2,2808.0 7636.4,2808.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f05" points="6417.2,1908.0 5198.0,1908.0 5198.0,2808.0 6417.2,2808.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f06" points="1126.8,2342.8 2346.0,2342.8 2346.0,1442.8 1126.8,1442.8" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f06" points="1126.8,4157.2 2346.0,4157.2 2346.0,3257.2 1126.8,3257.2" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f07" points="2346.0,2342.8 3565.2,2342.8 3565.2,1442.8 2346.0,1442.8" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f07" points="2346.0,4157.2 3565.2,4157.2 3565.2,3257.2 2346.0,3257.2" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f08" points="4026.8,2895.2 5246.0,2895.2 5246.0,1995.2 4026.8,1995.2" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f08" points="4026.8,4404.8 5246.0,4404.8 5246.0,3504.8 4026.8,3504.8" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f09" points="826.8,4195.2 2046.0,4195.2 2046.0,3295.2 826.8,3295.2" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f09" points="826.8,5704.8 2046.0,5704.8 2046.0,4804.8 826.8,4804.8" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f01" points="2059.4,5790.4 2059.4,6400.0 3259.4,6400.0 3259.4,5790.4" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f01" points="636.4,5790.4 636.4,6400.0 1551.4,6400.0 1551.4,5790.4" fill="#8e7cc3" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f02" points="2110.2,3961.6 2110.2,5790.4 3025.2,5790.4 3025.2,3961.6" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f03" points="2110.2,2132.8 2110.2,3961.6 3025.2,3961.6 3025.2,2132.8" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f04" points="5091.4,5892.0 6920.2,5892.0 6920.2,4977.0 5091.4,4977.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f05" points="7636.4,1908.0 6417.2,1908.0 6417.2,2823.0 7636.4,2823.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f06" points="6417.2,1908.0 5198.0,1908.0 5198.0,2823.0 6417.2,2823.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f07" points="3026.8,2342.8 4246.0,2342.8 4246.0,1427.8 3026.8,1427.8" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f07" points="3026.8,4172.2 4246.0,4172.2 4246.0,3257.2 3026.8,3257.2" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f08" points="4426.8,2842.8 5646.0,2842.8 5646.0,1927.8 4426.8,1927.8" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f08" points="4426.8,4672.2 5646.0,4672.2 5646.0,3757.2 4426.8,3757.2" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f09" points="5926.8,3442.8 7146.0,3442.8 7146.0,2527.8 5926.8,2527.8" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f09" points="5926.8,5272.2 7146.0,5272.2 7146.0,4357.2 5926.8,4357.2" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
 <polygon data-zone-id="back-room-door:door-approach" points="6111.4,3400.0 7636.4,3400.0 7636.4,2045.0 6111.4,2045.0" fill="#f08a4b" fill-opacity="0.22" stroke="#f08a4b" stroke-width="10.2" stroke-dasharray="50.9 38.2"/>
 <polygon data-zone-id="back-room-door:door-swing" points="6736.4,3400.0 7636.4,3400.0 7636.4,2500.0 7547.7,2500.0 7373.8,2534.6 7210.1,2602.4 7062.6,2700.9 6937.3,2826.3 6838.8,2973.7 6770.9,3137.5 6736.4,3311.4" fill="#e4572e" fill-opacity="0.22" stroke="#e4572e" stroke-width="10.2" stroke-dasharray="50.9 38.2"/>
+<polygon data-zone-id="entrance:decompression" points="3636.4,6400.0 4636.4,6400.0 4636.4,4733.3 3636.4,4733.3" fill="#f6e58d" fill-opacity="0.22" stroke="#f6e58d" stroke-width="10.2" stroke-dasharray="50.9 38.2"/>
 <polygon data-zone-id="entrance:door-swing" points="3636.4,6400.0 4636.4,6400.0 4636.4,6301.5 4597.9,6108.3 4522.6,5926.3 4413.1,5762.5 4273.8,5623.2 4110.0,5513.8 3928.1,5438.4 3734.9,5400.0 3636.4,5400.0" fill="#e4572e" fill-opacity="0.22" stroke="#e4572e" stroke-width="10.2" stroke-dasharray="50.9 38.2"/>
 <polygon data-zone-id="entrance:entrance-clear" points="3636.4,6400.0 5091.4,6400.0 5091.4,4875.0 3636.4,4875.0" fill="#f6c445" fill-opacity="0.22" stroke="#f6c445" stroke-width="10.2" stroke-dasharray="50.9 38.2"/>
 <polygon points="636.4,6400.0 7636.4,6400.0 7636.4,1400.0 636.4,1400.0" fill="none" stroke="#2b2b2b" stroke-width="70.0" stroke-linejoin="miter"/>
@@ -33,104 +33,106 @@
 <text data-wall-index="1" data-length-um="5000000" x="7840.0" y="3900.0" font-size="114.5" fill="#444444" text-anchor="middle" dominant-baseline="middle" transform="rotate(90.0 7840.0 3900.0)">5000 mm</text>
 <text data-wall-index="2" data-length-um="7000000" x="4136.4" y="1196.4" font-size="114.5" fill="#444444" text-anchor="middle" dominant-baseline="middle" transform="rotate(0.0 4136.4 1196.4)">7000 mm</text>
 <text data-wall-index="3" data-length-um="5000000" x="432.7" y="3900.0" font-size="114.5" fill="#444444" text-anchor="middle" dominant-baseline="middle" transform="rotate(90.0 432.7 3900.0)">5000 mm</text>
-<polygon data-placement-id="f01" data-product-id="nhf-c" data-width-um="609600" data-depth-um="508000" data-plan-points="6085.000,0.000 6085.000,609.600 5577.000,609.600 5577.000,0.000" points="6721.364,6400.000 6721.364,5790.400 6213.364,5790.400 6213.364,6400.000" fill="#f2b24c" stroke="#333333" stroke-width="12.7"/>
-<line x1="6245.2" y1="6400.0" x2="6245.2" y2="5790.4" stroke="#1d3557" stroke-width="31.8" stroke-opacity="0.75"/>
-<text x="6467.4" y="6051.8" font-size="140.0" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 6467.4 6095.2)">B</text>
-<text x="6467.4" y="6179.2" font-size="78.9" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 6467.4 6095.2)">610×508</text>
-<polygon data-placement-id="f02" data-product-id="nhf-6ft-extra-view-showcase" data-width-um="1828800" data-depth-um="558800" data-plan-points="6085.000,609.600 6085.000,2438.400 5526.200,2438.400 5526.200,609.600" points="6721.364,5790.400 6721.364,3961.600 6162.564,3961.600 6162.564,5790.400" fill="#7cc4e8" stroke="#333333" stroke-width="12.7"/>
-<line x1="6194.4" y1="5790.4" x2="6194.4" y2="3961.6" stroke="#1d3557" stroke-width="31.8" stroke-opacity="0.75"/>
-<text x="6442.0" y="4832.6" font-size="140.0" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 6442.0 4876.0)">A</text>
-<text x="6442.0" y="4960.0" font-size="78.9" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 6442.0 4876.0)">1829×559</text>
-<polygon data-placement-id="f03" data-product-id="nhf-6ft-extra-view-showcase" data-width-um="1828800" data-depth-um="558800" data-plan-points="0.000,0.000 1828.800,0.000 1828.800,558.800 0.000,558.800" points="636.364,6400.000 2465.164,6400.000 2465.164,5841.200 636.364,5841.200" fill="#7cc4e8" stroke="#333333" stroke-width="12.7"/>
-<line x1="636.4" y1="5873.0" x2="2465.2" y2="5873.0" stroke="#1d3557" stroke-width="31.8" stroke-opacity="0.75"/>
-<text x="1550.8" y="6077.2" font-size="140.0" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(0.0 1550.8 6120.6)">A</text>
-<text x="1550.8" y="6204.6" font-size="78.9" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(0.0 1550.8 6120.6)">1829×559</text>
-<polygon data-placement-id="f04" data-product-id="nhf-s-1" data-width-um="1219200" data-depth-um="508000" data-plan-points="7000.000,5000.000 5780.800,5000.000 5780.800,4492.000 7000.000,4492.000" points="7636.364,1400.000 6417.164,1400.000 6417.164,1908.000 7636.364,1908.000" fill="#7cc4e8" stroke="#333333" stroke-width="12.7"/>
+<polygon data-placement-id="f01" data-product-id="nhf-c" data-width-um="609600" data-depth-um="508000" data-plan-points="915.000,609.600 915.000,0.000 1423.000,0.000 1423.000,609.600" points="1551.364,5790.400 1551.364,6400.000 2059.364,6400.000 2059.364,5790.400" fill="#f2b24c" stroke="#333333" stroke-width="12.7"/>
+<line x1="2027.5" y1="5790.4" x2="2027.5" y2="6400.0" stroke="#1d3557" stroke-width="31.8" stroke-opacity="0.75"/>
+<text x="1805.4" y="6051.8" font-size="140.0" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 1805.4 6095.2)">C</text>
+<text x="1805.4" y="6179.2" font-size="78.9" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 1805.4 6095.2)">610×508</text>
+<polygon data-placement-id="f02" data-product-id="nhf-6ft-extra-view-showcase" data-width-um="1828800" data-depth-um="558800" data-plan-points="915.000,2438.400 915.000,609.600 1473.800,609.600 1473.800,2438.400" points="1551.364,3961.600 1551.364,5790.400 2110.164,5790.400 2110.164,3961.600" fill="#7cc4e8" stroke="#333333" stroke-width="12.7"/>
+<line x1="2078.3" y1="3961.6" x2="2078.3" y2="5790.4" stroke="#1d3557" stroke-width="31.8" stroke-opacity="0.75"/>
+<text x="1830.8" y="4832.6" font-size="140.0" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 1830.8 4876.0)">A</text>
+<text x="1830.8" y="4960.0" font-size="78.9" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 1830.8 4876.0)">1829×559</text>
+<polygon data-placement-id="f03" data-product-id="nhf-6ft-extra-view-showcase" data-width-um="1828800" data-depth-um="558800" data-plan-points="915.000,4267.200 915.000,2438.400 1473.800,2438.400 1473.800,4267.200" points="1551.364,2132.800 1551.364,3961.600 2110.164,3961.600 2110.164,2132.800" fill="#7cc4e8" stroke="#333333" stroke-width="12.7"/>
+<line x1="2078.3" y1="2132.8" x2="2078.3" y2="3961.6" stroke="#1d3557" stroke-width="31.8" stroke-opacity="0.75"/>
+<text x="1830.8" y="3003.8" font-size="140.0" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 1830.8 3047.2)">A</text>
+<text x="1830.8" y="3131.2" font-size="78.9" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 1830.8 3047.2)">1829×559</text>
+<polygon data-placement-id="f04" data-product-id="nhf-6ft-full-view-led-lights-showcase" data-width-um="1828800" data-depth-um="508000" data-plan-points="4455.000,0.000 6283.800,0.000 6283.800,508.000 4455.000,508.000" points="5091.364,6400.000 6920.164,6400.000 6920.164,5892.000 5091.364,5892.000" fill="#7cc4e8" stroke="#333333" stroke-width="12.7"/>
+<line x1="5091.4" y1="5923.8" x2="6920.2" y2="5923.8" stroke="#1d3557" stroke-width="31.8" stroke-opacity="0.75"/>
+<text x="6005.8" y="6102.6" font-size="140.0" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(0.0 6005.8 6146.0)">B</text>
+<text x="6005.8" y="6230.0" font-size="78.9" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(0.0 6005.8 6146.0)">1829×508</text>
+<polygon data-placement-id="f05" data-product-id="nhf-s-1" data-width-um="1219200" data-depth-um="508000" data-plan-points="7000.000,5000.000 5780.800,5000.000 5780.800,4492.000 7000.000,4492.000" points="7636.364,1400.000 6417.164,1400.000 6417.164,1908.000 7636.364,1908.000" fill="#7cc4e8" stroke="#333333" stroke-width="12.7"/>
 <line x1="7636.4" y1="1876.2" x2="6417.2" y2="1876.2" stroke="#1d3557" stroke-width="31.8" stroke-opacity="0.75"/>
 <text x="7026.8" y="1610.6" font-size="140.0" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(0.0 7026.8 1654.0)">E</text>
 <text x="7026.8" y="1738.0" font-size="78.9" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(0.0 7026.8 1654.0)">1219×508</text>
-<polygon data-placement-id="f05" data-product-id="nhf-s-1" data-width-um="1219200" data-depth-um="508000" data-plan-points="5780.800,5000.000 4561.600,5000.000 4561.600,4492.000 5780.800,4492.000" points="6417.164,1400.000 5197.964,1400.000 5197.964,1908.000 6417.164,1908.000" fill="#7cc4e8" stroke="#333333" stroke-width="12.7"/>
+<polygon data-placement-id="f06" data-product-id="nhf-s-1" data-width-um="1219200" data-depth-um="508000" data-plan-points="5780.800,5000.000 4561.600,5000.000 4561.600,4492.000 5780.800,4492.000" points="6417.164,1400.000 5197.964,1400.000 5197.964,1908.000 6417.164,1908.000" fill="#7cc4e8" stroke="#333333" stroke-width="12.7"/>
 <line x1="6417.2" y1="1876.2" x2="5198.0" y2="1876.2" stroke="#1d3557" stroke-width="31.8" stroke-opacity="0.75"/>
 <text x="5807.6" y="1610.6" font-size="140.0" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(0.0 5807.6 1654.0)">E</text>
 <text x="5807.6" y="1738.0" font-size="78.9" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(0.0 5807.6 1654.0)">1219×508</text>
-<polygon data-placement-id="f06" data-product-id="nhf-g" data-width-um="1219200" data-depth-um="914400" data-plan-points="490.400,3142.800 1709.600,3142.800 1709.600,4057.200 490.400,4057.200" points="1126.764,3257.200 2345.964,3257.200 2345.964,2342.800 1126.764,2342.800" fill="#9ad08f" stroke="#333333" stroke-width="12.7"/>
-<line x1="1126.8" y1="2374.6" x2="2346.0" y2="2374.6" stroke="#1d3557" stroke-width="31.8" stroke-opacity="0.75"/>
-<text x="1736.4" y="2756.6" font-size="140.0" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(0.0 1736.4 2800.0)">C</text>
-<text x="1736.4" y="2884.0" font-size="78.9" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(0.0 1736.4 2800.0)">1219×914</text>
-<polygon data-placement-id="f07" data-product-id="nhf-g" data-width-um="1219200" data-depth-um="914400" data-plan-points="1709.600,3142.800 2928.800,3142.800 2928.800,4057.200 1709.600,4057.200" points="2345.964,3257.200 3565.164,3257.200 3565.164,2342.800 2345.964,2342.800" fill="#9ad08f" stroke="#333333" stroke-width="12.7"/>
-<line x1="2346.0" y1="2374.6" x2="3565.2" y2="2374.6" stroke="#1d3557" stroke-width="31.8" stroke-opacity="0.75"/>
-<text x="2955.6" y="2756.6" font-size="140.0" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(0.0 2955.6 2800.0)">C</text>
-<text x="2955.6" y="2884.0" font-size="78.9" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(0.0 2955.6 2800.0)">1219×914</text>
-<polygon data-placement-id="f08" data-product-id="nhf-jan" data-width-um="1219200" data-depth-um="609600" data-plan-points="3390.400,2895.200 4609.600,2895.200 4609.600,3504.800 3390.400,3504.800" points="4026.764,3504.800 5245.964,3504.800 5245.964,2895.200 4026.764,2895.200" fill="#9ad08f" stroke="#333333" stroke-width="12.7"/>
-<line x1="4026.8" y1="2927.0" x2="5246.0" y2="2927.0" stroke="#1d3557" stroke-width="31.8" stroke-opacity="0.75"/>
-<text x="4636.4" y="3156.6" font-size="140.0" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(0.0 4636.4 3200.0)">D</text>
-<text x="4636.4" y="3284.0" font-size="78.9" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(0.0 4636.4 3200.0)">1219×610</text>
-<polygon data-placement-id="f09" data-product-id="nhf-jan" data-width-um="1219200" data-depth-um="609600" data-plan-points="190.400,1595.200 1409.600,1595.200 1409.600,2204.800 190.400,2204.800" points="826.764,4804.800 2045.964,4804.800 2045.964,4195.200 826.764,4195.200" fill="#9ad08f" stroke="#333333" stroke-width="12.7"/>
-<line x1="826.8" y1="4227.0" x2="2046.0" y2="4227.0" stroke="#1d3557" stroke-width="31.8" stroke-opacity="0.75"/>
-<text x="1436.4" y="4456.6" font-size="140.0" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(0.0 1436.4 4500.0)">D</text>
-<text x="1436.4" y="4584.0" font-size="78.9" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(0.0 1436.4 4500.0)">1219×610</text>
-<line data-aisle="main" data-width-um="3700000" x1="6213.4" y1="6095.2" x2="2513.4" y2="6095.2" stroke="#0b6e4f" stroke-width="11.5"/>
-<line x1="6213.4" y1="6139.7" x2="6213.4" y2="6050.7" stroke="#0b6e4f" stroke-width="11.5"/>
-<line x1="2513.4" y1="6139.7" x2="2513.4" y2="6050.7" stroke="#0b6e4f" stroke-width="11.5"/>
-<rect x="3676.1" y="6031.6" width="1374.5" height="127.3" fill="#ffffff" fill-opacity="0.85"/>
-<text x="4363.4" y="6095.2" font-size="86.5" fill="#0b6e4f" text-anchor="middle" dominant-baseline="central">in front of counter 3700 mm</text>
-<line data-aisle="secondary" data-width-um="900000" x1="1736.4" y1="2342.8" x2="1736.4" y2="1442.8" stroke="#3a7ca5" stroke-width="11.5"/>
-<line x1="1691.8" y1="2342.8" x2="1780.9" y2="2342.8" stroke="#3a7ca5" stroke-width="11.5"/>
-<line x1="1691.8" y1="1442.8" x2="1780.9" y2="1442.8" stroke="#3a7ca5" stroke-width="11.5"/>
-<rect x="1430.9" y="1829.2" width="610.9" height="127.3" fill="#ffffff" fill-opacity="0.85"/>
-<text x="1736.4" y="1892.8" font-size="86.5" fill="#3a7ca5" text-anchor="middle" dominant-baseline="central">aisle 900 mm</text>
-<line data-aisle="secondary" data-width-um="950000" x1="4636.4" y1="2895.2" x2="4636.4" y2="1945.2" stroke="#3a7ca5" stroke-width="11.5"/>
-<line x1="4591.8" y1="2895.2" x2="4680.9" y2="2895.2" stroke="#3a7ca5" stroke-width="11.5"/>
-<line x1="4591.8" y1="1945.2" x2="4680.9" y2="1945.2" stroke="#3a7ca5" stroke-width="11.5"/>
-<rect x="4330.9" y="2356.6" width="610.9" height="127.3" fill="#ffffff" fill-opacity="0.85"/>
-<text x="4636.4" y="2420.2" font-size="86.5" fill="#3a7ca5" text-anchor="middle" dominant-baseline="central">aisle 950 mm</text>
-<line data-aisle="secondary" data-width-um="900000" x1="1436.4" y1="4195.2" x2="1436.4" y2="3295.2" stroke="#3a7ca5" stroke-width="11.5"/>
-<line x1="1391.8" y1="4195.2" x2="1480.9" y2="4195.2" stroke="#3a7ca5" stroke-width="11.5"/>
-<line x1="1391.8" y1="3295.2" x2="1480.9" y2="3295.2" stroke="#3a7ca5" stroke-width="11.5"/>
-<rect x="1130.9" y="3681.6" width="610.9" height="127.3" fill="#ffffff" fill-opacity="0.85"/>
-<text x="1436.4" y="3745.2" font-size="86.5" fill="#3a7ca5" text-anchor="middle" dominant-baseline="central">aisle 900 mm</text>
+<polygon data-placement-id="f07" data-product-id="nhf-g" data-width-um="1219200" data-depth-um="914400" data-plan-points="2390.400,3142.800 3609.600,3142.800 3609.600,4057.200 2390.400,4057.200" points="3026.764,3257.200 4245.964,3257.200 4245.964,2342.800 3026.764,2342.800" fill="#9ad08f" stroke="#333333" stroke-width="12.7"/>
+<line x1="3026.8" y1="2374.6" x2="4246.0" y2="2374.6" stroke="#1d3557" stroke-width="31.8" stroke-opacity="0.75"/>
+<text x="3636.4" y="2756.6" font-size="140.0" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(0.0 3636.4 2800.0)">D</text>
+<text x="3636.4" y="2884.0" font-size="78.9" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(0.0 3636.4 2800.0)">1219×914</text>
+<polygon data-placement-id="f08" data-product-id="nhf-g" data-width-um="1219200" data-depth-um="914400" data-plan-points="3790.400,2642.800 5009.600,2642.800 5009.600,3557.200 3790.400,3557.200" points="4426.764,3757.200 5645.964,3757.200 5645.964,2842.800 4426.764,2842.800" fill="#9ad08f" stroke="#333333" stroke-width="12.7"/>
+<line x1="4426.8" y1="2874.6" x2="5646.0" y2="2874.6" stroke="#1d3557" stroke-width="31.8" stroke-opacity="0.75"/>
+<text x="5036.4" y="3256.6" font-size="140.0" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(0.0 5036.4 3300.0)">D</text>
+<text x="5036.4" y="3384.0" font-size="78.9" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(0.0 5036.4 3300.0)">1219×914</text>
+<polygon data-placement-id="f09" data-product-id="nhf-g" data-width-um="1219200" data-depth-um="914400" data-plan-points="5290.400,2042.800 6509.600,2042.800 6509.600,2957.200 5290.400,2957.200" points="5926.764,4357.200 7145.964,4357.200 7145.964,3442.800 5926.764,3442.800" fill="#9ad08f" stroke="#333333" stroke-width="12.7"/>
+<line x1="5926.8" y1="3474.6" x2="7146.0" y2="3474.6" stroke="#1d3557" stroke-width="31.8" stroke-opacity="0.75"/>
+<text x="6536.4" y="3856.6" font-size="140.0" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(0.0 6536.4 3900.0)">D</text>
+<text x="6536.4" y="3984.0" font-size="78.9" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(0.0 6536.4 3900.0)">1219×914</text>
+<line data-aisle="main" data-width-um="3000000" x1="2059.4" y1="6095.2" x2="5059.4" y2="6095.2" stroke="#0b6e4f" stroke-width="11.5"/>
+<line x1="2059.4" y1="6050.7" x2="2059.4" y2="6139.7" stroke="#0b6e4f" stroke-width="11.5"/>
+<line x1="5059.4" y1="6050.7" x2="5059.4" y2="6139.7" stroke="#0b6e4f" stroke-width="11.5"/>
+<rect x="2872.1" y="6031.6" width="1374.5" height="127.3" fill="#ffffff" fill-opacity="0.85"/>
+<text x="3559.4" y="6095.2" font-size="86.5" fill="#0b6e4f" text-anchor="middle" dominant-baseline="central">in front of counter 3000 mm</text>
+<line data-aisle="secondary" data-width-um="900000" x1="3636.4" y1="2342.8" x2="3636.4" y2="1442.8" stroke="#3a7ca5" stroke-width="11.5"/>
+<line x1="3591.8" y1="2342.8" x2="3680.9" y2="2342.8" stroke="#3a7ca5" stroke-width="11.5"/>
+<line x1="3591.8" y1="1442.8" x2="3680.9" y2="1442.8" stroke="#3a7ca5" stroke-width="11.5"/>
+<rect x="3330.9" y="1829.2" width="610.9" height="127.3" fill="#ffffff" fill-opacity="0.85"/>
+<text x="3636.4" y="1892.8" font-size="86.5" fill="#3a7ca5" text-anchor="middle" dominant-baseline="central">aisle 900 mm</text>
+<line data-aisle="secondary" data-width-um="900000" x1="5036.4" y1="2842.8" x2="5036.4" y2="1942.8" stroke="#3a7ca5" stroke-width="11.5"/>
+<line x1="4991.8" y1="2842.8" x2="5080.9" y2="2842.8" stroke="#3a7ca5" stroke-width="11.5"/>
+<line x1="4991.8" y1="1942.8" x2="5080.9" y2="1942.8" stroke="#3a7ca5" stroke-width="11.5"/>
+<rect x="4730.9" y="2329.2" width="610.9" height="127.3" fill="#ffffff" fill-opacity="0.85"/>
+<text x="5036.4" y="2392.8" font-size="86.5" fill="#3a7ca5" text-anchor="middle" dominant-baseline="central">aisle 900 mm</text>
+<line data-aisle="secondary" data-width-um="1500000" x1="6536.4" y1="3442.8" x2="6536.4" y2="1942.8" stroke="#3a7ca5" stroke-width="11.5"/>
+<line x1="6491.8" y1="3442.8" x2="6580.9" y2="3442.8" stroke="#3a7ca5" stroke-width="11.5"/>
+<line x1="6491.8" y1="1942.8" x2="6580.9" y2="1942.8" stroke="#3a7ca5" stroke-width="11.5"/>
+<rect x="6205.5" y="2629.2" width="661.8" height="127.3" fill="#ffffff" fill-opacity="0.85"/>
+<text x="6536.4" y="2692.8" font-size="86.5" fill="#3a7ca5" text-anchor="middle" dominant-baseline="central">aisle 1500 mm</text>
 <line x1="636.4" y1="6877.3" x2="1636.4" y2="6877.3" stroke="#111111" stroke-width="22.9"/>
 <text x="1700.0" y="6877.3" font-size="95.5" fill="#111111" dominant-baseline="central">1000 mm</text>
 <text x="8272.7" y="1476.4" font-size="120.9" font-weight="bold" fill="#1b1b1b">Fixtures</text>
 <rect x="8272.7" y="1559.1" width="140.0" height="101.8" fill="#7cc4e8" fill-opacity="1" stroke="#333333" stroke-width="6.4"/>
 <text x="8476.4" y="1648.2" font-size="95.5" fill="#1b1b1b">A 2 × 6FT EXTRA VIEW SHOWCASE</text>
 <text x="8476.4" y="1781.8" font-size="95.5" fill="#666666">1829 × 559 × 965 mm [unverified]</text>
-<rect x="8272.7" y="1858.2" width="140.0" height="101.8" fill="#f2b24c" fill-opacity="1" stroke="#333333" stroke-width="6.4"/>
-<text x="8476.4" y="1947.3" font-size="95.5" fill="#1b1b1b">B 1 × Counter</text>
-<text x="8476.4" y="2080.9" font-size="95.5" fill="#666666">610 × 508 × 965 mm [unverified]</text>
-<rect x="8272.7" y="2157.3" width="140.0" height="101.8" fill="#9ad08f" fill-opacity="1" stroke="#333333" stroke-width="6.4"/>
-<text x="8476.4" y="2246.4" font-size="95.5" fill="#1b1b1b">C 2 × Gondola 4 feet</text>
-<text x="8476.4" y="2380.0" font-size="95.5" fill="#666666">1219 × 914 × 1524 mm [unverified]</text>
+<rect x="8272.7" y="1858.2" width="140.0" height="101.8" fill="#7cc4e8" fill-opacity="1" stroke="#333333" stroke-width="6.4"/>
+<text x="8476.4" y="1947.3" font-size="95.5" fill="#1b1b1b">B 1 × 4 FT FULL VIEW LED lights Showcase</text>
+<text x="8476.4" y="2080.9" font-size="95.5" fill="#666666">1829 × 508 × 1067 mm [unverified]</text>
+<rect x="8272.7" y="2157.3" width="140.0" height="101.8" fill="#f2b24c" fill-opacity="1" stroke="#333333" stroke-width="6.4"/>
+<text x="8476.4" y="2246.4" font-size="95.5" fill="#1b1b1b">C 1 × Counter</text>
+<text x="8476.4" y="2380.0" font-size="95.5" fill="#666666">610 × 508 × 965 mm [unverified]</text>
 <rect x="8272.7" y="2456.4" width="140.0" height="101.8" fill="#9ad08f" fill-opacity="1" stroke="#333333" stroke-width="6.4"/>
-<text x="8476.4" y="2545.5" font-size="95.5" fill="#1b1b1b">D 2 × Gondola wood 4 feet</text>
-<text x="8476.4" y="2679.1" font-size="95.5" fill="#666666">1219 × 610 × 1372 mm [unverified]</text>
+<text x="8476.4" y="2545.5" font-size="95.5" fill="#1b1b1b">D 3 × Gondola 4 feet</text>
+<text x="8476.4" y="2679.1" font-size="95.5" fill="#666666">1219 × 914 × 1524 mm [unverified]</text>
 <rect x="8272.7" y="2755.5" width="140.0" height="101.8" fill="#7cc4e8" fill-opacity="1" stroke="#333333" stroke-width="6.4"/>
 <text x="8476.4" y="2844.5" font-size="95.5" fill="#1b1b1b">E 2 × Stand showcases</text>
 <text x="8476.4" y="2978.2" font-size="95.5" fill="#666666">1219 × 508 × 1829 mm [unverified]</text>
 <text x="8272.7" y="3143.6" font-size="95.5" fill="#666666">Dark band = front (customer side). Sizes are width × depth × height.</text>
 <text x="8272.7" y="3353.6" font-size="120.9" font-weight="bold" fill="#1b1b1b">Keep clear</text>
-<rect x="8272.7" y="3436.4" width="140.0" height="101.8" fill="#f08a4b" fill-opacity="0.35" stroke="#333333" stroke-width="6.4"/>
-<text x="8476.4" y="3525.5" font-size="95.5" fill="#333333">Door approach (keep clear)</text>
-<rect x="8272.7" y="3570.0" width="140.0" height="101.8" fill="#e4572e" fill-opacity="0.35" stroke="#333333" stroke-width="6.4"/>
-<text x="8476.4" y="3659.1" font-size="95.5" fill="#333333">Door swing (keep clear)</text>
-<rect x="8272.7" y="3703.6" width="140.0" height="101.8" fill="#f6c445" fill-opacity="0.35" stroke="#333333" stroke-width="6.4"/>
-<text x="8476.4" y="3792.7" font-size="95.5" fill="#333333">Entrance clear zone</text>
-<rect x="8272.7" y="3837.3" width="140.0" height="101.8" fill="#4a90d9" fill-opacity="0.2" stroke="#333333" stroke-width="6.4"/>
-<text x="8476.4" y="3926.4" font-size="95.5" fill="#333333">Aisle / access space in front of fixtures</text>
-<text x="8272.7" y="4136.4" font-size="120.9" font-weight="bold" fill="#1b1b1b">Why this option</text>
-<text x="8272.7" y="4308.2" font-size="95.5" fill="#333333">40.9 / 50 Fixtures placed: 9 of 11 placed</text>
-<text x="8272.7" y="4441.8" font-size="95.5" fill="#333333">10.9 / 15 Counter near the entrance: 2351 mm from the entrance</text>
-<text x="8272.7" y="4575.5" font-size="95.5" fill="#333333">9.9 / 10 Counter faces the entrance: the counter looks at the entrance</text>
-<text x="8272.7" y="4709.1" font-size="95.5" fill="#333333">5.6 / 10 Showcases near the counter: on average 3776 mm from the</text>
-<text x="8272.7" y="4842.7" font-size="95.5" fill="#333333">counter</text>
-<text x="8272.7" y="4976.4" font-size="95.5" fill="#333333">3.3 / 10 Gondolas in rows: 4 gondolas in 3 rows</text>
-<text x="8272.7" y="5110.0" font-size="95.5" fill="#333333">2.9 / 5 Open view from the entrance: 2850 mm clear straight ahead of</text>
-<text x="8272.7" y="5243.6" font-size="95.5" fill="#333333">the door</text>
-<text x="8272.7" y="5453.6" font-size="120.9" font-weight="bold" fill="#1b1b1b">Did not fit</text>
-<text x="8272.7" y="5625.5" font-size="95.5" fill="#b3261e">1 × Gondola wood 4 feet</text>
-<text x="8374.5" y="5759.1" font-size="95.5" fill="#555555">Tried 3597 positions. The closest ones failed because it would leave</text>
-<text x="8374.5" y="5892.7" font-size="95.5" fill="#555555">an aisle narrower than 900 mm (33 positions).</text>
-<text x="8272.7" y="6051.8" font-size="95.5" fill="#b3261e">1 × Showcase 6 feet</text>
-<text x="8374.5" y="6185.5" font-size="95.5" fill="#555555">Its dimensions are not known yet, so it cannot be placed. Confirm the</text>
-<text x="8374.5" y="6319.1" font-size="95.5" fill="#555555">size first.</text>
+<rect x="8272.7" y="3436.4" width="140.0" height="101.8" fill="#f6e58d" fill-opacity="0.35" stroke="#333333" stroke-width="6.4"/>
+<text x="8476.4" y="3525.5" font-size="95.5" fill="#333333">Entrance decompression zone (keep clear)</text>
+<rect x="8272.7" y="3570.0" width="140.0" height="101.8" fill="#f08a4b" fill-opacity="0.35" stroke="#333333" stroke-width="6.4"/>
+<text x="8476.4" y="3659.1" font-size="95.5" fill="#333333">Door approach (keep clear)</text>
+<rect x="8272.7" y="3703.6" width="140.0" height="101.8" fill="#e4572e" fill-opacity="0.35" stroke="#333333" stroke-width="6.4"/>
+<text x="8476.4" y="3792.7" font-size="95.5" fill="#333333">Door swing (keep clear)</text>
+<rect x="8272.7" y="3837.3" width="140.0" height="101.8" fill="#f6c445" fill-opacity="0.35" stroke="#333333" stroke-width="6.4"/>
+<text x="8476.4" y="3926.4" font-size="95.5" fill="#333333">Entrance clear zone</text>
+<rect x="8272.7" y="3970.9" width="140.0" height="101.8" fill="#4a90d9" fill-opacity="0.2" stroke="#333333" stroke-width="6.4"/>
+<text x="8476.4" y="4060.0" font-size="95.5" fill="#333333">Aisle / access space in front of fixtures</text>
+<text x="8272.7" y="4270.0" font-size="120.9" font-weight="bold" fill="#1b1b1b">Why this option</text>
+<text x="8272.7" y="4441.8" font-size="95.5" fill="#333333">37.5 / 50 Fixtures placed: 9 of 12 placed</text>
+<text x="8272.7" y="4575.5" font-size="95.5" fill="#333333">10.9 / 15 Counter near the entrance: 2351 mm from the entrance</text>
+<text x="8272.7" y="4709.1" font-size="95.5" fill="#333333">9.9 / 10 Counter faces the entrance: the counter looks at the entrance</text>
+<text x="8272.7" y="4842.7" font-size="95.5" fill="#333333">5.0 / 10 Showcases near the counter: on average 4260 mm from the</text>
+<text x="8272.7" y="4976.4" font-size="95.5" fill="#333333">counter</text>
+<text x="8272.7" y="5110.0" font-size="95.5" fill="#333333">0.0 / 10 Gondolas in rows: 3 gondolas in 3 rows</text>
+<text x="8272.7" y="5243.6" font-size="95.5" fill="#333333">2.6 / 5 Open view from the entrance: 2600 mm clear straight ahead of</text>
+<text x="8272.7" y="5377.3" font-size="95.5" fill="#333333">the door</text>
+<text x="8272.7" y="5587.3" font-size="120.9" font-weight="bold" fill="#1b1b1b">Did not fit</text>
+<text x="8272.7" y="5759.1" font-size="95.5" fill="#b3261e">2 × Gondola wood 4 feet</text>
+<text x="8374.5" y="5892.7" font-size="95.5" fill="#555555">Its dimensions are not known yet, so it cannot be placed. Confirm the</text>
+<text x="8374.5" y="6026.4" font-size="95.5" fill="#555555">size first.</text>
+<text x="8272.7" y="6185.5" font-size="95.5" fill="#b3261e">1 × Showcase 6 feet</text>
+<text x="8374.5" y="6319.1" font-size="95.5" fill="#555555">Its dimensions are not known yet, so it cannot be placed. Confirm the</text>
+<text x="8374.5" y="6452.7" font-size="95.5" fill="#555555">size first.</text>
 </svg>

@@ -3,6 +3,7 @@
 <text x="818.2" y="392.7" font-size="245.5" font-weight="bold" fill="#111111">Room: lShapeWithColumn</text>
 <text x="818.2" y="670.9" font-size="139.1" fill="#444444">Floor area 54.00 m²  ·  0 fixtures  ·  L-shaped shop, 9 m x 7 m overall with a 3 m x 3 m notch out of the top-right corner, one 400 mm column, entrance on the bottom wall, window on the left wall.</text>
 <polygon data-role="room-outline" data-plan-points="0.000,0.000 9000.000,0.000 9000.000,4000.000 6000.000,4000.000 6000.000,7000.000 0.000,7000.000" points="818.182,8800.000 9818.182,8800.000 9818.182,4800.000 6818.182,4800.000 6818.182,1800.000 818.182,1800.000" fill="#fbfaf7" stroke="none"/>
+<polygon data-zone-id="entrance:decompression" points="4818.2,8800.0 5818.2,8800.0 5818.2,6466.7 4818.2,6466.7" fill="#f6e58d" fill-opacity="0.22" stroke="#f6e58d" stroke-width="13.1" stroke-dasharray="65.5 49.1"/>
 <polygon data-zone-id="entrance:door-swing" points="4818.2,8800.0 5818.2,8800.0 5818.2,8701.5 5779.8,8508.3 5704.4,8326.3 5594.9,8162.5 5455.6,8023.2 5291.9,7913.8 5109.9,7838.4 4916.7,7800.0 4818.2,7800.0" fill="#e4572e" fill-opacity="0.22" stroke="#e4572e" stroke-width="13.1" stroke-dasharray="65.5 49.1"/>
 <polygon data-zone-id="entrance:entrance-clear" points="4818.2,8800.0 6273.2,8800.0 6273.2,7275.0 4818.2,7275.0" fill="#f6c445" fill-opacity="0.22" stroke="#f6c445" stroke-width="13.1" stroke-dasharray="65.5 49.1"/>
 <polygon points="818.2,8800.0 9818.2,8800.0 9818.2,4800.0 6818.2,4800.0 6818.2,1800.0 818.2,1800.0" fill="none" stroke="#2b2b2b" stroke-width="90.0" stroke-linejoin="miter"/>
@@ -24,8 +25,10 @@
 <line x1="818.2" y1="9413.6" x2="1818.2" y2="9413.6" stroke="#111111" stroke-width="29.5"/>
 <text x="1900.0" y="9413.6" font-size="122.7" fill="#111111" dominant-baseline="central">1000 mm</text>
 <text x="10636.4" y="1898.2" font-size="155.5" font-weight="bold" fill="#1b1b1b">Keep clear</text>
-<rect x="10636.4" y="2004.5" width="180.0" height="130.9" fill="#e4572e" fill-opacity="0.35" stroke="#333333" stroke-width="8.2"/>
-<text x="10898.2" y="2119.1" font-size="122.7" fill="#333333">Door swing (keep clear)</text>
-<rect x="10636.4" y="2176.4" width="180.0" height="130.9" fill="#f6c445" fill-opacity="0.35" stroke="#333333" stroke-width="8.2"/>
-<text x="10898.2" y="2290.9" font-size="122.7" fill="#333333">Entrance clear zone</text>
+<rect x="10636.4" y="2004.5" width="180.0" height="130.9" fill="#f6e58d" fill-opacity="0.35" stroke="#333333" stroke-width="8.2"/>
+<text x="10898.2" y="2119.1" font-size="122.7" fill="#333333">Entrance decompression zone (keep clear)</text>
+<rect x="10636.4" y="2176.4" width="180.0" height="130.9" fill="#e4572e" fill-opacity="0.35" stroke="#333333" stroke-width="8.2"/>
+<text x="10898.2" y="2290.9" font-size="122.7" fill="#333333">Door swing (keep clear)</text>
+<rect x="10636.4" y="2348.2" width="180.0" height="130.9" fill="#f6c445" fill-opacity="0.35" stroke="#333333" stroke-width="8.2"/>
+<text x="10898.2" y="2462.7" font-size="122.7" fill="#333333">Entrance clear zone</text>
 </svg>

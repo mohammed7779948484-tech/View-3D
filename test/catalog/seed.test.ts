@@ -180,7 +180,7 @@ describe('catalog seed', () => {
     expect(kind('6FT EXTRA VIEW SHOWCASE')).toBe('showcase/freestanding');
     expect(kind('4 FT FULL VIEW LED lights Showcase')).toBe('showcase/freestanding');
     expect(kind('Counter')).toBe('counter/counter');
-    expect(kind('Gondola wood 4 feet')).toBe('gondola/island');
+    expect(kind('Gondola wood 4 feet')).toBe('gondola/wall'); // single-sided
     expect(kind('Gondola 4 feet')).toBe('gondola/island');
     expect(kind('Stand showcases')).toBe('showcase/wall');
   });
@@ -202,7 +202,7 @@ describe('catalog helpers', () => {
       }
       expect(isPlaceable(product, 'no-such-variant')).toBe(false);
     }
-    expect(seedProducts.filter((p) => p.verification === 'unknown')).toHaveLength(3);
+    expect(seedProducts.filter((p) => p.verification === 'unknown')).toHaveLength(4); // incl. the wood gondola
   });
 
   it('a variant with a single unknown dimension is not placeable', () => {

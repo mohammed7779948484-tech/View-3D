@@ -60,9 +60,10 @@ export const scenarios: readonly LayoutRequest[] = [
     items: [
       item(seed('nhf-c'), 1),
       item(seed('nhf-6ft-extra-view-showcase'), 2),
+      item(seed('nhf-6ft-full-view-led-lights-showcase'), 1, 'h42'),
       item(seed('nhf-s-1'), 2),
-      item(seed('nhf-jan'), 3),
-      item(seed('nhf-g'), 2),
+      item(seed('nhf-g'), 3),
+      item(seed('nhf-jan'), 2), // wood gondola: outer width unknown
       item(seed('nhf-s'), 1), // "Showcase 6 feet": no dimensions on the website
     ],
   },

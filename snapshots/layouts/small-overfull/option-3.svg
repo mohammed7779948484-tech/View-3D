@@ -6,11 +6,12 @@
 <polygon data-role="room-outline" data-plan-points="0.000,0.000 4000.000,0.000 4000.000,5000.000 0.000,5000.000" points="454.545,6000.000 4454.545,6000.000 4454.545,1000.000 454.545,1000.000" fill="#fbfaf7" stroke="none"/>
 <polygon data-access-zone="f01" points="3354.5,2515.0 1554.5,2515.0 1554.5,3715.0 3354.5,3715.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
 <polygon data-access-zone="f01" points="3354.5,1000.0 1554.5,1000.0 1554.5,1915.0 3354.5,1915.0" fill="#8e7cc3" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f02" points="3954.5,6000.0 3954.5,4500.0 3054.5,4500.0 3054.5,6000.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f03" points="3954.5,4500.0 3954.5,3000.0 3054.5,3000.0 3054.5,4500.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f04" points="854.5,2515.0 854.5,3715.0 1754.5,3715.0 1754.5,2515.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f05" points="854.5,3715.0 854.5,4915.0 1754.5,4915.0 1754.5,3715.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f06" points="1054.5,4915.0 1054.5,5515.0 1954.5,5515.0 1954.5,4915.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f02" points="3954.5,6000.0 3954.5,4500.0 3039.5,4500.0 3039.5,6000.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f03" points="3954.5,4500.0 3954.5,3000.0 3039.5,3000.0 3039.5,4500.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f04" points="854.5,2515.0 854.5,3715.0 1769.5,3715.0 1769.5,2515.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f05" points="854.5,3715.0 854.5,4915.0 1769.5,4915.0 1769.5,3715.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f06" points="1054.5,4915.0 1054.5,5515.0 1969.5,5515.0 1969.5,4915.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-zone-id="entrance:decompression" points="2004.5,6000.0 2904.5,6000.0 2904.5,4333.3 2004.5,4333.3" fill="#f6e58d" fill-opacity="0.22" stroke="#f6e58d" stroke-width="7.3" stroke-dasharray="36.4 27.3"/>
 <polygon data-zone-id="entrance:door-swing" points="2004.5,6000.0 2904.5,6000.0 2904.5,5911.4 2870.0,5737.5 2802.1,5573.7 2703.6,5426.3 2578.3,5300.9 2430.9,5202.4 2267.1,5134.6 2093.2,5100.0 2004.5,5100.0" fill="#e4572e" fill-opacity="0.22" stroke="#e4572e" stroke-width="7.3" stroke-dasharray="36.4 27.3"/>
 <polygon data-zone-id="entrance:entrance-clear" points="2004.5,6000.0 3359.5,6000.0 3359.5,4475.0 2004.5,4475.0" fill="#f6c445" fill-opacity="0.22" stroke="#f6c445" stroke-width="7.3" stroke-dasharray="36.4 27.3"/>
 <polygon points="454.5,6000.0 4454.5,6000.0 4454.5,1000.0 454.5,1000.0" fill="none" stroke="#2b2b2b" stroke-width="50.0" stroke-linejoin="miter"/>
@@ -68,31 +69,33 @@
 <text x="5054.5" y="1913.6" font-size="68.2" fill="#666666">1200 × 400 × 2100 mm [TEST]</text>
 <text x="4909.1" y="2031.8" font-size="68.2" fill="#666666">Dark band = front (customer side). Sizes are width × depth × height.</text>
 <text x="4909.1" y="2181.8" font-size="86.4" font-weight="bold" fill="#1b1b1b">Keep clear</text>
-<rect x="4909.1" y="2240.9" width="100.0" height="72.7" fill="#e4572e" fill-opacity="0.35" stroke="#333333" stroke-width="4.5"/>
-<text x="5054.5" y="2304.5" font-size="68.2" fill="#333333">Door swing (keep clear)</text>
-<rect x="4909.1" y="2336.4" width="100.0" height="72.7" fill="#f6c445" fill-opacity="0.35" stroke="#333333" stroke-width="4.5"/>
-<text x="5054.5" y="2400.0" font-size="68.2" fill="#333333">Entrance clear zone</text>
-<rect x="4909.1" y="2431.8" width="100.0" height="72.7" fill="#4a90d9" fill-opacity="0.2" stroke="#333333" stroke-width="4.5"/>
-<text x="5054.5" y="2495.5" font-size="68.2" fill="#333333">Aisle / access space in front of fixtures</text>
-<text x="4909.1" y="2645.5" font-size="86.4" font-weight="bold" fill="#1b1b1b">Why this option</text>
-<text x="4909.1" y="2768.2" font-size="68.2" fill="#333333">16.7 / 50 Fixtures placed: 6 of 18 placed</text>
-<text x="4909.1" y="2863.6" font-size="68.2" fill="#333333">6.1 / 15 Counter near the entrance: 3785 mm from the entrance</text>
-<text x="4909.1" y="2959.1" font-size="68.2" fill="#333333">10.0 / 10 Counter faces the entrance: the counter looks at the entrance</text>
-<text x="4909.1" y="3054.5" font-size="68.2" fill="#333333">5.4 / 10 Showcases near the counter: on average 2916 mm from the</text>
-<text x="4909.1" y="3150.0" font-size="68.2" fill="#333333">counter</text>
-<text x="4909.1" y="3245.5" font-size="68.2" fill="#333333">10.0 / 10 Gondolas in rows: no gondolas in this layout</text>
-<text x="4909.1" y="3340.9" font-size="68.2" fill="#333333">3.5 / 5 Open view from the entrance: 3450 mm clear straight ahead of</text>
-<text x="4909.1" y="3436.4" font-size="68.2" fill="#333333">the door</text>
-<text x="4909.1" y="3586.4" font-size="86.4" font-weight="bold" fill="#1b1b1b">Did not fit</text>
-<text x="4909.1" y="3709.1" font-size="68.2" fill="#b3261e">6 × TEST double-sided gondola</text>
-<text x="4981.8" y="3804.5" font-size="68.2" fill="#555555">Tried 2091 positions. The closest ones failed because there is not</text>
-<text x="4981.8" y="3900.0" font-size="68.2" fill="#555555">enough aisle space left in front of it (at least 900 mm) (178</text>
-<text x="4981.8" y="3995.5" font-size="68.2" fill="#555555">positions).</text>
-<text x="4909.1" y="4109.1" font-size="68.2" fill="#b3261e">2 × TEST display tower</text>
-<text x="4981.8" y="4204.5" font-size="68.2" fill="#555555">Tried 424 positions. The closest ones failed because it would leave</text>
-<text x="4981.8" y="4300.0" font-size="68.2" fill="#555555">an aisle narrower than 900 mm (46 positions).</text>
-<text x="4909.1" y="4413.6" font-size="68.2" fill="#b3261e">4 × TEST wall shelving unit</text>
-<text x="4981.8" y="4509.1" font-size="68.2" fill="#555555">Tried 463 positions. The closest ones failed because there is not</text>
-<text x="4981.8" y="4604.5" font-size="68.2" fill="#555555">enough aisle space left in front of it (at least 900 mm) (214</text>
-<text x="4981.8" y="4700.0" font-size="68.2" fill="#555555">positions).</text>
+<rect x="4909.1" y="2240.9" width="100.0" height="72.7" fill="#f6e58d" fill-opacity="0.35" stroke="#333333" stroke-width="4.5"/>
+<text x="5054.5" y="2304.5" font-size="68.2" fill="#333333">Entrance decompression zone (keep clear)</text>
+<rect x="4909.1" y="2336.4" width="100.0" height="72.7" fill="#e4572e" fill-opacity="0.35" stroke="#333333" stroke-width="4.5"/>
+<text x="5054.5" y="2400.0" font-size="68.2" fill="#333333">Door swing (keep clear)</text>
+<rect x="4909.1" y="2431.8" width="100.0" height="72.7" fill="#f6c445" fill-opacity="0.35" stroke="#333333" stroke-width="4.5"/>
+<text x="5054.5" y="2495.5" font-size="68.2" fill="#333333">Entrance clear zone</text>
+<rect x="4909.1" y="2527.3" width="100.0" height="72.7" fill="#4a90d9" fill-opacity="0.2" stroke="#333333" stroke-width="4.5"/>
+<text x="5054.5" y="2590.9" font-size="68.2" fill="#333333">Aisle / access space in front of fixtures</text>
+<text x="4909.1" y="2740.9" font-size="86.4" font-weight="bold" fill="#1b1b1b">Why this option</text>
+<text x="4909.1" y="2863.6" font-size="68.2" fill="#333333">16.7 / 50 Fixtures placed: 6 of 18 placed</text>
+<text x="4909.1" y="2959.1" font-size="68.2" fill="#333333">6.1 / 15 Counter near the entrance: 3785 mm from the entrance</text>
+<text x="4909.1" y="3054.5" font-size="68.2" fill="#333333">10.0 / 10 Counter faces the entrance: the counter looks at the entrance</text>
+<text x="4909.1" y="3150.0" font-size="68.2" fill="#333333">5.4 / 10 Showcases near the counter: on average 2916 mm from the</text>
+<text x="4909.1" y="3245.5" font-size="68.2" fill="#333333">counter</text>
+<text x="4909.1" y="3340.9" font-size="68.2" fill="#333333">10.0 / 10 Gondolas in rows: no gondolas in this layout</text>
+<text x="4909.1" y="3436.4" font-size="68.2" fill="#333333">3.5 / 5 Open view from the entrance: 3450 mm clear straight ahead of</text>
+<text x="4909.1" y="3531.8" font-size="68.2" fill="#333333">the door</text>
+<text x="4909.1" y="3681.8" font-size="86.4" font-weight="bold" fill="#1b1b1b">Did not fit</text>
+<text x="4909.1" y="3804.5" font-size="68.2" fill="#b3261e">6 × TEST double-sided gondola</text>
+<text x="4981.8" y="3900.0" font-size="68.2" fill="#555555">Tried 2091 positions. The closest ones failed because there is not</text>
+<text x="4981.8" y="3995.5" font-size="68.2" fill="#555555">enough aisle space left in front of it (at least 915 mm) (165</text>
+<text x="4981.8" y="4090.9" font-size="68.2" fill="#555555">positions).</text>
+<text x="4909.1" y="4204.5" font-size="68.2" fill="#b3261e">2 × TEST display tower</text>
+<text x="4981.8" y="4300.0" font-size="68.2" fill="#555555">Tried 436 positions. The closest ones failed because it would leave</text>
+<text x="4981.8" y="4395.5" font-size="68.2" fill="#555555">an aisle narrower than 915 mm (46 positions).</text>
+<text x="4909.1" y="4509.1" font-size="68.2" fill="#b3261e">4 × TEST wall shelving unit</text>
+<text x="4981.8" y="4604.5" font-size="68.2" fill="#555555">Tried 478 positions. The closest ones failed because there is not</text>
+<text x="4981.8" y="4700.0" font-size="68.2" fill="#555555">enough aisle space left in front of it (at least 915 mm) (220</text>
+<text x="4981.8" y="4795.5" font-size="68.2" fill="#555555">positions).</text>
 </svg>

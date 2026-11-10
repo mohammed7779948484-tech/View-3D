@@ -3,7 +3,6 @@
  * depends only on the document and the config, never on the order of the placements.
  */
 import type { DesignDocument, Opening, Placement, Product, Room, Variant } from '../core/index';
-import { isTall } from '../catalog/index';
 import {
   differencePolygons,
   distancePointToSegment,
@@ -344,7 +343,8 @@ export function validateLayout(doc: DesignDocument, config: PlanningConfig = def
     }
 
     // 5. window-blocked
-    if (isTall(f.variant) && f.variant.heightUm !== null) {
+    // A fixture blocks a window when it is higher than that window's sill.
+    if (f.variant.heightUm !== null) {
       for (const opening of room.openings) {
         if (opening.kind !== 'window' || f.variant.heightUm <= opening.sillHeightUm) continue;
         const band = openingBand(room, opening, config.windowBandDepthUm);
@@ -354,7 +354,7 @@ export function validateLayout(doc: DesignDocument, config: PlanningConfig = def
             severity: 'error',
             placementIds: [id],
             openingId: opening.id,
-            message: `${label(f)} is ${mmText(f.variant.heightUm)} tall and stands in front of window "${opening.id}" (sill at ${mmText(opening.sillHeightUm)}).`,
+            message: `${label(f)} is ${mmText(f.variant.heightUm)} high and stands in front of window "${opening.id}", whose sill is at ${mmText(opening.sillHeightUm)}.`,
             measuredUm: f.variant.heightUm,
             requiredUm: opening.sillHeightUm,
           });

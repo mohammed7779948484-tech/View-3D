@@ -47,11 +47,13 @@ const ZONE_COLOURS: Record<string, string> = {
   'door-swing': '#e4572e',
   'door-approach': '#f08a4b',
   'entrance-clear': '#f6c445',
+  decompression: '#f6e58d',
 };
 const ZONE_NAMES: Record<string, string> = {
   'door-swing': 'Door swing (keep clear)',
   'door-approach': 'Door approach (keep clear)',
   'entrance-clear': 'Entrance clear zone',
+  decompression: 'Entrance decompression zone (keep clear)',
 };
 
 const esc = (s: string): string =>

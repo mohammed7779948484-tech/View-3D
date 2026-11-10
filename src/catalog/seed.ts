@@ -70,7 +70,7 @@ export const seedProducts: readonly Product[] = [
       url: `${SITE}6ft-full-view-led-lights-showcase`,
       dimensionsAsWritten: '72″L x 20″W x 38″/42”H',
     },
-    flags: ['title says 4 FT but the page text says 72 in; confirm length with the owner', FLAG_CLEARANCES],
+    flags: ['title says 4 FT but the page text says 72 in; the owner says 72 in, pending his final confirmation', FLAG_CLEARANCES],
     testOnly: false,
   },
   {
@@ -90,13 +90,25 @@ export const seedProducts: readonly Product[] = [
     id: 'nhf-jan',
     name: 'Gondola wood 4 feet',
     category: 'gondola',
-    placement: 'island',
-    variants: [sized('default', 48, 24, 54, 'in')],
+    // Single-sided: it goes against a wall or back-to-back in pairs (owner, 2026-11-10).
+    placement: 'wall',
+    variants: [
+      {
+        id: 'default',
+        label: 'outer width unknown x 24 x 54 in',
+        widthUm: null,
+        depthUm: toUm(24, 'in'),
+        heightUm: toUm(54, 'in'),
+      },
+    ],
     clearances: { ...NO_CLEARANCES },
     priceCents: 45000,
-    verification: 'unverified',
+    verification: 'unknown',
     source: { url: `${SITE}jan`, dimensionsAsWritten: '48(inside )*24*54inch' },
-    flags: ['48 in is stated as the inside width; outside width is not stated', FLAG_CLEARANCES],
+    flags: [
+      '48 in is the inside width; the outer width is not stated, so it cannot be placed until the owner gives it',
+      FLAG_CLEARANCES,
+    ],
     testOnly: false,
   },
   {
@@ -126,7 +138,7 @@ export const seedProducts: readonly Product[] = [
       dimensionsAsWritten: '48*20*72 6mm thickness tempering glass 7pcs shelf',
     },
     flags: [
-      'axis order and unit not stated on the page; assumed width x depth x height in inches',
+      'size confirmed by the owner on 2026-11-10: width 48 x depth 20 x height 72 in; price not confirmed',
       FLAG_CLEARANCES,
     ],
     testOnly: false,

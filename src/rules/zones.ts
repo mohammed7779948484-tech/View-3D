@@ -4,7 +4,7 @@ import { doorSwingZone, intersectPolygons, openingSegment, rectCorners, wallSegm
 import type { OrientedRect, Point } from '../geometry/index';
 import type { PlanningConfig } from './config';
 
-export type KeepClearKind = 'door-swing' | 'door-approach' | 'entrance-clear';
+export type KeepClearKind = 'door-swing' | 'door-approach' | 'entrance-clear' | 'decompression';
 
 export type KeepClearZone = {
   id: string;
@@ -38,8 +38,8 @@ function clipped(
 
 /**
  * Zones that must stay free of fixtures, in opening order: for every door its swing (when it
- * swings in) and the approach in front of it. The entrance approach is at least as deep as the
- * entrance clear depth. Windows give no zone.
+ * swings in) and the approach in front of it; for every entrance also the decompression zone
+ * straight in from the door. Windows give no zone.
  */
 export function keepClearZones(room: Room, config: PlanningConfig): KeepClearZone[] {
   const zones: KeepClearZone[] = [];
@@ -66,9 +66,7 @@ export function keepClearZones(room: Room, config: PlanningConfig): KeepClearZon
     let to = opening.offsetUm + opening.widthUm;
     if (door.hinge === 'start') to += latch;
     else from -= latch;
-    const depth = door.isEntrance
-      ? Math.max(config.doorApproachDepthUm, config.entranceClearDepthUm)
-      : config.doorApproachDepthUm;
+    const depth = config.doorApproachDepthUm;
     const at = (t: number, d: number): Point => ({
       x: round(wall.start.x + wall.direction.x * t + wall.inwardNormal.x * d),
       y: round(wall.start.y + wall.direction.y * t + wall.inwardNormal.y * d),
@@ -85,6 +83,25 @@ export function keepClearZones(room: Room, config: PlanningConfig): KeepClearZon
           : `People need clear floor in front of ${name} to open it and walk through.`,
       ),
     );
+    if (door.isEntrance) {
+      // Decompression zone: straight in from the entrance, as wide as the door.
+      const mid = at(opening.offsetUm + opening.widthUm / 2, 0);
+      const shopDepth = Math.max(
+        ...room.outline.map((p) => (p.x - mid.x) * wall.inwardNormal.x + (p.y - mid.y) * wall.inwardNormal.y),
+      );
+      const deep = Math.min(config.entranceDecompressionDepthUm, shopDepth * config.entranceDecompressionShare);
+      const o0 = opening.offsetUm;
+      const o1 = opening.offsetUm + opening.widthUm;
+      zones.push(
+        ...clipped(
+          room,
+          opening,
+          'decompression',
+          [at(o0, 0), at(o1, 0), at(o1, deep), at(o0, deep)],
+          'Customers arriving need open floor and a clear view straight in from the entrance.',
+        ),
+      );
+    }
   }
   return zones;
 }
