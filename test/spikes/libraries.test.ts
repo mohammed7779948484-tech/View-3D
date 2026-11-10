@@ -12,6 +12,7 @@ import { createElement } from 'react';
 import { renderToString } from 'react-dom/server';
 import fc from 'fast-check';
 import { z } from 'zod';
+import { produce } from 'immer';
 import { Resvg } from '@resvg/resvg-js';
 import { area, difference, FillRule, inflatePaths, intersect, JoinType, EndType } from 'clipper2-ts';
 
@@ -95,5 +96,34 @@ describe('spike: i18next + react-i18next', () => {
     expect(html).toContain('No project is open.');
     expect(instance.dir('ar')).toBe('rtl');
     expect(instance.dir('en')).toBe('ltr');
+  });
+});
+
+describe('spike: immer 11 (structural sharing, frozen, replacement)', () => {
+  type Base = { a: { x: number }; b: { y: number } };
+  const make = (): Base => ({ a: { x: 1 }, b: { y: 1 } });
+
+  it('shares untouched subtrees and freezes the result', () => {
+    const base = make();
+    const result = produce(base, (d) => {
+      d.a.x = 2;
+    });
+    expect(result).not.toBe(base);
+    expect(result.a.x).toBe(2);
+    expect(base.a.x).toBe(1);
+    expect(result.b).toBe(base.b);
+    expect(Object.isFrozen(result)).toBe(true);
+    expect(Object.isFrozen(result.a)).toBe(true);
+  });
+
+  it('returns the same reference when the recipe changes nothing', () => {
+    const base = make();
+    expect(produce(base, () => {})).toBe(base);
+  });
+
+  it('replaces the root when the recipe returns a new object', () => {
+    const base = make();
+    const next: Base = { a: { x: 9 }, b: { y: 9 } };
+    expect(produce(base, () => next)).toBe(next);
   });
 });
