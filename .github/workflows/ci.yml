@@ -28,3 +28,18 @@ jobs:
         with:
           name: snapshot-images
           path: snapshots-png
+      # The app: build it, then drive it with Playwright. Ubuntu 24.04 blocks the unprivileged user
+      # namespaces Chromium's sandbox needs unless this AppArmor switch is off; Linux has no display, so xvfb.
+      - run: pnpm build
+      - if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          xvfb-run -a pnpm exec playwright test
+      - if: matrix.os == 'windows-latest'
+        run: pnpm exec playwright test
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results-${{ matrix.os }}
+          path: test-results
+          if-no-files-found: ignore

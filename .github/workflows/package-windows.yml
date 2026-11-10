@@ -1,0 +1,60 @@
+# Builds the unsigned Windows installer, installs it silently on the runner and runs the smoke test
+# against the installed app. Only when the app or its build changes (owner ruling 2026-11-11).
+name: Package Windows installer
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'app/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'electron-builder.yml'
+      - 'electron.vite.config.ts'
+      - '.github/workflows/package-windows.yml'
+  pull_request:
+    paths:
+      - 'app/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'electron-builder.yml'
+      - 'electron.vite.config.ts'
+      - '.github/workflows/package-windows.yml'
+jobs:
+  package-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm package:win
+        env:
+          # Unsigned on purpose (decisions/0007): never look for a signing certificate.
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+      - name: Install silently, as the owner would with two clicks
+        shell: pwsh
+        run: |
+          $setup = Get-ChildItem release -Filter 'View-3D-Setup-*.exe' | Select-Object -First 1
+          if ($null -eq $setup) { throw 'installer not found in release/' }
+          Write-Host "installer: $($setup.Name) $([math]::Round($setup.Length / 1MB)) MB"
+          Start-Process -FilePath $setup.FullName -ArgumentList '/S' -Wait
+          $exe = Get-ChildItem "$env:LOCALAPPDATA\Programs" -Recurse -Filter 'View-3D.exe' | Select-Object -First 1
+          if ($null -eq $exe) { throw 'View-3D.exe not found after install' }
+          Write-Host "installed: $($exe.FullName)"
+          "VIEW3D_EXE=$($exe.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+      - name: Smoke test the installed app
+        run: pnpm exec playwright test test/e2e
+      - uses: actions/upload-artifact@v4
+        with:
+          name: View-3D-installer
+          path: release/View-3D-Setup-*.exe
+          retention-days: 7
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results-installed
+          path: test-results
+          if-no-files-found: ignore
