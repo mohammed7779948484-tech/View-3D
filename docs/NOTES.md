@@ -88,7 +88,8 @@ Running log and decisions. Checkpointed after every step so work survives a rest
 8. Capture thresholds, our own first guess until you confirm them (`src/rules/config.ts`):
    closure tolerance 10 mm; diagonal tolerance 20 mm; wall shorter than 100 mm or longer than
    30 m warns; a corner sharper than 15 degrees warns; a scan gap of 50 mm or less is closed
-   (and reported), a larger one is reported as a possible doorway.
+   (and reported), a larger one is reported as a possible doorway; the corner angles must add up
+   to (n - 2) x 180 degrees within 0.5 degrees.
 
 Answered on 2026-11-11 (Milestone 2 detail plan): order 1, 2, 3, 4, 5, 8, 10, 6, 7, 9, 11; strings
 through t() from issue 1; closure check gives the smallest suspect set; document null until a room
@@ -130,3 +131,8 @@ W48 × D20 × H72 in; single-sided units go on walls or back to back; entrance d
   within 0.5; the oracle caught a deliberately broken walking rule with 7 failing tests.
 - 2026-11-11 Scope change (owner): laptop-only local Electron app; phone, PWA, sync and hosting moved to Future; scan importer added as the last issue of M2; PDF via Chromium printToPDF. Plan, STACK, ARCHITECTURE, TEAM_RULES and decision 0007 updated (docs only).
 - 2026-11-11 Milestone 2 detail plan approved with rulings (see open questions 8 and the answers above). Plan table reordered; DXF spike dropped.
+- 2026-11-11 M2 issue 1: Electron shell, locked-down window, unsigned NSIS installer job; smoke test 4/4 on the build and on the packaged app; CI green on Ubuntu and Windows.
+  Each protection (popup handler, navigation block, sandbox, CSP) removed alone turns one smoke test red.
+- 2026-11-11 M2 issues 2, 3, 4, 5, 8 (tests written in parallel by three test-writers in worktrees): document store 15 tests;
+  capture 51 tests (L and angled rooms exact, closure suspects, diagonal pick, warnings); length entry 81 tests. Suite 509 green.
+- 2026-11-11 Added to the open questions: the angle-sum tolerance 0.5 degrees (closure check), our own first guess.
