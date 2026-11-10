@@ -1,15 +1,19 @@
 /** Snapshot gallery: every ranked option of every scenario, for the owner to judge. */
+import { rmSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, it } from 'vitest';
 import { rectCorners } from '../../src/geometry/index';
 import { autoLayout } from '../../src/layout/index';
 import { renderPlanSvg } from '../../src/render-svg/index';
 import { defaultConfig, keepClearZones, placedFixtures } from '../../src/rules/index';
 import { scenarios } from '../layout/scenarios';
-import { expectSnapshot } from './snapshot';
+import { expectSnapshot, SNAPSHOT_ROOT } from './snapshot';
 
 describe('layout snapshots', () => {
   for (const request of scenarios) {
     it(`${request.id}: every ranked option`, () => {
+      // When regenerating, drop the old files first so a scenario never keeps a stale option.
+      if (process.env['UPDATE_SNAPSHOTS'] === '1') rmSync(resolve(SNAPSHOT_ROOT, 'layouts', request.id), { recursive: true, force: true });
       for (const option of autoLayout(request).options) {
         const svg = renderPlanSvg(option.document, {
           title: request.name,

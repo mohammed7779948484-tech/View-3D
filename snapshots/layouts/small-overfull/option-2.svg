@@ -1,108 +1,111 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 7863.6 6590.9" width="7863.6mm" height="6590.9mm" font-family="DejaVu Sans, Arial, sans-serif">
-<rect x="0" y="0" width="7863.6" height="6590.9" fill="#ffffff"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 7863.6 6681.8" width="7863.6mm" height="6681.8mm" font-family="DejaVu Sans, Arial, sans-serif">
+<rect x="0" y="0" width="7863.6" height="6681.8" fill="#ffffff"/>
 <text x="454.5" y="218.2" font-size="136.4" font-weight="bold" fill="#111111">Option 2 — Small shop, more products than fit (test fixtures)</text>
-<text x="454.5" y="372.7" font-size="77.3" fill="#444444">Floor area 20.00 m²  ·  8 fixtures  ·  Score 55.2 / 100  ·  Counter at wall 2; gondola rows run from front to back.</text>
+<text x="454.5" y="372.7" font-size="77.3" fill="#444444">Floor area 20.00 m²  ·  8 fixtures  ·  Score 55.9 / 100  ·  Checkout at wall 2; island rows run from front to back.</text>
 <text x="454.5" y="490.9" font-size="77.3" font-weight="bold" fill="#b3261e">Contains test-only fixtures (not real products)</text>
-<polygon data-role="room-outline" data-plan-points="0.000,0.000 4000.000,0.000 4000.000,5000.000 0.000,5000.000" points="454.545,6000.000 4454.545,6000.000 4454.545,1000.000 454.545,1000.000" fill="#fbfaf7" stroke="none"/>
-<polygon data-access-zone="f01" points="2939.5,4475.0 2939.5,2675.0 1739.5,2675.0 1739.5,4475.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f01" points="4454.5,4475.0 4454.5,2675.0 3539.5,2675.0 3539.5,4475.0" fill="#8e7cc3" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f02" points="3039.5,2675.0 3039.5,1175.0 2124.5,1175.0 2124.5,2675.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f03" points="2093.2,1500.0 593.2,1500.0 593.2,2415.0 2093.2,2415.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f04" points="854.5,2500.0 854.5,3700.0 1769.5,3700.0 1769.5,2500.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f05" points="854.5,3700.0 854.5,4900.0 1769.5,4900.0 1769.5,3700.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f06" points="4454.5,1600.0 3854.5,1600.0 3854.5,2515.0 4454.5,2515.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f07" points="3854.5,6000.0 3854.5,5400.0 2939.5,5400.0 2939.5,6000.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-access-zone="f08" points="1054.5,4900.0 1054.5,5500.0 1969.5,5500.0 1969.5,4900.0" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
-<polygon data-zone-id="entrance:decompression" points="2004.5,6000.0 2904.5,6000.0 2904.5,4333.3 2004.5,4333.3" fill="#f6e58d" fill-opacity="0.22" stroke="#f6e58d" stroke-width="7.3" stroke-dasharray="36.4 27.3"/>
-<polygon data-zone-id="entrance:door-swing" points="2004.5,6000.0 2904.5,6000.0 2904.5,5911.4 2870.0,5737.5 2802.1,5573.7 2703.6,5426.3 2578.3,5300.9 2430.9,5202.4 2267.1,5134.6 2093.2,5100.0 2004.5,5100.0" fill="#e4572e" fill-opacity="0.22" stroke="#e4572e" stroke-width="7.3" stroke-dasharray="36.4 27.3"/>
-<polygon data-zone-id="entrance:entrance-clear" points="2004.5,6000.0 3359.5,6000.0 3359.5,4475.0 2004.5,4475.0" fill="#f6c445" fill-opacity="0.22" stroke="#f6c445" stroke-width="7.3" stroke-dasharray="36.4 27.3"/>
-<polygon points="454.5,6000.0 4454.5,6000.0 4454.5,1000.0 454.5,1000.0" fill="none" stroke="#2b2b2b" stroke-width="50.0" stroke-linejoin="miter"/>
-<line data-door-id="entrance" x1="2004.5" y1="6000.0" x2="2904.5" y2="6000.0" stroke="#ffffff" stroke-width="65.0"/>
-<line x1="2004.5" y1="6000.0" x2="2004.5" y2="5100.0" stroke="#2b2b2b" stroke-width="12.7"/>
-<path d="M 2904.5 6000.0 A 900.0 900.0 0 0 0 2004.5 5100.0" fill="none" stroke="#2b2b2b" stroke-width="6.4" stroke-dasharray="27.3 22.7"/>
-<text x="2454.5" y="6172.7" font-size="86.4" font-weight="bold" fill="#b3261e" text-anchor="middle" dominant-baseline="middle">ENTRANCE</text>
-<text data-wall-index="0" data-length-um="4000000" x="2454.5" y="6309.1" font-size="81.8" fill="#444444" text-anchor="middle" dominant-baseline="middle" transform="rotate(0.0 2454.5 6309.1)">4000 mm</text>
-<text data-wall-index="1" data-length-um="5000000" x="4600.0" y="3500.0" font-size="81.8" fill="#444444" text-anchor="middle" dominant-baseline="middle" transform="rotate(90.0 4600.0 3500.0)">5000 mm</text>
-<text data-wall-index="2" data-length-um="4000000" x="2454.5" y="854.5" font-size="81.8" fill="#444444" text-anchor="middle" dominant-baseline="middle" transform="rotate(0.0 2454.5 854.5)">4000 mm</text>
-<text data-wall-index="3" data-length-um="5000000" x="309.1" y="3500.0" font-size="81.8" fill="#444444" text-anchor="middle" dominant-baseline="middle" transform="rotate(90.0 309.1 3500.0)">5000 mm</text>
-<polygon data-placement-id="f01" data-product-id="test-counter-long" data-width-um="1800000" data-depth-um="600000" data-plan-points="3085.000,1525.000 3085.000,3325.000 2485.000,3325.000 2485.000,1525.000" points="3539.545,4475.000 3539.545,2675.000 2939.545,2675.000 2939.545,4475.000" fill="#f2b24c" stroke="#333333" stroke-width="9.1"/>
-<line x1="2962.3" y1="4475.0" x2="2962.3" y2="2675.0" stroke="#1d3557" stroke-width="22.7" stroke-opacity="0.75"/>
-<text x="3239.5" y="3544.0" font-size="100.0" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 3239.5 3575.0)">A</text>
-<text x="3239.5" y="3635.0" font-size="56.4" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 3239.5 3575.0)">1800×600</text>
-<polygon data-placement-id="f02" data-product-id="test-showcase" data-width-um="1500000" data-depth-um="500000" data-plan-points="3085.000,3325.000 3085.000,4825.000 2585.000,4825.000 2585.000,3325.000" points="3539.545,2675.000 3539.545,1175.000 3039.545,1175.000 3039.545,2675.000" fill="#7cc4e8" stroke="#333333" stroke-width="9.1"/>
-<line x1="3062.3" y1="2675.0" x2="3062.3" y2="1175.0" stroke="#1d3557" stroke-width="22.7" stroke-opacity="0.75"/>
-<text x="3289.5" y="1894.0" font-size="100.0" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 3289.5 1925.0)">B</text>
-<text x="3289.5" y="1985.0" font-size="56.4" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 3289.5 1925.0)">1500×500</text>
-<polygon data-placement-id="f03" data-product-id="test-showcase" data-width-um="1500000" data-depth-um="500000" data-plan-points="1638.642,5000.000 138.642,5000.000 138.642,4500.000 1638.642,4500.000" points="2093.187,1000.000 593.187,1000.000 593.187,1500.000 2093.187,1500.000" fill="#7cc4e8" stroke="#333333" stroke-width="9.1"/>
-<line x1="2093.2" y1="1477.3" x2="593.2" y2="1477.3" stroke="#1d3557" stroke-width="22.7" stroke-opacity="0.75"/>
-<text x="1343.2" y="1219.0" font-size="100.0" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(0.0 1343.2 1250.0)">B</text>
-<text x="1343.2" y="1310.0" font-size="56.4" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(0.0 1343.2 1250.0)">1500×500</text>
-<polygon data-placement-id="f04" data-product-id="test-wall-shelf" data-width-um="1200000" data-depth-um="400000" data-plan-points="0.000,3500.000 0.000,2300.000 400.000,2300.000 400.000,3500.000" points="454.545,2500.000 454.545,3700.000 854.545,3700.000 854.545,2500.000" fill="#9ad08f" stroke="#333333" stroke-width="9.1"/>
-<line x1="831.8" y1="2500.0" x2="831.8" y2="3700.0" stroke="#1d3557" stroke-width="22.7" stroke-opacity="0.75"/>
-<text x="654.5" y="3069.0" font-size="100.0" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 654.5 3100.0)">D</text>
-<text x="654.5" y="3160.0" font-size="56.4" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 654.5 3100.0)">1200×400</text>
-<polygon data-placement-id="f05" data-product-id="test-wall-shelf" data-width-um="1200000" data-depth-um="400000" data-plan-points="0.000,2300.000 0.000,1100.000 400.000,1100.000 400.000,2300.000" points="454.545,3700.000 454.545,4900.000 854.545,4900.000 854.545,3700.000" fill="#9ad08f" stroke="#333333" stroke-width="9.1"/>
-<line x1="831.8" y1="3700.0" x2="831.8" y2="4900.0" stroke="#1d3557" stroke-width="22.7" stroke-opacity="0.75"/>
-<text x="654.5" y="4269.0" font-size="100.0" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 654.5 4300.0)">D</text>
-<text x="654.5" y="4360.0" font-size="56.4" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 654.5 4300.0)">1200×400</text>
-<polygon data-placement-id="f06" data-product-id="test-tower" data-width-um="600000" data-depth-um="600000" data-plan-points="4000.000,5000.000 3400.000,5000.000 3400.000,4400.000 4000.000,4400.000" points="4454.545,1000.000 3854.545,1000.000 3854.545,1600.000 4454.545,1600.000" fill="#c6a5e0" stroke="#333333" stroke-width="9.1"/>
-<line x1="4454.5" y1="1577.3" x2="3854.5" y2="1577.3" stroke="#1d3557" stroke-width="22.7" stroke-opacity="0.75"/>
-<text x="4154.5" y="1269.0" font-size="100.0" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(0.0 4154.5 1300.0)">C</text>
-<text x="4154.5" y="1360.0" font-size="56.4" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(0.0 4154.5 1300.0)">600×600</text>
-<polygon data-placement-id="f07" data-product-id="test-tower" data-width-um="600000" data-depth-um="600000" data-plan-points="4000.000,0.000 4000.000,600.000 3400.000,600.000 3400.000,0.000" points="4454.545,6000.000 4454.545,5400.000 3854.545,5400.000 3854.545,6000.000" fill="#c6a5e0" stroke="#333333" stroke-width="9.1"/>
-<line x1="3877.3" y1="6000.0" x2="3877.3" y2="5400.0" stroke="#1d3557" stroke-width="22.7" stroke-opacity="0.75"/>
-<text x="4154.5" y="5669.0" font-size="100.0" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 4154.5 5700.0)">C</text>
-<text x="4154.5" y="5760.0" font-size="56.4" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 4154.5 5700.0)">600×600</text>
-<polygon data-placement-id="f08" data-product-id="test-tower" data-width-um="600000" data-depth-um="600000" data-plan-points="0.000,1100.000 0.000,500.000 600.000,500.000 600.000,1100.000" points="454.545,4900.000 454.545,5500.000 1054.545,5500.000 1054.545,4900.000" fill="#c6a5e0" stroke="#333333" stroke-width="9.1"/>
-<line x1="1031.8" y1="4900.0" x2="1031.8" y2="5500.0" stroke="#1d3557" stroke-width="22.7" stroke-opacity="0.75"/>
-<text x="754.5" y="5169.0" font-size="100.0" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 754.5 5200.0)">C</text>
-<text x="754.5" y="5260.0" font-size="56.4" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 754.5 5200.0)">600×600</text>
-<line data-aisle="main" data-width-um="2050000" x1="2939.5" y1="3575.0" x2="889.5" y2="3575.0" stroke="#0b6e4f" stroke-width="8.2"/>
-<line x1="2939.5" y1="3606.8" x2="2939.5" y2="3543.2" stroke="#0b6e4f" stroke-width="8.2"/>
-<line x1="889.5" y1="3606.8" x2="889.5" y2="3543.2" stroke="#0b6e4f" stroke-width="8.2"/>
-<rect x="1423.6" y="3529.5" width="981.8" height="90.9" fill="#ffffff" fill-opacity="0.85"/>
-<text x="1914.5" y="3575.0" font-size="61.8" fill="#0b6e4f" text-anchor="middle" dominant-baseline="central">in front of counter 2050 mm</text>
-<line x1="454.5" y1="6340.9" x2="1454.5" y2="6340.9" stroke="#111111" stroke-width="16.4"/>
-<text x="1500.0" y="6340.9" font-size="68.2" fill="#111111" dominant-baseline="central">1000 mm</text>
-<text x="4909.1" y="1054.5" font-size="86.4" font-weight="bold" fill="#1b1b1b">Fixtures</text>
-<rect x="4909.1" y="1113.6" width="100.0" height="72.7" fill="#f2b24c" fill-opacity="1" stroke="#333333" stroke-width="4.5"/>
-<text x="5054.5" y="1177.3" font-size="68.2" fill="#1b1b1b">A 1 × TEST long counter</text>
-<text x="5054.5" y="1272.7" font-size="68.2" fill="#666666">1800 × 600 × 1000 mm [TEST]</text>
-<rect x="4909.1" y="1327.3" width="100.0" height="72.7" fill="#7cc4e8" fill-opacity="1" stroke="#333333" stroke-width="4.5"/>
-<text x="5054.5" y="1390.9" font-size="68.2" fill="#1b1b1b">B 2 × TEST glass showcase</text>
-<text x="5054.5" y="1486.4" font-size="68.2" fill="#666666">1500 × 500 × 1000 mm [TEST]</text>
-<rect x="4909.1" y="1540.9" width="100.0" height="72.7" fill="#c6a5e0" fill-opacity="1" stroke="#333333" stroke-width="4.5"/>
-<text x="5054.5" y="1604.5" font-size="68.2" fill="#1b1b1b">C 3 × TEST display tower</text>
-<text x="5054.5" y="1700.0" font-size="68.2" fill="#666666">600 × 600 × 1900 mm [TEST]</text>
-<rect x="4909.1" y="1754.5" width="100.0" height="72.7" fill="#9ad08f" fill-opacity="1" stroke="#333333" stroke-width="4.5"/>
-<text x="5054.5" y="1818.2" font-size="68.2" fill="#1b1b1b">D 2 × TEST wall shelving unit</text>
-<text x="5054.5" y="1913.6" font-size="68.2" fill="#666666">1200 × 400 × 2100 mm [TEST]</text>
-<text x="4909.1" y="2031.8" font-size="68.2" fill="#666666">Dark band = front (customer side). Sizes are width × depth × height.</text>
-<text x="4909.1" y="2181.8" font-size="86.4" font-weight="bold" fill="#1b1b1b">Keep clear</text>
-<rect x="4909.1" y="2240.9" width="100.0" height="72.7" fill="#f6e58d" fill-opacity="0.35" stroke="#333333" stroke-width="4.5"/>
-<text x="5054.5" y="2304.5" font-size="68.2" fill="#333333">Entrance decompression zone (keep clear)</text>
-<rect x="4909.1" y="2336.4" width="100.0" height="72.7" fill="#e4572e" fill-opacity="0.35" stroke="#333333" stroke-width="4.5"/>
-<text x="5054.5" y="2400.0" font-size="68.2" fill="#333333">Door swing (keep clear)</text>
-<rect x="4909.1" y="2431.8" width="100.0" height="72.7" fill="#f6c445" fill-opacity="0.35" stroke="#333333" stroke-width="4.5"/>
-<text x="5054.5" y="2495.5" font-size="68.2" fill="#333333">Entrance clear zone</text>
-<rect x="4909.1" y="2527.3" width="100.0" height="72.7" fill="#4a90d9" fill-opacity="0.2" stroke="#333333" stroke-width="4.5"/>
-<text x="5054.5" y="2590.9" font-size="68.2" fill="#333333">Aisle / access space in front of fixtures</text>
-<text x="4909.1" y="2740.9" font-size="86.4" font-weight="bold" fill="#1b1b1b">Why this option</text>
-<text x="4909.1" y="2863.6" font-size="68.2" fill="#333333">22.2 / 50 Fixtures placed: 8 of 18 placed</text>
-<text x="4909.1" y="2959.1" font-size="68.2" fill="#333333">9.0 / 15 Counter near the entrance: 2549 mm from the entrance</text>
-<text x="4909.1" y="3054.5" font-size="68.2" fill="#333333">3.1 / 10 Counter faces the entrance: the entrance is to one side of the</text>
-<text x="4909.1" y="3150.0" font-size="68.2" fill="#333333">counter</text>
-<text x="4909.1" y="3245.5" font-size="68.2" fill="#333333">6.4 / 10 Showcases near the counter: on average 2326 mm from the</text>
-<text x="4909.1" y="3340.9" font-size="68.2" fill="#333333">counter</text>
-<text x="4909.1" y="3436.4" font-size="68.2" fill="#333333">10.0 / 10 Gondolas in rows: no gondolas in this layout</text>
-<text x="4909.1" y="3531.8" font-size="68.2" fill="#333333">4.5 / 5 Open view from the entrance: 4500 mm clear straight ahead of</text>
-<text x="4909.1" y="3627.3" font-size="68.2" fill="#333333">the door</text>
-<text x="4909.1" y="3777.3" font-size="86.4" font-weight="bold" fill="#1b1b1b">Did not fit</text>
-<text x="4909.1" y="3900.0" font-size="68.2" fill="#b3261e">6 × TEST double-sided gondola</text>
-<text x="4981.8" y="3995.5" font-size="68.2" fill="#555555">Tried 2091 positions. The closest ones failed because there is not</text>
-<text x="4981.8" y="4090.9" font-size="68.2" fill="#555555">enough aisle space left in front of it (at least 915 mm) (238</text>
-<text x="4981.8" y="4186.4" font-size="68.2" fill="#555555">positions).</text>
-<text x="4909.1" y="4300.0" font-size="68.2" fill="#b3261e">4 × TEST wall shelving unit</text>
-<text x="4981.8" y="4395.5" font-size="68.2" fill="#555555">Tried 497 positions. The closest ones failed because it would cut</text>
-<text x="4981.8" y="4490.9" font-size="68.2" fill="#555555">part of the shop off from the entrance (21 positions).</text>
+<polygon data-role="room-outline" data-plan-points="0.000,0.000 4000.000,0.000 4000.000,5000.000 0.000,5000.000" points="454.545,6090.909 4454.545,6090.909 4454.545,1090.909 454.545,1090.909" fill="#fbfaf7" stroke="none"/>
+<polygon data-access-zone="f01" points="2939.5,4565.9 2939.5,2765.9 1739.5,2765.9 1739.5,4565.9" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f01" points="4454.5,4565.9 4454.5,2765.9 3539.5,2765.9 3539.5,4565.9" fill="#8e7cc3" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f02" points="3039.5,2765.9 3039.5,1265.9 2124.5,1265.9 2124.5,2765.9" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f03" points="2093.2,1590.9 593.2,1590.9 593.2,2505.9 2093.2,2505.9" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f04" points="854.5,2590.9 854.5,3790.9 1769.5,3790.9 1769.5,2590.9" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f05" points="854.5,3790.9 854.5,4990.9 1769.5,4990.9 1769.5,3790.9" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f06" points="4454.5,1690.9 3854.5,1690.9 3854.5,2605.9 4454.5,2605.9" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f07" points="3854.5,6090.9 3854.5,5490.9 2939.5,5490.9 2939.5,6090.9" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-access-zone="f08" points="1054.5,4990.9 1054.5,5590.9 1969.5,5590.9 1969.5,4990.9" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
+<polygon data-zone-id="entrance:decompression" points="2004.5,6090.9 2904.5,6090.9 2904.5,4424.2 2004.5,4424.2" fill="#f6e58d" fill-opacity="0.22" stroke="#f6e58d" stroke-width="7.3" stroke-dasharray="36.4 27.3"/>
+<polygon data-zone-id="entrance:door-swing" points="2004.5,6090.9 2904.5,6090.9 2904.5,6002.3 2870.0,5828.4 2802.1,5664.6 2703.6,5517.2 2578.3,5391.8 2430.9,5293.3 2267.1,5225.5 2093.2,5190.9 2004.5,5190.9" fill="#e4572e" fill-opacity="0.22" stroke="#e4572e" stroke-width="7.3" stroke-dasharray="36.4 27.3"/>
+<polygon data-zone-id="entrance:entrance-clear" points="2004.5,6090.9 3359.5,6090.9 3359.5,4565.9 2004.5,4565.9" fill="#f6c445" fill-opacity="0.22" stroke="#f6c445" stroke-width="7.3" stroke-dasharray="36.4 27.3"/>
+<polygon points="454.5,6090.9 4454.5,6090.9 4454.5,1090.9 454.5,1090.9" fill="none" stroke="#2b2b2b" stroke-width="50.0" stroke-linejoin="miter"/>
+<line data-door-id="entrance" x1="2004.5" y1="6090.9" x2="2904.5" y2="6090.9" stroke="#ffffff" stroke-width="65.0"/>
+<line x1="2004.5" y1="6090.9" x2="2004.5" y2="5190.9" stroke="#2b2b2b" stroke-width="12.7"/>
+<path d="M 2904.5 6090.9 A 900.0 900.0 0 0 0 2004.5 5190.9" fill="none" stroke="#2b2b2b" stroke-width="6.4" stroke-dasharray="27.3 22.7"/>
+<text x="2454.5" y="6263.6" font-size="86.4" font-weight="bold" fill="#b3261e" text-anchor="middle" dominant-baseline="middle">ENTRANCE</text>
+<text data-wall-index="0" data-length-um="4000000" x="2454.5" y="6400.0" font-size="81.8" fill="#444444" text-anchor="middle" dominant-baseline="middle" transform="rotate(0.0 2454.5 6400.0)">4000 mm</text>
+<text data-wall-index="1" data-length-um="5000000" x="4600.0" y="3590.9" font-size="81.8" fill="#444444" text-anchor="middle" dominant-baseline="middle" transform="rotate(90.0 4600.0 3590.9)">5000 mm</text>
+<text data-wall-index="2" data-length-um="4000000" x="2454.5" y="945.5" font-size="81.8" fill="#444444" text-anchor="middle" dominant-baseline="middle" transform="rotate(0.0 2454.5 945.5)">4000 mm</text>
+<text data-wall-index="3" data-length-um="5000000" x="309.1" y="3590.9" font-size="81.8" fill="#444444" text-anchor="middle" dominant-baseline="middle" transform="rotate(90.0 309.1 3590.9)">5000 mm</text>
+<polygon data-placement-id="f01" data-product-id="test-counter-long" data-width-um="1800000" data-depth-um="600000" data-plan-points="3085.000,1525.000 3085.000,3325.000 2485.000,3325.000 2485.000,1525.000" points="3539.545,4565.909 3539.545,2765.909 2939.545,2765.909 2939.545,4565.909" fill="#f2b24c" stroke="#333333" stroke-width="9.1"/>
+<line x1="2962.3" y1="4565.9" x2="2962.3" y2="2765.9" stroke="#1d3557" stroke-width="22.7" stroke-opacity="0.75"/>
+<text data-label-for="f01" x="3239.5" y="3634.9" font-size="100.0" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 3239.5 3665.9)">A</text>
+<text x="3239.5" y="3725.9" font-size="56.4" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 3239.5 3665.9)">1800×600</text>
+<polygon data-placement-id="f02" data-product-id="test-showcase" data-width-um="1500000" data-depth-um="500000" data-plan-points="3085.000,3325.000 3085.000,4825.000 2585.000,4825.000 2585.000,3325.000" points="3539.545,2765.909 3539.545,1265.909 3039.545,1265.909 3039.545,2765.909" fill="#7cc4e8" stroke="#333333" stroke-width="9.1"/>
+<line x1="3062.3" y1="2765.9" x2="3062.3" y2="1265.9" stroke="#1d3557" stroke-width="22.7" stroke-opacity="0.75"/>
+<text data-label-for="f02" x="3289.5" y="1984.9" font-size="100.0" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 3289.5 2015.9)">B</text>
+<text x="3289.5" y="2075.9" font-size="56.4" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 3289.5 2015.9)">1500×500</text>
+<polygon data-placement-id="f03" data-product-id="test-showcase" data-width-um="1500000" data-depth-um="500000" data-plan-points="1638.642,5000.000 138.642,5000.000 138.642,4500.000 1638.642,4500.000" points="2093.187,1090.909 593.187,1090.909 593.187,1590.909 2093.187,1590.909" fill="#7cc4e8" stroke="#333333" stroke-width="9.1"/>
+<line x1="2093.2" y1="1568.2" x2="593.2" y2="1568.2" stroke="#1d3557" stroke-width="22.7" stroke-opacity="0.75"/>
+<text data-label-for="f03" x="1343.2" y="1309.9" font-size="100.0" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(0.0 1343.2 1340.9)">B</text>
+<text x="1343.2" y="1400.9" font-size="56.4" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(0.0 1343.2 1340.9)">1500×500</text>
+<polygon data-placement-id="f04" data-product-id="test-wall-shelf" data-width-um="1200000" data-depth-um="400000" data-plan-points="0.000,3500.000 0.000,2300.000 400.000,2300.000 400.000,3500.000" points="454.545,2590.909 454.545,3790.909 854.545,3790.909 854.545,2590.909" fill="#9ad08f" stroke="#333333" stroke-width="9.1"/>
+<line x1="831.8" y1="2590.9" x2="831.8" y2="3790.9" stroke="#1d3557" stroke-width="22.7" stroke-opacity="0.75"/>
+<text data-label-for="f04" x="654.5" y="3159.9" font-size="100.0" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 654.5 3190.9)">D</text>
+<text x="654.5" y="3250.9" font-size="56.4" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 654.5 3190.9)">1200×400</text>
+<polygon data-placement-id="f05" data-product-id="test-wall-shelf" data-width-um="1200000" data-depth-um="400000" data-plan-points="0.000,2300.000 0.000,1100.000 400.000,1100.000 400.000,2300.000" points="454.545,3790.909 454.545,4990.909 854.545,4990.909 854.545,3790.909" fill="#9ad08f" stroke="#333333" stroke-width="9.1"/>
+<line x1="831.8" y1="3790.9" x2="831.8" y2="4990.9" stroke="#1d3557" stroke-width="22.7" stroke-opacity="0.75"/>
+<text data-label-for="f05" x="654.5" y="4359.9" font-size="100.0" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 654.5 4390.9)">D</text>
+<text x="654.5" y="4450.9" font-size="56.4" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 654.5 4390.9)">1200×400</text>
+<polygon data-placement-id="f06" data-product-id="test-tower" data-width-um="600000" data-depth-um="600000" data-plan-points="4000.000,5000.000 3400.000,5000.000 3400.000,4400.000 4000.000,4400.000" points="4454.545,1090.909 3854.545,1090.909 3854.545,1690.909 4454.545,1690.909" fill="#c6a5e0" stroke="#333333" stroke-width="9.1"/>
+<line x1="4454.5" y1="1668.2" x2="3854.5" y2="1668.2" stroke="#1d3557" stroke-width="22.7" stroke-opacity="0.75"/>
+<text data-label-for="f06" x="4154.5" y="1359.9" font-size="100.0" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(0.0 4154.5 1390.9)">C</text>
+<text x="4154.5" y="1450.9" font-size="56.4" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(0.0 4154.5 1390.9)">600×600</text>
+<polygon data-placement-id="f07" data-product-id="test-tower" data-width-um="600000" data-depth-um="600000" data-plan-points="4000.000,0.000 4000.000,600.000 3400.000,600.000 3400.000,0.000" points="4454.545,6090.909 4454.545,5490.909 3854.545,5490.909 3854.545,6090.909" fill="#c6a5e0" stroke="#333333" stroke-width="9.1"/>
+<line x1="3877.3" y1="6090.9" x2="3877.3" y2="5490.9" stroke="#1d3557" stroke-width="22.7" stroke-opacity="0.75"/>
+<text data-label-for="f07" x="4154.5" y="5759.9" font-size="100.0" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 4154.5 5790.9)">C</text>
+<text x="4154.5" y="5850.9" font-size="56.4" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 4154.5 5790.9)">600×600</text>
+<polygon data-placement-id="f08" data-product-id="test-tower" data-width-um="600000" data-depth-um="600000" data-plan-points="0.000,1100.000 0.000,500.000 600.000,500.000 600.000,1100.000" points="454.545,4990.909 454.545,5590.909 1054.545,5590.909 1054.545,4990.909" fill="#c6a5e0" stroke="#333333" stroke-width="9.1"/>
+<line x1="1031.8" y1="4990.9" x2="1031.8" y2="5590.9" stroke="#1d3557" stroke-width="22.7" stroke-opacity="0.75"/>
+<text data-label-for="f08" x="754.5" y="5259.9" font-size="100.0" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 754.5 5290.9)">C</text>
+<text x="754.5" y="5350.9" font-size="56.4" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0 754.5 5290.9)">600×600</text>
+<line data-aisle="main" data-width-um="2084000" x1="2939.5" y1="3665.9" x2="855.5" y2="3665.9" stroke="#0b6e4f" stroke-width="8.2"/>
+<line x1="2939.5" y1="3697.7" x2="2939.5" y2="3634.1" stroke="#0b6e4f" stroke-width="8.2"/>
+<line x1="855.5" y1="3697.7" x2="855.5" y2="3634.1" stroke="#0b6e4f" stroke-width="8.2"/>
+<rect x="1297.5" y="3620.5" width="1200.0" height="90.9" fill="#ffffff" fill-opacity="0.85"/>
+<text x="1897.5" y="3665.9" font-size="61.8" fill="#0b6e4f" text-anchor="middle" dominant-baseline="central">clear in front of counter 2084 mm</text>
+<line x1="454.5" y1="6431.8" x2="1454.5" y2="6431.8" stroke="#111111" stroke-width="16.4"/>
+<text x="1500.0" y="6431.8" font-size="68.2" fill="#111111" dominant-baseline="central">1000 mm</text>
+<text x="4909.1" y="1145.5" font-size="86.4" font-weight="bold" fill="#1b1b1b">Fixtures</text>
+<rect x="4909.1" y="1204.5" width="100.0" height="72.7" fill="#f2b24c" fill-opacity="1" stroke="#333333" stroke-width="4.5"/>
+<text x="5054.5" y="1268.2" font-size="68.2" fill="#1b1b1b">A 1 × TEST long counter</text>
+<text x="5054.5" y="1363.6" font-size="68.2" fill="#666666">1800 × 600 × 1000 mm [TEST]</text>
+<rect x="4909.1" y="1418.2" width="100.0" height="72.7" fill="#7cc4e8" fill-opacity="1" stroke="#333333" stroke-width="4.5"/>
+<text x="5054.5" y="1481.8" font-size="68.2" fill="#1b1b1b">B 2 × TEST glass showcase</text>
+<text x="5054.5" y="1577.3" font-size="68.2" fill="#666666">1500 × 500 × 1000 mm [TEST]</text>
+<rect x="4909.1" y="1631.8" width="100.0" height="72.7" fill="#c6a5e0" fill-opacity="1" stroke="#333333" stroke-width="4.5"/>
+<text x="5054.5" y="1695.5" font-size="68.2" fill="#1b1b1b">C 3 × TEST display tower</text>
+<text x="5054.5" y="1790.9" font-size="68.2" fill="#666666">600 × 600 × 1900 mm [TEST]</text>
+<rect x="4909.1" y="1845.5" width="100.0" height="72.7" fill="#9ad08f" fill-opacity="1" stroke="#333333" stroke-width="4.5"/>
+<text x="5054.5" y="1909.1" font-size="68.2" fill="#1b1b1b">D 2 × TEST wall shelving unit</text>
+<text x="5054.5" y="2004.5" font-size="68.2" fill="#666666">1200 × 400 × 2100 mm [TEST]</text>
+<text x="4909.1" y="2122.7" font-size="68.2" fill="#666666">Dark band = front (customer side). Sizes are width × depth × height.</text>
+<text x="4909.1" y="2272.7" font-size="86.4" font-weight="bold" fill="#1b1b1b">Keep clear</text>
+<rect x="4909.1" y="2331.8" width="100.0" height="72.7" fill="#f6e58d" fill-opacity="0.35" stroke="#333333" stroke-width="4.5"/>
+<text x="5054.5" y="2395.5" font-size="68.2" fill="#333333">Entrance decompression zone (keep clear)</text>
+<rect x="4909.1" y="2427.3" width="100.0" height="72.7" fill="#e4572e" fill-opacity="0.35" stroke="#333333" stroke-width="4.5"/>
+<text x="5054.5" y="2490.9" font-size="68.2" fill="#333333">Door swing (keep clear)</text>
+<rect x="4909.1" y="2522.7" width="100.0" height="72.7" fill="#f6c445" fill-opacity="0.35" stroke="#333333" stroke-width="4.5"/>
+<text x="5054.5" y="2586.4" font-size="68.2" fill="#333333">Entrance clear zone</text>
+<rect x="4909.1" y="2618.2" width="100.0" height="72.7" fill="#4a90d9" fill-opacity="0.2" stroke="#333333" stroke-width="4.5"/>
+<text x="5054.5" y="2681.8" font-size="68.2" fill="#333333">Aisle / access space in front of fixtures</text>
+<text x="4909.1" y="2831.8" font-size="86.4" font-weight="bold" fill="#1b1b1b">Why this option</text>
+<text x="4909.1" y="2954.5" font-size="68.2" fill="#333333">20.0 / 45 Fixtures placed: 8 of 18 placed</text>
+<text x="4909.1" y="3050.0" font-size="68.2" fill="#333333">7.2 / 12 Counter near the entrance: 2549 mm from the entrance</text>
+<text x="4909.1" y="3145.5" font-size="68.2" fill="#333333">2.5 / 8 Counter faces the entrance: the entrance is to one side of the</text>
+<text x="4909.1" y="3240.9" font-size="68.2" fill="#333333">counter</text>
+<text x="4909.1" y="3336.4" font-size="68.2" fill="#333333">5.0 / 10 Showcases with the counter: 1 of 2 in the checkout block</text>
+<text x="4909.1" y="3431.8" font-size="68.2" fill="#333333">10.0 / 10 Islands in rows: no islands in this layout</text>
+<text x="4909.1" y="3527.3" font-size="68.2" fill="#333333">6.7 / 10 Even use of the floor: fixtures in 6 of 9 parts of the floor</text>
+<text x="4909.1" y="3622.7" font-size="68.2" fill="#333333">4.5 / 5 Open view from the entrance: 4490 mm clear straight ahead of</text>
+<text x="4909.1" y="3718.2" font-size="68.2" fill="#333333">the door</text>
+<text x="4909.1" y="3868.2" font-size="86.4" font-weight="bold" fill="#1b1b1b">Did not fit</text>
+<text x="4909.1" y="3990.9" font-size="68.2" fill="#b3261e">6 × TEST double-sided gondola</text>
+<text x="4981.8" y="4086.4" font-size="68.2" fill="#555555">Tried 1209 positions. Most failed because another fixture is already</text>
+<text x="4981.8" y="4181.8" font-size="68.2" fill="#555555">there (602); then because it would block a door or the clear zone</text>
+<text x="4981.8" y="4277.3" font-size="68.2" fill="#555555">inside the entrance (369); then because there is not enough aisle</text>
+<text x="4981.8" y="4372.7" font-size="68.2" fill="#555555">space left in front of it (at least 915 mm) (238).</text>
+<text x="4909.1" y="4486.4" font-size="68.2" fill="#b3261e">4 × TEST wall shelving unit</text>
+<text x="4981.8" y="4581.8" font-size="68.2" fill="#555555">Tried 1785 positions. Most failed because another fixture is already</text>
+<text x="4981.8" y="4677.3" font-size="68.2" fill="#555555">there (767); then because there is not enough aisle space left in</text>
+<text x="4981.8" y="4772.7" font-size="68.2" fill="#555555">front of it (at least 915 mm) (511); then because it would block a</text>
+<text x="4981.8" y="4868.2" font-size="68.2" fill="#555555">door or the clear zone inside the entrance (352).</text>
 </svg>

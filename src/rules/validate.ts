@@ -95,6 +95,31 @@ export function placedFixtures(doc: DesignDocument, config: PlanningConfig): Pla
 // ---------------------------------------------------------------------------------------------
 // Walkable floor
 
+// Insetting the room and growing an obstacle are pure functions of the polygon and the distance,
+// and the layout engine asks for the same ones thousands of times, so they are remembered per
+// polygon object. The caches hold no state that could change a result.
+const insetCache = new WeakMap<readonly Point[], Map<number, Point[][]>>();
+const grownCache = new WeakMap<readonly Point[], Map<number, Point[][]>>();
+
+function remembered(
+  cache: WeakMap<readonly Point[], Map<number, Point[][]>>,
+  polygon: readonly Point[],
+  distance: number,
+  compute: () => Point[][],
+): Point[][] {
+  let byDistance = cache.get(polygon);
+  if (byDistance === undefined) {
+    byDistance = new Map();
+    cache.set(polygon, byDistance);
+  }
+  let value = byDistance.get(distance);
+  if (value === undefined) {
+    value = compute();
+    byDistance.set(distance, value);
+  }
+  return value;
+}
+
 /**
  * Where the centre of a walker `widthUm` wide can be: the room pulled in by half the width,
  * minus every obstacle pushed out by half the width. Each returned piece is one connected area.
@@ -106,10 +131,12 @@ export function walkableRegion(
   config: PlanningConfig,
 ): PolygonWithHoles[] {
   const half = Math.max(0, Math.floor((widthUm - config.aisleToleranceUm) / 2));
-  const floor = insetPolygon(room.outline, half);
+  const floor = remembered(insetCache, room.outline, half, () => insetPolygon(room.outline, half));
   if (floor.length === 0) return [];
   const grown: Point[][] = [];
-  for (const obstacle of obstacles) for (const piece of offsetPolygon(obstacle, half)) grown.push(piece.outer);
+  for (const obstacle of obstacles) {
+    grown.push(...remembered(grownCache, obstacle, half, () => offsetPolygon(obstacle, half).map((piece) => piece.outer)));
+  }
   if (grown.length === 0) return floor.map((outer) => ({ outer, holes: [] }));
   return differencePolygons(floor, grown);
 }
@@ -117,6 +144,12 @@ export function walkableRegion(
 function containsPoint(piece: PolygonWithHoles, p: Point): boolean {
   if (pointInPolygon(p, piece.outer) === 'outside') return false;
   return piece.holes.every((hole) => pointInPolygon(p, hole) !== 'inside');
+}
+
+/** Inside the piece and not on its edge: such a point always means shared floor of non-zero area. */
+function strictlyOnPiece(piece: PolygonWithHoles, p: Point): boolean {
+  if (pointInPolygon(p, piece.outer) !== 'inside') return false;
+  return piece.holes.every((hole) => pointInPolygon(p, hole) === 'outside');
 }
 
 function distanceToOutline(p: Point, polygon: readonly Point[]): number {
@@ -158,6 +191,9 @@ export function entrancePiece(
 
 /** True when the rectangle shares floor with the walkable piece. */
 export function rectTouchesPiece(rect: OrientedRect, piece: PolygonWithHoles): boolean {
+  // Fast path: a corner or the centre of the rectangle standing on the piece settles it without
+  // any polygon clipping. Only the undecided cases go on to the exact intersection.
+  for (const p of [rect.center, ...rectCorners(rect)]) if (strictlyOnPiece(piece, p)) return true;
   const shared = intersectPolygons([rectCorners(rect)], [piece.outer]);
   if (shared.length === 0) return false;
   if (piece.holes.length === 0) return true;
@@ -261,6 +297,92 @@ export function snapToWall(room: Room, rect: OrientedRect, config: PlanningConfi
     bestGap = gap;
   }
   return best;
+}
+
+// ---------------------------------------------------------------------------------------------
+// Walking rules
+
+/**
+ * The walking rules on their own: unreachable, aisle-too-narrow and main-aisle. Every fixture's
+ * customer zones must be reachable from every entrance along a secondary-aisle-wide path, staff
+ * zones along a staff passage, and the counter's front from the main entrance along the main aisle.
+ * `blockedZones` (`placementId/side`) are access zones already reported as blocked; they are not
+ * reported a second time. Used by `validateLayout`, and by the layout engine after its own local
+ * checks, so both apply exactly the same rule.
+ */
+export function walkingViolations(
+  room: Room,
+  fixtures: readonly PlacedFixture[],
+  config: PlanningConfig,
+  blockedZones: ReadonlySet<string> = new Set(),
+): Violation[] {
+  const out: Violation[] = [];
+  const label = (f: PlacedFixture): string => `"${f.product.name}" (${f.placement.id})`;
+  const entrances = entrancesOf(room); // validateRoom guarantees at least one
+  if (fixtures.length > 0) {
+    const obstacles: Point[][] = [...fixtures.map((f) => f.corners), ...room.columns.map((c) => c.outline)];
+    // For one aisle width: the floor a walker can stand on, as seen from each entrance.
+    const piecesAt = (widthUm: number, from: readonly Opening[]): (PolygonWithHoles | undefined)[] => {
+      const region = walkableRegion(room, obstacles, widthUm, config);
+      return from.map((e) => entrancePiece(room, e, region, widthUm));
+    };
+    const secondary = piecesAt(config.secondaryAisleUm, entrances);
+    const passage = piecesAt(config.staffPassageUm, entrances);
+    // Reachable means reachable from every entrance.
+    const touches = (zone: AccessZone, pieces: readonly (PolygonWithHoles | undefined)[]): boolean =>
+      pieces.every((piece) => piece !== undefined && rectTouchesPiece(zone.rect, piece));
+
+    for (const f of fixtures) {
+      const open = f.zones.filter((z) => !blockedZones.has(`${f.placement.id}/${z.side}`));
+      const customer = open.filter((z) => z.kind === 'customer');
+      const staff = open.filter((z) => z.kind === 'staff');
+      if (customer.some((z) => !touches(z, secondary))) {
+        const walkable = customer.every((z) => touches(z, passage));
+        out.push(
+          walkable
+            ? {
+                rule: 'aisle-too-narrow',
+                severity: 'error',
+                placementIds: [f.placement.id],
+                message: `The way from the entrance to ${label(f)} is narrower than ${mmText(config.secondaryAisleUm)} somewhere.`,
+                requiredUm: config.secondaryAisleUm,
+              }
+            : {
+                rule: 'unreachable',
+                severity: 'error',
+                placementIds: [f.placement.id],
+                message: `Customers cannot walk from the entrance to ${label(f)}.`,
+                requiredUm: config.secondaryAisleUm,
+              },
+        );
+      }
+      if (staff.some((z) => !touches(z, passage))) {
+        out.push({
+          rule: 'unreachable',
+          severity: 'error',
+          placementIds: [f.placement.id],
+          message: `Staff cannot get behind ${label(f)}: the way in is narrower than ${mmText(config.staffPassageUm)}.`,
+          requiredUm: config.staffPassageUm,
+        });
+      }
+    }
+
+    const counter = fixtures.find((f) => f.product.placement === 'counter');
+    const front = counter?.zones.find((z) => z.kind === 'customer');
+    if (counter !== undefined && front !== undefined && touches(front, secondary)) {
+      if (!touches(front, piecesAt(config.mainAisleUm, entrances.slice(0, 1)))) {
+        out.push({
+          rule: 'main-aisle',
+          severity: 'error',
+          placementIds: [counter.placement.id],
+          message: `The main aisle from the entrance to ${label(counter)} is narrower than ${mmText(config.mainAisleUm)} somewhere.`,
+          requiredUm: config.mainAisleUm,
+        });
+      }
+    }
+  }
+
+  return out;
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -431,70 +553,7 @@ export function validateLayout(doc: DesignDocument, config: PlanningConfig = def
     }
   }
 
-  // 8 and 9. walking: unreachable, aisle-too-narrow, main-aisle
-  const entrances = entrancesOf(room); // validateRoom guarantees at least one
-  if (fixtures.length > 0) {
-    const obstacles: Point[][] = [...fixtures.map((f) => f.corners), ...room.columns.map((c) => c.outline)];
-    // For one aisle width: the floor a walker can stand on, as seen from each entrance.
-    const piecesAt = (widthUm: number, from: readonly Opening[]): (PolygonWithHoles | undefined)[] => {
-      const region = walkableRegion(room, obstacles, widthUm, config);
-      return from.map((e) => entrancePiece(room, e, region, widthUm));
-    };
-    const secondary = piecesAt(config.secondaryAisleUm, entrances);
-    const passage = piecesAt(config.staffPassageUm, entrances);
-    // Reachable means reachable from every entrance.
-    const touches = (zone: AccessZone, pieces: readonly (PolygonWithHoles | undefined)[]): boolean =>
-      pieces.every((piece) => piece !== undefined && rectTouchesPiece(zone.rect, piece));
-
-    for (const f of fixtures) {
-      const open = f.zones.filter((z) => !blockedZones.has(`${f.placement.id}/${z.side}`));
-      const customer = open.filter((z) => z.kind === 'customer');
-      const staff = open.filter((z) => z.kind === 'staff');
-      if (customer.some((z) => !touches(z, secondary))) {
-        const walkable = customer.every((z) => touches(z, passage));
-        out.push(
-          walkable
-            ? {
-                rule: 'aisle-too-narrow',
-                severity: 'error',
-                placementIds: [f.placement.id],
-                message: `The way from the entrance to ${label(f)} is narrower than ${mmText(config.secondaryAisleUm)} somewhere.`,
-                requiredUm: config.secondaryAisleUm,
-              }
-            : {
-                rule: 'unreachable',
-                severity: 'error',
-                placementIds: [f.placement.id],
-                message: `Customers cannot walk from the entrance to ${label(f)}.`,
-                requiredUm: config.secondaryAisleUm,
-              },
-        );
-      }
-      if (staff.some((z) => !touches(z, passage))) {
-        out.push({
-          rule: 'unreachable',
-          severity: 'error',
-          placementIds: [f.placement.id],
-          message: `Staff cannot get behind ${label(f)}: the way in is narrower than ${mmText(config.staffPassageUm)}.`,
-          requiredUm: config.staffPassageUm,
-        });
-      }
-    }
-
-    const counter = fixtures.find((f) => f.product.placement === 'counter');
-    const front = counter?.zones.find((z) => z.kind === 'customer');
-    if (counter !== undefined && front !== undefined && touches(front, secondary)) {
-      if (!touches(front, piecesAt(config.mainAisleUm, entrances.slice(0, 1)))) {
-        out.push({
-          rule: 'main-aisle',
-          severity: 'error',
-          placementIds: [counter.placement.id],
-          message: `The main aisle from the entrance to ${label(counter)} is narrower than ${mmText(config.mainAisleUm)} somewhere.`,
-          requiredUm: config.mainAisleUm,
-        });
-      }
-    }
-  }
+  out.push(...walkingViolations(room, fixtures, config, blockedZones));
 
   const key = (v: Violation): string =>
     [v.rule, ...v.placementIds, v.openingId ?? '', v.columnId ?? '', v.message].join('\u0000');

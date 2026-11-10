@@ -1,6 +1,6 @@
 /** Keep-clear zones of a room and the access zones of a placed fixture. */
 import type { Opening, Placement, Product, Room, Variant } from '../core/index';
-import { doorSwingZone, intersectPolygons, openingSegment, rectCorners, wallSegment } from '../geometry/index';
+import { doorSwingZone, intersectPolygons, openingSegment, wallSegment } from '../geometry/index';
 import type { OrientedRect, Point } from '../geometry/index';
 import type { PlanningConfig } from './config';
 
@@ -128,18 +128,35 @@ export type AccessZone = {
   rect: OrientedRect;
 };
 
-/** A rectangle `depthUm` deep lying against the front or back edge of `rect`, same width. */
+/** Unit vector pointing out of a rectangle's front, exact for quarter turns. */
+export function frontDirection(rotationUdeg: number): { x: number; y: number } {
+  switch (((rotationUdeg % 360_000_000) + 360_000_000) % 360_000_000) {
+    case 0:
+      return { x: 0, y: 1 };
+    case 90_000_000:
+      return { x: -1, y: 0 };
+    case 180_000_000:
+      return { x: 0, y: -1 };
+    case 270_000_000:
+      return { x: 1, y: 0 };
+    default: {
+      const a = (rotationUdeg * Math.PI) / 180_000_000;
+      return { x: -Math.sin(a), y: Math.cos(a) };
+    }
+  }
+}
+
+/**
+ * A rectangle `depthUm` deep lying against the front or back edge of `rect`, same width.
+ * The direction comes from the rotation itself, not from the rounded corners, so a thin fixture
+ * on an angled wall gets a zone that is exactly in line with it.
+ */
 export function adjacentRect(rect: OrientedRect, side: 'front' | 'back', depthUm: number): OrientedRect {
-  const [bl, br, fr, fl] = rectCorners(rect) as [Point, Point, Point, Point];
-  const frontMid = { x: (fr.x + fl.x) / 2, y: (fr.y + fl.y) / 2 };
-  const backMid = { x: (bl.x + br.x) / 2, y: (bl.y + br.y) / 2 };
-  // Unit vector from back to front, taken from the exact corners.
-  const ux = (frontMid.x - backMid.x) / rect.depthUm;
-  const uy = (frontMid.y - backMid.y) / rect.depthUm;
-  const edge = side === 'front' ? frontMid : backMid;
+  const front = frontDirection(rect.rotationUdeg);
   const sign = side === 'front' ? 1 : -1;
+  const reach = sign * (rect.depthUm / 2 + depthUm / 2);
   return {
-    center: { x: round(edge.x + (sign * ux * depthUm) / 2), y: round(edge.y + (sign * uy * depthUm) / 2) },
+    center: { x: round(rect.center.x + front.x * reach), y: round(rect.center.y + front.y * reach) },
     widthUm: rect.widthUm,
     depthUm,
     rotationUdeg: rect.rotationUdeg,

@@ -25,7 +25,13 @@ describe.each(scenarios.map((s) => [s.id, s] as const))('auto layout: %s', (_id,
     const options = run(request);
     expect(options.length).toBeGreaterThanOrEqual(2);
     expect(options.map((o) => o.rank)).toEqual(options.map((_, i) => i + 1));
-    for (let i = 1; i < options.length; i++) expect(options[i - 1]!.score).toBeGreaterThanOrEqual(options[i]!.score);
+    // Best first: more fixtures placed wins; the score decides between equals.
+    for (let i = 1; i < options.length; i++) {
+      const [better, worse] = [options[i - 1]!, options[i]!];
+      const [n1, n2] = [better.document.placements.length, worse.document.placements.length];
+      expect(n1).toBeGreaterThanOrEqual(n2);
+      if (n1 === n2) expect(better.score).toBeGreaterThanOrEqual(worse.score);
+    }
     const signatures = options.map((o) => JSON.stringify(o.document.placements));
     expect(new Set(signatures).size).toBe(options.length); // no two options are the same layout
   });

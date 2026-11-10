@@ -1,32 +1,32 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14181.8 8545.5" width="14181.8mm" height="8545.5mm" font-family="DejaVu Sans, Arial, sans-serif">
-<rect x="0" y="0" width="14181.8" height="8545.5" fill="#ffffff"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14181.8 8690.9" width="14181.8mm" height="8690.9mm" font-family="DejaVu Sans, Arial, sans-serif">
+<rect x="0" y="0" width="14181.8" height="8690.9" fill="#ffffff"/>
 <text x="727.3" y="349.1" font-size="218.2" font-weight="bold" fill="#111111">Room: angledWall</text>
 <text x="727.3" y="596.4" font-size="123.6" fill="#444444">Floor area 44.00 m²  ·  0 fixtures  ·  Five-sided shop, 8 m x 6 m overall, top-right corner cut by an angled wall from (8 m, 2 m) to (6 m, 6 m); entrance on the bottom wall, window on the left wall.</text>
-<polygon data-role="room-outline" data-plan-points="0.000,0.000 8000.000,0.000 8000.000,2000.000 6000.000,6000.000 0.000,6000.000" points="727.273,7600.000 8727.273,7600.000 8727.273,5600.000 6727.273,1600.000 727.273,1600.000" fill="#fbfaf7" stroke="none"/>
-<polygon data-zone-id="entrance:decompression" points="3727.3,7600.0 4727.3,7600.0 4727.3,5600.0 3727.3,5600.0" fill="#f6e58d" fill-opacity="0.22" stroke="#f6e58d" stroke-width="11.6" stroke-dasharray="58.2 43.6"/>
-<polygon data-zone-id="entrance:door-swing" points="3727.3,7600.0 4727.3,7600.0 4727.3,7501.5 4688.8,7308.3 4613.5,7126.3 4504.0,6962.5 4364.7,6823.2 4201.0,6713.8 4019.0,6638.4 3825.8,6600.0 3727.3,6600.0" fill="#e4572e" fill-opacity="0.22" stroke="#e4572e" stroke-width="11.6" stroke-dasharray="58.2 43.6"/>
-<polygon data-zone-id="entrance:entrance-clear" points="3727.3,7600.0 5182.3,7600.0 5182.3,6075.0 3727.3,6075.0" fill="#f6c445" fill-opacity="0.22" stroke="#f6c445" stroke-width="11.6" stroke-dasharray="58.2 43.6"/>
-<polygon points="727.3,7600.0 8727.3,7600.0 8727.3,5600.0 6727.3,1600.0 727.3,1600.0" fill="none" stroke="#2b2b2b" stroke-width="80.0" stroke-linejoin="miter"/>
-<line data-door-id="entrance" x1="3727.3" y1="7600.0" x2="4727.3" y2="7600.0" stroke="#ffffff" stroke-width="104.0"/>
-<line x1="3727.3" y1="7600.0" x2="3727.3" y2="6600.0" stroke="#2b2b2b" stroke-width="20.4"/>
-<path d="M 4727.3 7600.0 A 1000.0 1000.0 0 0 0 3727.3 6600.0" fill="none" stroke="#2b2b2b" stroke-width="10.2" stroke-dasharray="43.6 36.4"/>
-<text x="4227.3" y="7876.4" font-size="138.2" font-weight="bold" fill="#b3261e" text-anchor="middle" dominant-baseline="middle">ENTRANCE</text>
-<line x1="727.3" y1="3600.0" x2="727.3" y2="5100.0" stroke="#ffffff" stroke-width="88.0"/>
-<line data-window-id="window-1" x1="703.3" y1="3600.0" x2="703.3" y2="5100.0" stroke="#2f7fc1" stroke-width="17.5"/>
-<line data-window-id="window-1" x1="751.3" y1="3600.0" x2="751.3" y2="5100.0" stroke="#2f7fc1" stroke-width="17.5"/>
-<text x="1047.3" y="4350.0" font-size="101.8" fill="#2f7fc1" text-anchor="middle" dominant-baseline="middle">window</text>
-<text data-wall-index="0" data-length-um="8000000" x="4727.3" y="8094.5" font-size="130.9" fill="#444444" text-anchor="middle" dominant-baseline="middle" transform="rotate(0.0 4727.3 8094.5)">8000 mm</text>
-<text data-wall-index="1" data-length-um="2000000" x="8960.0" y="6600.0" font-size="130.9" fill="#444444" text-anchor="middle" dominant-baseline="middle" transform="rotate(90.0 8960.0 6600.0)">2000 mm</text>
-<text data-wall-index="2" data-length-um="4472136" x="7935.4" y="3495.9" font-size="130.9" fill="#444444" text-anchor="middle" dominant-baseline="middle" transform="rotate(63.4 7935.4 3495.9)">4472 mm</text>
-<text data-wall-index="3" data-length-um="6000000" x="3727.3" y="1367.3" font-size="130.9" fill="#444444" text-anchor="middle" dominant-baseline="middle" transform="rotate(0.0 3727.3 1367.3)">6000 mm</text>
-<text data-wall-index="4" data-length-um="6000000" x="494.5" y="4600.0" font-size="130.9" fill="#444444" text-anchor="middle" dominant-baseline="middle" transform="rotate(90.0 494.5 4600.0)">6000 mm</text>
-<line x1="727.3" y1="8145.5" x2="1727.3" y2="8145.5" stroke="#111111" stroke-width="26.2"/>
-<text x="1800.0" y="8145.5" font-size="109.1" fill="#111111" dominant-baseline="central">1000 mm</text>
-<text x="9454.5" y="1687.3" font-size="138.2" font-weight="bold" fill="#1b1b1b">Keep clear</text>
-<rect x="9454.5" y="1781.8" width="160.0" height="116.4" fill="#f6e58d" fill-opacity="0.35" stroke="#333333" stroke-width="7.3"/>
-<text x="9687.3" y="1883.6" font-size="109.1" fill="#333333">Entrance decompression zone (keep clear)</text>
-<rect x="9454.5" y="1934.5" width="160.0" height="116.4" fill="#e4572e" fill-opacity="0.35" stroke="#333333" stroke-width="7.3"/>
-<text x="9687.3" y="2036.4" font-size="109.1" fill="#333333">Door swing (keep clear)</text>
-<rect x="9454.5" y="2087.3" width="160.0" height="116.4" fill="#f6c445" fill-opacity="0.35" stroke="#333333" stroke-width="7.3"/>
-<text x="9687.3" y="2189.1" font-size="109.1" fill="#333333">Entrance clear zone</text>
+<polygon data-role="room-outline" data-plan-points="0.000,0.000 8000.000,0.000 8000.000,2000.000 6000.000,6000.000 0.000,6000.000" points="727.273,7745.455 8727.273,7745.455 8727.273,5745.455 6727.273,1745.455 727.273,1745.455" fill="#fbfaf7" stroke="none"/>
+<polygon data-zone-id="entrance:decompression" points="3727.3,7745.5 4727.3,7745.5 4727.3,5745.5 3727.3,5745.5" fill="#f6e58d" fill-opacity="0.22" stroke="#f6e58d" stroke-width="11.6" stroke-dasharray="58.2 43.6"/>
+<polygon data-zone-id="entrance:door-swing" points="3727.3,7745.5 4727.3,7745.5 4727.3,7647.0 4688.8,7453.8 4613.5,7271.8 4504.0,7108.0 4364.7,6968.7 4201.0,6859.3 4019.0,6783.9 3825.8,6745.5 3727.3,6745.5" fill="#e4572e" fill-opacity="0.22" stroke="#e4572e" stroke-width="11.6" stroke-dasharray="58.2 43.6"/>
+<polygon data-zone-id="entrance:entrance-clear" points="3727.3,7745.5 5182.3,7745.5 5182.3,6220.5 3727.3,6220.5" fill="#f6c445" fill-opacity="0.22" stroke="#f6c445" stroke-width="11.6" stroke-dasharray="58.2 43.6"/>
+<polygon points="727.3,7745.5 8727.3,7745.5 8727.3,5745.5 6727.3,1745.5 727.3,1745.5" fill="none" stroke="#2b2b2b" stroke-width="80.0" stroke-linejoin="miter"/>
+<line data-door-id="entrance" x1="3727.3" y1="7745.5" x2="4727.3" y2="7745.5" stroke="#ffffff" stroke-width="104.0"/>
+<line x1="3727.3" y1="7745.5" x2="3727.3" y2="6745.5" stroke="#2b2b2b" stroke-width="20.4"/>
+<path d="M 4727.3 7745.5 A 1000.0 1000.0 0 0 0 3727.3 6745.5" fill="none" stroke="#2b2b2b" stroke-width="10.2" stroke-dasharray="43.6 36.4"/>
+<text x="4227.3" y="8021.8" font-size="138.2" font-weight="bold" fill="#b3261e" text-anchor="middle" dominant-baseline="middle">ENTRANCE</text>
+<line x1="727.3" y1="3745.5" x2="727.3" y2="5245.5" stroke="#ffffff" stroke-width="88.0"/>
+<line data-window-id="window-1" x1="703.3" y1="3745.5" x2="703.3" y2="5245.5" stroke="#2f7fc1" stroke-width="17.5"/>
+<line data-window-id="window-1" x1="751.3" y1="3745.5" x2="751.3" y2="5245.5" stroke="#2f7fc1" stroke-width="17.5"/>
+<text x="1047.3" y="4495.5" font-size="101.8" fill="#2f7fc1" text-anchor="middle" dominant-baseline="middle">window</text>
+<text data-wall-index="0" data-length-um="8000000" x="4727.3" y="8240.0" font-size="130.9" fill="#444444" text-anchor="middle" dominant-baseline="middle" transform="rotate(0.0 4727.3 8240.0)">8000 mm</text>
+<text data-wall-index="1" data-length-um="2000000" x="8960.0" y="6745.5" font-size="130.9" fill="#444444" text-anchor="middle" dominant-baseline="middle" transform="rotate(90.0 8960.0 6745.5)">2000 mm</text>
+<text data-wall-index="2" data-length-um="4472136" x="7935.4" y="3641.4" font-size="130.9" fill="#444444" text-anchor="middle" dominant-baseline="middle" transform="rotate(63.4 7935.4 3641.4)">4472 mm</text>
+<text data-wall-index="3" data-length-um="6000000" x="3727.3" y="1512.7" font-size="130.9" fill="#444444" text-anchor="middle" dominant-baseline="middle" transform="rotate(0.0 3727.3 1512.7)">6000 mm</text>
+<text data-wall-index="4" data-length-um="6000000" x="494.5" y="4745.5" font-size="130.9" fill="#444444" text-anchor="middle" dominant-baseline="middle" transform="rotate(90.0 494.5 4745.5)">6000 mm</text>
+<line x1="727.3" y1="8290.9" x2="1727.3" y2="8290.9" stroke="#111111" stroke-width="26.2"/>
+<text x="1800.0" y="8290.9" font-size="109.1" fill="#111111" dominant-baseline="central">1000 mm</text>
+<text x="9454.5" y="1832.7" font-size="138.2" font-weight="bold" fill="#1b1b1b">Keep clear</text>
+<rect x="9454.5" y="1927.3" width="160.0" height="116.4" fill="#f6e58d" fill-opacity="0.35" stroke="#333333" stroke-width="7.3"/>
+<text x="9687.3" y="2029.1" font-size="109.1" fill="#333333">Entrance decompression zone (keep clear)</text>
+<rect x="9454.5" y="2080.0" width="160.0" height="116.4" fill="#e4572e" fill-opacity="0.35" stroke="#333333" stroke-width="7.3"/>
+<text x="9687.3" y="2181.8" font-size="109.1" fill="#333333">Door swing (keep clear)</text>
+<rect x="9454.5" y="2232.7" width="160.0" height="116.4" fill="#f6c445" fill-opacity="0.35" stroke="#333333" stroke-width="7.3"/>
+<text x="9687.3" y="2334.5" font-size="109.1" fill="#333333">Entrance clear zone</text>
 </svg>

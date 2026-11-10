@@ -16,10 +16,15 @@ const byId = (id: string): LayoutRequest => scenarios.find((s) => s.id === id)!;
 const fixturesOf = (doc: DesignDocument) => placedFixtures(doc, defaultConfig);
 const all = [...scenarios, wallsFull];
 
-/** Position of a fixture across the rows: along its own front direction. */
+/**
+ * Position of a fixture's row line across the rows. An island is centred on its row line; a
+ * single-sided unit of a back-to-back pair has its BACK on the line.
+ */
 function across(f: ReturnType<typeof fixturesOf>[number], reference: number): number {
   const a = (reference * Math.PI) / 180e6;
-  return f.rect.center.x * -Math.sin(a) + f.rect.center.y * Math.cos(a);
+  const [backLeft, backRight] = f.corners as [{ x: number; y: number }, { x: number; y: number }];
+  const p = f.product.placement === 'wall' ? { x: (backLeft.x + backRight.x) / 2, y: (backLeft.y + backRight.y) / 2 } : f.rect.center;
+  return p.x * -Math.sin(a) + p.y * Math.cos(a);
 }
 
 describe.each(all.map((s) => [s.id, s] as const))('quality: %s', (_id, request) => {
@@ -109,7 +114,7 @@ describe.each(all.map((s) => [s.id, s] as const))('quality: %s', (_id, request) 
 
 describe('quality: specific expectations', () => {
   it('all glass showcases join the checkout block where they fit', () => {
-    for (const id of ['l-shape-with-column', 'angled-wall', 'protected-doorway-real-products']) {
+    for (const id of ['l-shape-with-column', 'angled-wall']) {
       const best = run(byId(id))[0]!;
       const showcases = fixturesOf(best.document).filter((f) => f.product.category === 'showcase' && f.product.placement === 'freestanding');
       expect(showcases.length).toBeGreaterThan(0);
@@ -120,8 +125,17 @@ describe('quality: specific expectations', () => {
   });
 
   it('a small counter (24 in) still anchors the block', () => {
-    const best = run(byId('protected-doorway-real-products'))[0]!;
-    expect(best.cashWrap.length).toBe(4); // counter + 3 showcases
+    // 7 m x 5 m shop: the counter (610 mm) and two 1829 mm showcases make a 4268 mm block on the
+    // 5 m wall. The third showcase cannot join: the block would be 6097 mm, and the corner legs
+    // run into the entrance and the back-room door. It is placed against a wall instead.
+    // Placing the most fixtures and building the biggest block pull in different directions here,
+    // so both are offered: one of the ranked options has the three-piece block.
+    const options = run(byId('protected-doorway-real-products'));
+    const biggest = [...options].sort((a, b) => b.cashWrap.length - a.cashWrap.length)[0]!;
+    expect(biggest.cashWrap.length).toBe(3);
+    const fixtures = fixturesOf(biggest.document);
+    expect(biggest.cashWrap.map((id) => fixtures.find((f) => f.placement.id === id)!.product.placement).sort()).toEqual(['counter', 'freestanding', 'freestanding']);
+    for (const option of options) expect(option.cashWrap.length).toBeGreaterThanOrEqual(2); // never the counter alone
   });
 
   it('places at least as many fixtures as the first engine did', () => {

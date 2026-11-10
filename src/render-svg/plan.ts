@@ -108,7 +108,7 @@ export function renderPlanSvg(doc: DesignDocument, overlays: PlanOverlays = {}, 
   const roomH = maxY - minY;
   const fs = Math.max(roomW, roomH) / 55; // base font size, mm
   const margin = fs * 5;
-  const titleH = fs * 6;
+  const titleH = fs * 7;
   const panelW = fs * 30;
   const originX = margin;
   const originY = titleH + margin;
@@ -267,7 +267,7 @@ export function renderPlanSvg(doc: DesignDocument, overlays: PlanOverlays = {}, 
     const twoLines = short >= codeSize + sizeFont * 1.6 && sizeFont >= fs * 0.4;
     const t = `transform="rotate(${n1(angle)} ${n1(cx)} ${n1(cy)})"`;
     body.push(
-      `<text x="${n1(cx)}" y="${n1(cy - (twoLines ? sizeFont * 0.55 : 0))}" font-size="${n1(codeSize)}" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" ${t}>${d.code}</text>`,
+      `<text data-label-for="${esc(placement.id)}" x="${n1(cx)}" y="${n1(cy - (twoLines ? sizeFont * 0.55 : 0))}" font-size="${n1(codeSize)}" font-weight="bold" fill="#1b1b1b" text-anchor="middle" dominant-baseline="central" ${t}>${d.code}${product.verification === 'verified' ? '' : '*'}</text>`,
     );
     if (twoLines) {
       body.push(
@@ -326,7 +326,11 @@ export function renderPlanSvg(doc: DesignDocument, overlays: PlanOverlays = {}, 
       const dims = [d.variant.widthUm!, d.variant.depthUm!, ...(d.variant.heightUm === null ? [] : [d.variant.heightUm])]
         .map((v) => num(v, unit))
         .join(' × ');
-      const marks = [d.product.testOnly ? 'TEST' : '', d.product.verification === 'unverified' ? 'unverified' : ''].filter((m) => m !== '');
+      const marks = [
+        d.product.testOnly ? 'TEST' : '',
+        d.product.verification === 'unverified' ? '* unverified' : '',
+        d.product.flags.some((flag) => /assumed/i.test(flag)) ? 'size assumed' : '',
+      ].filter((m) => m !== '');
       swatch(CATEGORY_COLOURS[d.product.category]);
       const name = d.product.testOnly && !d.product.name.startsWith('TEST') ? `TEST ${d.product.name}` : d.product.name;
       line(`${d.code}  ${count} × ${name}`, '#1b1b1b', fs * 1.6);
@@ -374,6 +378,9 @@ export function renderPlanSvg(doc: DesignDocument, overlays: PlanOverlays = {}, 
     ...(overlays.subtitle === undefined ? [] : [overlays.subtitle]),
   ].join('  ·  ');
   head.push(`<text x="${n1(margin)}" y="${n1(fs * 4.1)}" font-size="${n1(fs * 0.85)}" fill="#444444">${esc(facts)}</text>`);
+  if (drawn.some((d) => d.product.verification !== 'verified')) {
+    head.push(`<text x="${n1(margin)}" y="${n1(fs * (hasTestOnly ? 6.6 : 5.4))}" font-size="${n1(fs * 0.8)}" fill="#8a5a00">Sizes marked * are from the website and not yet confirmed by the owner.</text>`);
+  }
   if (hasTestOnly) {
     head.push(`<text x="${n1(margin)}" y="${n1(fs * 5.4)}" font-size="${n1(fs * 0.85)}" font-weight="bold" fill="#b3261e">Contains test-only fixtures (not real products)</text>`);
   }
