@@ -1,4 +1,4 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["app/main", "electron.vite.config.ts", "playwright.config.ts"]
+  "include": ["app/main", "app/preload", "app/shared", "electron.vite.config.ts", "playwright.config.ts"]
 }

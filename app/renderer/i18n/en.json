@@ -3,6 +3,26 @@
     "title": "View-3D"
   },
   "start": {
-    "noProject": "No project is open."
+    "noProject": "No project is open.",
+    "open": "Open a project"
+  },
+  "open": {
+    "notJson": "This file is not a View-3D project: it is not valid JSON (line {{line}}).",
+    "notAProject": "This file is not a valid View-3D project."
+  },
+  "project": {
+    "name": "Project name",
+    "save": "Save",
+    "saveAs": "Save as",
+    "saveCopy": "Save a copy",
+    "undo": "Undo",
+    "redo": "Redo",
+    "copyName": "{{name}} (copy)"
+  },
+  "close": {
+    "title": "Close without saving?",
+    "body": "Your changes since the last save will be lost.",
+    "discard": "Close without saving",
+    "cancel": "Cancel"
   }
 }

@@ -133,8 +133,10 @@ used as sort keys in whole millimetres, so a sub-micrometre difference never dec
 ## 9. How the app will sit on the engine (Milestones 2 to 4)
 
 Decided in outline (owner, 2026-11-11, `decisions/0007-local-electron-desktop-app.md`); details
-in `plans/M2-M4-plan.md`. Built so far: `app/main` (the window, locked down) and `app/renderer`
-(the start screen and `i18n/`). The rest below is still planned.
+in `plans/M2-M4-plan.md`. Built so far: `app/main` (the window, locked down; dialogs and file
+access in `project-files.ts`), `app/preload` (the bridge), `app/shared` (types only: the bridge's
+requests and results) and `app/renderer` (`state/`, `storage/`, `i18n/`, the start and project
+screens). The rest below is still planned.
 
 V1 is a laptop-only, fully local **Electron** desktop app (electron-vite + electron-builder).
 
@@ -142,7 +144,9 @@ V1 is a laptop-only, fully local **Electron** desktop app (electron-vite + elect
 app/                          the desktop app                         imports ->  src/*
   main/                       Electron main process: windows, native open/save dialogs,
                               all disk access, printToPDF (M4)
-  preload/                    the narrow, typed API the renderer may call (no Node in the renderer)
+  preload/                    the narrow, typed API the renderer may call (no Node in the renderer):
+                              window.view3d = openProject, saveProject, onCloseRequested, closeWindow
+  shared/                     types only, imported by main, preload and renderer
   renderer/                   the UI (React)
     state/                    the open document + undo history (the only mutable copy)
     editor-2d/                plan editor (room capture, manual layout)
@@ -160,6 +164,8 @@ src/                          the engine (this document)              never impo
 ```
 
 - The renderer never touches the disk: file access goes through `app/main` behind the preload API.
+  The renderer never names a path either: `app/main` shows the native dialog and remembers the
+  current project file (only a file that is a valid project becomes current).
 - Enforced by `test/architecture/imports.test.ts` ("architecture: app/"): `app/` holds only
   `main`, `preload` and `renderer`; the renderer imports no Node built-in and no `electron`, and
   nothing from `main` or `preload`; only `main` and `preload` import `electron`; only the preload
