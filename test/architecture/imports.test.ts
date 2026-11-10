@@ -3,7 +3,8 @@
  * statements under src/. If this fails, either move the code or change the architecture document
  * and this table together, on purpose.
  */
-import { readdirSync, readFileSync } from 'node:fs';
+import { builtinModules } from 'node:module';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, relative, resolve, sep } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
@@ -85,5 +86,76 @@ describe('architecture', () => {
       }
     }
     expect(offenders).toEqual([]);
+  });
+});
+
+// ---- app/ (docs/ARCHITECTURE.md section 9) ----
+
+const APP = resolve(import.meta.dirname, '../../app');
+
+/** Like files(), but also takes .tsx; a missing folder is an empty list. */
+function sourceFiles(dir: string): string[] {
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
+    e.isDirectory() ? sourceFiles(join(dir, e.name)) : /\.tsx?$/.test(e.name) ? [join(dir, e.name)] : [],
+  );
+}
+const stripComments = (text: string): string => text.replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, '');
+const underDir = (file: string, dir: string): boolean => !posix(relative(dir, file)).startsWith('..');
+const isNodeBuiltin = (spec: string): boolean => spec.startsWith('node:') || builtinModules.includes(spec) || builtinModules.includes(spec.split('/')[0]!);
+
+describe('architecture: app/', () => {
+  const MAIN = join(APP, 'main');
+  const PRELOAD = join(APP, 'preload');
+  const RENDERER = join(APP, 'renderer');
+  const all = sourceFiles(APP);
+  const rel = (f: string): string => posix(relative(APP, f));
+  const relativeTargets = (file: string): string[] => imports(file).filter((s) => s.startsWith('.')).map((s) => resolve(file, '..', s));
+
+  it('app has the known parts', () => {
+    const folders = existsSync(APP) ? readdirSync(APP, { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name) : [];
+    for (const f of folders) expect(['main', 'preload', 'renderer'], f).toContain(f);
+    expect(folders).toContain('main');
+    expect(folders).toContain('renderer');
+  });
+
+  it('the renderer never imports Node or Electron', () => {
+    const violations: string[] = [];
+    for (const file of all.filter((f) => underDir(f, RENDERER))) {
+      for (const spec of imports(file)) {
+        if (spec === 'electron' || isNodeBuiltin(spec)) violations.push(`${rel(file)} imports ${spec}`);
+      }
+      for (const target of relativeTargets(file)) {
+        if (underDir(target, MAIN) || underDir(target, PRELOAD)) violations.push(`${rel(file)} reaches into main or preload`);
+      }
+    }
+    expect(violations).toEqual([]);
+  });
+
+  it('only main and the preload import electron', () => {
+    const violations: string[] = [];
+    for (const file of all) {
+      const allowed = underDir(file, MAIN) || underDir(file, PRELOAD);
+      if (!allowed && imports(file).includes('electron')) violations.push(`${rel(file)} imports electron`);
+      if (!underDir(file, PRELOAD) && /\b(contextBridge|ipcRenderer)\b/.test(stripComments(readFileSync(file, 'utf8')))) {
+        violations.push(`${rel(file)} uses contextBridge or ipcRenderer outside the preload`);
+      }
+    }
+    expect(violations).toEqual([]);
+  });
+
+  it('main never imports the renderer', () => {
+    const violations = all
+      .filter((f) => underDir(f, MAIN))
+      .filter((f) => relativeTargets(f).some((t) => underDir(t, RENDERER)))
+      .map((f) => `${rel(f)} imports the renderer`);
+    expect(violations).toEqual([]);
+  });
+
+  it('src never imports app', () => {
+    const violations = files(SRC)
+      .filter((f) => relativeTargets(f).some((t) => underDir(t, APP)))
+      .map((f) => `${posix(relative(SRC, f))} imports app/`);
+    expect(violations).toEqual([]);
   });
 });
