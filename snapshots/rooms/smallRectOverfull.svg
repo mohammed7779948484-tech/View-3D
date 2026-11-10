@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 7863.6 6590.9" width="7863.6mm" height="6590.9mm" font-family="DejaVu Sans, Arial, sans-serif">
+<rect x="0" y="0" width="7863.6" height="6590.9" fill="#ffffff"/>
+<text x="454.5" y="218.2" font-size="136.4" font-weight="bold" fill="#111111">Room: smallRectOverfull</text>
+<text x="454.5" y="372.7" font-size="77.3" fill="#444444">Floor area 20.00 m²  ·  0 fixtures  ·  Small 4 m x 5 m rectangle with a 900 mm entrance on the bottom wall; used with more products than can fit.</text>
+<polygon data-role="room-outline" data-plan-points="0.000,0.000 4000.000,0.000 4000.000,5000.000 0.000,5000.000" points="454.545,6000.000 4454.545,6000.000 4454.545,1000.000 454.545,1000.000" fill="#fbfaf7" stroke="none"/>
+<polygon data-zone-id="entrance:door-swing" points="2004.5,6000.0 2904.5,6000.0 2904.5,5911.4 2870.0,5737.5 2802.1,5573.7 2703.6,5426.3 2578.3,5300.9 2430.9,5202.4 2267.1,5134.6 2093.2,5100.0 2004.5,5100.0" fill="#e4572e" fill-opacity="0.22" stroke="#e4572e" stroke-width="7.3" stroke-dasharray="36.4 27.3"/>
+<polygon data-zone-id="entrance:entrance-clear" points="2004.5,6000.0 3359.5,6000.0 3359.5,4475.0 2004.5,4475.0" fill="#f6c445" fill-opacity="0.22" stroke="#f6c445" stroke-width="7.3" stroke-dasharray="36.4 27.3"/>
+<polygon points="454.5,6000.0 4454.5,6000.0 4454.5,1000.0 454.5,1000.0" fill="none" stroke="#2b2b2b" stroke-width="50.0" stroke-linejoin="miter"/>
+<line data-door-id="entrance" x1="2004.5" y1="6000.0" x2="2904.5" y2="6000.0" stroke="#ffffff" stroke-width="65.0"/>
+<line x1="2004.5" y1="6000.0" x2="2004.5" y2="5100.0" stroke="#2b2b2b" stroke-width="12.7"/>
+<path d="M 2904.5 6000.0 A 900.0 900.0 0 0 0 2004.5 5100.0" fill="none" stroke="#2b2b2b" stroke-width="6.4" stroke-dasharray="27.3 22.7"/>
+<text x="2454.5" y="6172.7" font-size="86.4" font-weight="bold" fill="#b3261e" text-anchor="middle" dominant-baseline="middle">ENTRANCE</text>
+<text data-wall-index="0" data-length-um="4000000" x="2454.5" y="6309.1" font-size="81.8" fill="#444444" text-anchor="middle" dominant-baseline="middle" transform="rotate(0.0 2454.5 6309.1)">4000 mm</text>
+<text data-wall-index="1" data-length-um="5000000" x="4600.0" y="3500.0" font-size="81.8" fill="#444444" text-anchor="middle" dominant-baseline="middle" transform="rotate(90.0 4600.0 3500.0)">5000 mm</text>
+<text data-wall-index="2" data-length-um="4000000" x="2454.5" y="854.5" font-size="81.8" fill="#444444" text-anchor="middle" dominant-baseline="middle" transform="rotate(0.0 2454.5 854.5)">4000 mm</text>
+<text data-wall-index="3" data-length-um="5000000" x="309.1" y="3500.0" font-size="81.8" fill="#444444" text-anchor="middle" dominant-baseline="middle" transform="rotate(90.0 309.1 3500.0)">5000 mm</text>
+<line x1="454.5" y1="6340.9" x2="1454.5" y2="6340.9" stroke="#111111" stroke-width="16.4"/>
+<text x="1500.0" y="6340.9" font-size="68.2" fill="#111111" dominant-baseline="central">1000 mm</text>
+<text x="4909.1" y="1054.5" font-size="86.4" font-weight="bold" fill="#1b1b1b">Keep clear</text>
+<rect x="4909.1" y="1113.6" width="100.0" height="72.7" fill="#e4572e" fill-opacity="0.35" stroke="#333333" stroke-width="4.5"/>
+<text x="5054.5" y="1177.3" font-size="68.2" fill="#333333">Door swing (keep clear)</text>
+<rect x="4909.1" y="1209.1" width="100.0" height="72.7" fill="#f6c445" fill-opacity="0.35" stroke="#333333" stroke-width="4.5"/>
+<text x="5054.5" y="1272.7" font-size="68.2" fill="#333333">Entrance clear zone</text>
+</svg>
