@@ -326,3 +326,41 @@ describe('determinism', () => {
     expect(elapsed).toBeLessThan(1000);
   });
 });
+
+describe('single-sided units back to back', () => {
+  // Wall shelf: 1200 wide, 400 deep. Two of them back to back around y = 4000 in an 8 m room.
+  const room = rectRoom(8000, 8000);
+  const pair = [
+    place('north', testWallShelf, 6000, 4200, 0), // back on y = 4000, front faces +y
+    place('south', testWallShelf, 6000, 3800, 180), // back on y = 4000, front faces -y
+  ];
+
+  it('accepts a pair standing back to back in the open floor', () => {
+    expect(rules(room, pair)).toEqual([]);
+  });
+
+  it('rejects one of them alone: its back would show', () => {
+    expect(rules(room, [pair[0]!])).toEqual(['wall-unit-not-on-wall']);
+  });
+
+  it('rejects a pair whose backs are apart, or that only half cover each other', () => {
+    const apart = [pair[0]!, place('south', testWallShelf, 6000, 3700, 180)];
+    expect(rules(room, apart).filter((r) => r === 'wall-unit-not-on-wall')).toHaveLength(2);
+    const shifted = [pair[0]!, place('south', testWallShelf, 6600, 3800, 180)];
+    expect(rules(room, shifted).filter((r) => r === 'wall-unit-not-on-wall')).toHaveLength(2);
+  });
+
+  it('accepts a long unit backed by two short ones', () => {
+    const backed = [
+      place('long', testWallShelf, 6000, 4200, 0), // x 5400..6600
+      place('t1', testTower, 5700, 3700, 180), // 600 wide: x 5400..6000, back on y = 4000
+      place('t2', testTower, 6300, 3700, 180), // x 6000..6600
+    ];
+    expect(rules(room, backed)).toEqual([]);
+  });
+
+  it('two units facing the same way are not back to back', () => {
+    const same = [pair[0]!, place('south', testWallShelf, 6000, 3800, 0)];
+    expect(rules(room, same)).toContain('wall-unit-not-on-wall');
+  });
+});
