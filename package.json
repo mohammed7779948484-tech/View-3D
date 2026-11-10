@@ -10,6 +10,10 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "build": "electron-vite build",
+    "test:e2e": "electron-vite build && playwright test",
+    "package:win": "electron-vite build && electron-builder --win nsis --x64 --publish never",
+    "package:dir": "electron-vite build && electron-builder --dir --publish never",
     "snapshots:update": "vitest run --config vitest.update.config.ts",
     "snapshots:png": "vitest run --config vitest.png.config.ts"
   },
@@ -18,10 +22,23 @@
     "zod": "4.6.7"
   },
   "devDependencies": {
+    "@playwright/test": "1.65.0",
     "@resvg/resvg-js": "2.6.2",
     "@types/node": "22.20.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.3.0",
+    "electron": "45.3.0",
+    "electron-builder": "26.18.0",
+    "electron-vite": "6.0.0",
     "fast-check": "4.10.2",
+    "i18next": "27.1.1",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "react-i18next": "18.0.1",
     "typescript": "7.0.2",
+    "vite": "8.3.7",
     "vitest": "5.1.0"
-  }
+  },
+  "main": "out/main/index.js"
 }
