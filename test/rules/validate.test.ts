@@ -5,6 +5,7 @@ import { wallSegments } from '../../src/geometry/index';
 import { defaultConfig, footprint, snapToWall, validateLayout } from '../../src/rules/index';
 import { angledWall, lShapeWithColumn, protectedDoorway } from '../fixtures/rooms';
 import {
+  testBin,
   testCounterLong,
   testGondolaDouble,
   testProducts,
@@ -98,9 +99,17 @@ describe('blocked-door', () => {
     expect(v[1]!.message).toMatch(/entrance/);
   });
 
-  it('accepts a fixture just beyond the entrance clear zone', () => {
-    // Zone is 1525 mm deep; showcase depth 500 centred at 1775 starts exactly at 1525.
-    expect(rules(protectedDoorway, [place('s', testShowcase, 3500, 1775)])).not.toContain('blocked-door');
+  it('accepts a fixture that starts exactly where the decompression zone ends', () => {
+    // The zone is a third of the 5 m shop depth: 1666.667 mm. Showcase depth 500, so its centre is 250 mm further.
+    const touching = { ...place('s', testShowcase, 3500, 0), center: { x: mm(3500), y: 1_666_667 + mm(250) } };
+    expect(rules(protectedDoorway, [touching])).not.toContain('blocked-door');
+    const inside = { ...touching, center: { x: mm(3500), y: 1_666_667 + mm(250) - mm(10) } };
+    expect(rules(protectedDoorway, [inside])).toContain('blocked-door');
+  });
+
+  it('keeps the way straight in from the entrance clear, beyond the door approach', () => {
+    // 1525 mm (door approach) < 1900 mm < 2333 mm (a third of the 7 m deep L-shaped shop).
+    expect(rules(lShapeWithColumn, [place('g', testGondolaDouble, 4500, 1900 + 450)])).toContain('blocked-door');
   });
 });
 
@@ -116,9 +125,14 @@ describe('window-blocked', () => {
     expect(v[0]!.openingId).toBe('window-1');
   });
 
-  it('accepts a low showcase under the window', () => {
-    // Showcase height 1000 mm is not tall (threshold 1372 mm).
-    expect(rules(lShapeWithColumn, [place('s', testShowcase, 250, 3500, 270)])).not.toContain('window-blocked');
+  it('rejects anything higher than the sill, even a low showcase: 1000 mm against a 900 mm sill', () => {
+    const v = ofRule(validateLayout(makeDoc(lShapeWithColumn, testProducts, [place('s', testShowcase, 250, 3500, 270)])), 'window-blocked');
+    expect(v).toHaveLength(1);
+    expect([v[0]!.measuredUm, v[0]!.requiredUm]).toEqual([mm(1000), mm(900)]);
+  });
+
+  it('accepts a fixture that is not higher than the sill: 900 mm bin under a 900 mm sill', () => {
+    expect(rules(lShapeWithColumn, [place('bin', testBin, 400, 3500, 270)])).not.toContain('window-blocked');
   });
 
   it('accepts a tall unit below a high window (sill above the unit)', () => {
@@ -194,16 +208,16 @@ describe('snapToWall', () => {
 });
 
 describe('access-blocked', () => {
-  it('rejects two gondolas facing each other 800 mm apart and accepts 900 mm', () => {
+  it('rejects two gondolas facing each other 815 mm apart and accepts 915 mm', () => {
     // Depth 900 -> front at centre + 450. a faces +y, b sits above it.
     const pair = (gapMm: number) => [
-      place('a', testGondolaDouble, 4000, 3000),
-      place('b', testGondolaDouble, 4000, 3000 + 900 + gapMm),
+      place('a', testGondolaDouble, 6200, 3000),
+      place('b', testGondolaDouble, 6200, 3000 + 900 + gapMm),
     ];
-    const narrow = ofRule(validateLayout(makeDoc(rectRoom(8000, 8000), testProducts, pair(800))), 'access-blocked');
+    const narrow = ofRule(validateLayout(makeDoc(rectRoom(8000, 8000), testProducts, pair(815))), 'access-blocked');
     expect(narrow.map((v) => v.placementIds)).toEqual([['a', 'b'], ['b', 'a']]);
-    expect(narrow[0]!.requiredUm).toBe(mm(900));
-    expect(rules(rectRoom(8000, 8000), pair(900))).toEqual([]);
+    expect(narrow[0]!.requiredUm).toBe(mm(915));
+    expect(rules(rectRoom(8000, 8000), pair(915))).toEqual([]);
   });
 
   it('rejects a fixture whose access zone runs through a wall', () => {
@@ -234,15 +248,15 @@ describe('unreachable and aisle-too-narrow', () => {
     place('shelf', testWallShelf, 1500, 8800, 180),
   ];
 
-  it('passes when the gap past the barrier is 900 mm', () => {
-    expect(rules(roomOfWidth(3300), layout)).toEqual([]);
+  it('passes when the gap past the barrier is 915 mm', () => {
+    expect(rules(roomOfWidth(3315), layout)).toEqual([]);
   });
 
   it('reports aisle-too-narrow for what lies beyond a 700 mm gap', () => {
     const v = validateLayout(makeDoc(roomOfWidth(3100), testProducts, layout));
     const narrow = ofRule(v, 'aisle-too-narrow');
     expect(narrow.map((x) => x.placementIds[0])).toEqual(['g1', 'g2', 'shelf']);
-    expect(narrow[0]!.requiredUm).toBe(mm(900));
+    expect(narrow[0]!.requiredUm).toBe(mm(915));
     expect(ofRule(v, 'unreachable')).toEqual([]);
   });
 
@@ -299,7 +313,7 @@ describe('determinism', () => {
   it('validates 40 fixtures quickly', () => {
     const placements: Placement[] = [];
     for (let i = 0; i < 40; i++) {
-      placements.push(place(`g${String(i).padStart(2, '0')}`, testGondolaDouble, 2000 + (i % 8) * 2400, 3000 + Math.floor(i / 8) * 2700));
+      placements.push(place(`g${String(i).padStart(2, '0')}`, testGondolaDouble, 2000 + (i % 8) * 2400, 4200 + Math.floor(i / 8) * 2600));
     }
     const room = rectRoom(22000, 16000);
     const doc = makeDoc(room, testProducts, placements);

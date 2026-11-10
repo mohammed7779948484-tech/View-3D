@@ -1,13 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import {
-  TALL_THRESHOLD_UM,
-  findProduct,
-  isPlaceable,
-  isTall,
-  seedProducts,
-} from '../../src/catalog/index';
+import { findProduct, isPlaceable, seedProducts } from '../../src/catalog/index';
 import { ProductSchema } from '../../src/core/index';
-import type { Variant } from '../../src/core/index';
 
 const IN = 25400;
 const FT = 304800;
@@ -22,7 +15,7 @@ const STATED: {
   priceCents: number;
   asWritten: string | null;
   unitUm: number;
-  sizes: ([number, number, number] | null)[];
+  sizes: ([number | null, number | null, number | null] | null)[];
 }[] = [
   {
     name: '6FT EXTRA VIEW SHOWCASE',
@@ -57,7 +50,8 @@ const STATED: {
     priceCents: 45000,
     asWritten: '48(inside )*24*54inch',
     unitUm: IN,
-    sizes: [[48, 24, 54]],
+    // 48 in is the INSIDE width; the outer width is not stated, so the footprint is unknown.
+    sizes: [[null, 24, 54]],
   },
   {
     name: 'Gondola 4 feet',
@@ -130,10 +124,11 @@ describe('catalog seed', () => {
       if (size === null) {
         expect(dims).toEqual([null, null, null]);
       } else {
-        expect(dims).toEqual(size.map((n) => n * stated.unitUm));
+        expect(dims).toEqual(size.map((n) => (n === null ? null : n * stated.unitUm)));
       }
     });
-    expect(product.verification).toBe(stated.sizes.includes(null) ? 'unknown' : 'unverified');
+    const incomplete = stated.sizes.some((size) => size === null || size.includes(null));
+    expect(product.verification).toBe(incomplete ? 'unknown' : 'unverified');
   });
 
   it('every seed product has a source url on the owner site', () => {
@@ -159,14 +154,14 @@ describe('catalog seed', () => {
   it('carries the flags for the doubtful pages', () => {
     const flagsOf = (name: string): string[] => seedProducts.find((p) => p.name === name)?.flags ?? [];
     expect(flagsOf('4 FT FULL VIEW LED lights Showcase')).toContain(
-      'title says 4 FT but the page text says 72 in; confirm length with the owner',
+      'title says 4 FT but the page text says 72 in; the owner says 72 in, pending his final confirmation',
     );
     expect(flagsOf('Counter')).toContain('axis order not stated on the page; assumed width x depth x height');
     expect(flagsOf('Gondola wood 4 feet')).toContain(
-      '48 in is stated as the inside width; outside width is not stated',
+      '48 in is the inside width; the outer width is not stated, so it cannot be placed until the owner gives it',
     );
     expect(flagsOf('Stand showcases')).toContain(
-      'axis order and unit not stated on the page; assumed width x depth x height in inches',
+      'size confirmed by the owner on 2026-11-10: width 48 x depth 20 x height 72 in; price not confirmed',
     );
     for (const name of [
       'Showcase 6 feet',
@@ -221,24 +216,9 @@ describe('catalog helpers', () => {
     expect(isPlaceable(partial, v.id)).toBe(false);
   });
 
-  it('isTall uses a 1372 mm threshold, strictly greater', () => {
-    expect(TALL_THRESHOLD_UM).toBe(1_372_000);
-    const variant = (heightUm: number | null): Variant => ({
-      id: 'v',
-      label: 'v',
-      widthUm: 1_000_000,
-      depthUm: 500_000,
-      heightUm,
-    });
-    expect(isTall(variant(54 * IN))).toBe(false); // the 54 in gondola is not tall
-    expect(isTall(variant(1_372_000))).toBe(false); // exactly at the threshold is not tall
-    expect(isTall(variant(1_372_001))).toBe(true);
-    expect(isTall(variant(72 * IN))).toBe(true);
-    expect(isTall(variant(null))).toBe(false); // unknown height is never called tall
-  });
-
-  it('classifies the seed: the 5 ft gondola and the 72 in stand showcase are tall', () => {
-    const tallNames = seedProducts.filter((p) => p.variants.some(isTall)).map((p) => p.name);
-    expect(tallNames).toEqual(['Gondola 4 feet', 'Stand showcases']);
+  it('the wood gondola is single-sided (a wall unit) and not placeable while its outer width is unknown', () => {
+    const wood = seedProducts.find((p) => p.id === 'nhf-jan')!;
+    expect(wood.placement).toBe('wall');
+    expect(isPlaceable(wood, 'default')).toBe(false);
   });
 });

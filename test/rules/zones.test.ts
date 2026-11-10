@@ -16,11 +16,12 @@ const bounds = (polygon: readonly { x: number; y: number }[]) => ({
 describe('config', () => {
   it('has the planning numbers from NOTES.md, each with a source', () => {
     expect(defaultConfig.mainAisleUm).toBe(mm(1200));
-    expect(defaultConfig.secondaryAisleUm).toBe(mm(900));
+    expect(defaultConfig.secondaryAisleUm).toBe(mm(915));
     expect(defaultConfig.staffSpaceUm).toBe(mm(915));
     expect(defaultConfig.doorApproachDepthUm).toBe(mm(1525));
     expect(defaultConfig.doorLatchSideUm).toBe(mm(455));
-    expect(defaultConfig.entranceClearDepthUm).toBe(mm(1500));
+    expect(defaultConfig.entranceDecompressionDepthUm).toBe(mm(3000));
+    expect(defaultConfig.entranceDecompressionShare).toBeCloseTo(1 / 3, 12);
     expect(defaultConfig.wallSnapMaxGapUm).toBe(2);
     expect(defaultConfig.wallSnapDistanceUm).toBe(mm(300));
     expect(defaultConfig.windowBandDepthUm).toBe(mm(600));
@@ -38,16 +39,17 @@ describe('keepClearZones', () => {
     expect(zones.map((z) => [z.id, z.kind, z.openingId])).toEqual([
       ['entrance:door-swing', 'door-swing', 'entrance'],
       ['entrance:entrance-clear', 'entrance-clear', 'entrance'],
+      ['entrance:decompression', 'decompression', 'entrance'],
       ['back-room-door:door-swing', 'door-swing', 'back-room-door'],
       ['back-room-door:door-approach', 'door-approach', 'back-room-door'],
     ]);
     for (const zone of zones) expect(zone.reason).toMatch(/\S/);
 
     // Entrance: x 3000..4000, hinge at the start (x = 3000), so the latch side is the end:
-    // 455 mm more to the right, and max(1525, 1500) = 1525 mm deep.
+    // 455 mm more to the right, 1525 mm deep (the door approach).
     expect(zones[1]!.polygon).toEqual([pt(3000, 0), pt(4455, 0), pt(4455, 1525), pt(3000, 1525)]);
     // Back-room door on the right wall: y 3000..3900, hinge at y = 3000, latch side up.
-    expect(bounds(zones[3]!.polygon)).toEqual({ minX: mm(5475), maxX: mm(7000), minY: mm(3000), maxY: mm(4355) });
+    expect(bounds(zones[4]!.polygon)).toEqual({ minX: mm(5475), maxX: mm(7000), minY: mm(3000), maxY: mm(4355) });
 
     // Swing zones are clipped to the room and cover the swept quarter disc (radius = door width).
     const swing = zones[0]!.polygon;
@@ -59,10 +61,17 @@ describe('keepClearZones', () => {
     expect(areaMm2(swing)).toBeLessThan(quarterDisc * 1.02);
   });
 
-  it('uses the entrance clear depth when it is the larger number', () => {
-    const zones = keepClearZones(protectedDoorway, { ...defaultConfig, entranceClearDepthUm: mm(2000) });
-    expect(bounds(zones[1]!.polygon).maxY).toBe(mm(2000));
-    expect(bounds(zones[3]!.polygon).minX).toBe(mm(7000 - 1525)); // the other door is unchanged
+  it('decompression zone: straight in from the entrance, door wide, a third of the shop depth, at most 3 m', () => {
+    // protectedDoorway is 5 m deep from the entrance wall: one third is 1666.667 mm.
+    const zones = keepClearZones(protectedDoorway, defaultConfig);
+    expect(zones[2]!.polygon).toEqual([pt(3000, 0), pt(4000, 0), { x: mm(4000), y: 1_666_667 }, { x: mm(3000), y: 1_666_667 }]);
+    // A 12 m deep shop: a third would be 4 m, so the 3 m cap applies.
+    const deep: Room = { ...protectedDoorway, outline: [pt(0, 0), pt(7000, 0), pt(7000, 12000), pt(0, 12000)] };
+    expect(bounds(keepClearZones(deep, defaultConfig)[2]!.polygon).maxY).toBe(mm(3000));
+    // Both numbers come from the config.
+    const custom = keepClearZones(deep, { ...defaultConfig, entranceDecompressionDepthUm: mm(2000), entranceDecompressionShare: 0.5 });
+    expect(bounds(custom[2]!.polygon).maxY).toBe(mm(2000));
+    expect(bounds(custom[4]!.polygon).minX).toBe(mm(7000 - 1525)); // the other door is unchanged
   });
 
   it('a door that swings out has no swing zone and no latch-side extension; windows give nothing', () => {
@@ -74,7 +83,7 @@ describe('keepClearZones', () => {
       ],
     };
     const zones = keepClearZones(room, defaultConfig);
-    expect(zones.map((z) => z.id)).toEqual(['entrance:entrance-clear']);
+    expect(zones.map((z) => z.id)).toEqual(['entrance:entrance-clear', 'entrance:decompression']);
     expect(zones[0]!.polygon).toEqual([pt(3000, 0), pt(4000, 0), pt(4000, 1525), pt(3000, 1525)]);
   });
 
@@ -106,6 +115,8 @@ describe('keepClearZones', () => {
       'entrance:door-swing#2',
       'entrance:entrance-clear#1',
       'entrance:entrance-clear#2',
+      'entrance:decompression#1',
+      'entrance:decompression#2',
     ]);
     expect(zones[2]!.polygon).toEqual([pt(500, 0), pt(1955, 0), pt(1955, 700), pt(500, 700)]);
     expect(zones[3]!.polygon).toEqual([pt(500, 800), pt(1955, 800), pt(1955, 1525), pt(500, 1525)]);
@@ -129,12 +140,12 @@ describe('footprint', () => {
 describe('accessZones', () => {
   const variantOf = (product: Product) => product.variants[0]!;
 
-  it('wall unit: one customer zone in front, full width, secondary aisle deep', () => {
+  it('wall unit: one customer zone in front, full width, secondary aisle (915 mm) deep', () => {
     const p = place('shelf', testWallShelf, 1000, 200); // back on y = 0, front at y = 400
     const zones = accessZones(p, testWallShelf, variantOf(testWallShelf), defaultConfig);
     expect(zones).toHaveLength(1);
-    expect(zones[0]).toMatchObject({ kind: 'customer', side: 'front', depthUm: mm(900) });
-    expect(rectCorners(zones[0]!.rect)).toEqual([pt(400, 400), pt(1600, 400), pt(1600, 1300), pt(400, 1300)]);
+    expect(zones[0]).toMatchObject({ kind: 'customer', side: 'front', depthUm: mm(915) });
+    expect(rectCorners(zones[0]!.rect)).toEqual([pt(400, 400), pt(1600, 400), pt(1600, 1315), pt(400, 1315)]);
   });
 
   it('uses the product front clearance when it is larger than the secondary aisle', () => {
@@ -147,12 +158,12 @@ describe('accessZones', () => {
     const p = place('g', testGondolaDouble, 3000, 3000, 90); // front faces -x
     const zones = accessZones(p, testGondolaDouble, variantOf(testGondolaDouble), defaultConfig);
     expect(zones.map((z) => [z.kind, z.side, z.depthUm])).toEqual([
-      ['customer', 'front', mm(900)],
-      ['customer', 'back', mm(900)],
+      ['customer', 'front', mm(915)],
+      ['customer', 'back', mm(915)],
     ]);
     const xs = (i: number) => rectCorners(zones[i]!.rect).map((c) => c.x);
-    expect([Math.min(...xs(0)), Math.max(...xs(0))]).toEqual([mm(3000 - 450 - 900), mm(3000 - 450)]);
-    expect([Math.min(...xs(1)), Math.max(...xs(1))]).toEqual([mm(3000 + 450), mm(3000 + 450 + 900)]);
+    expect([Math.min(...xs(0)), Math.max(...xs(0))]).toEqual([mm(3000 - 450 - 915), mm(3000 - 450)]);
+    expect([Math.min(...xs(1)), Math.max(...xs(1))]).toEqual([mm(3000 + 450), mm(3000 + 450 + 915)]);
   });
 
   it('counter: main aisle on the customer side, staff space behind', () => {

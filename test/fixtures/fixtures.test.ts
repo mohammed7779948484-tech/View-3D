@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isPlaceable, isTall, seedProducts } from '../../src/catalog/index';
+import { isPlaceable, seedProducts } from '../../src/catalog/index';
 import { ProductSchema, RoomSchema, parseDesignDocument } from '../../src/core/index';
 import type { Opening, Point, Room } from '../../src/core/index';
 import { testProducts } from './products';
@@ -91,11 +91,10 @@ describe('fixture products', () => {
     }
   });
 
-  it('are all placeable, and the tall ones are the ones above 1372 mm', () => {
+  it('are all placeable', () => {
     for (const product of testProducts) {
       for (const variant of product.variants) {
         expect(isPlaceable(product, variant.id)).toBe(true);
-        expect(isTall(variant)).toBe(variant.heightUm! > 1372 * MM);
       }
     }
   });

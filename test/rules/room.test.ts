@@ -116,7 +116,7 @@ describe('several entrances', () => {
   // from its own side, but a fixture must be reachable from EVERY entrance.
   const room: Room = { ...rectRoom(6000, 8000), openings: [door('entrance', 0, 2500, 1000, true), door('second', 2, 2500, 1000, true)] };
   it('keeps a clear zone inside each entrance', () => {
-    const top = validateLayout(makeDoc(room, testProducts, [place('g', testGondolaDouble, 3000, 7400)]));
+    const top = validateLayout(makeDoc(room, testProducts, [place('g', testGondolaDouble, 3000, 6200)]));
     expect(top.map((v) => [v.rule, v.openingId])).toContainEqual(['blocked-door', 'second']);
   });
 
