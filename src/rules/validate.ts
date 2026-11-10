@@ -20,10 +20,13 @@ import {
 import type { OrientedRect, Point, PolygonWithHoles, WallSegment } from '../geometry/index';
 import { defaultConfig } from './config';
 import type { PlanningConfig } from './config';
+import { entrancesOf, validateRoom } from './room';
 import { accessZones, footprint, keepClearZones, openingBand } from './zones';
 import type { AccessZone } from './zones';
 
 export type RuleId =
+  | 'invalid-room'
+  | 'unknown-product'
   | 'overlap'
   | 'outside-room'
   | 'column'
@@ -74,7 +77,9 @@ export function placedFixtures(doc: DesignDocument, config: PlanningConfig): Pla
   for (const placement of sorted) {
     const product = doc.products.find((p) => p.id === placement.productId);
     const variant = product?.variants.find((v) => v.id === placement.variantId);
-    if (product === undefined || variant === undefined) continue; // the schema rejects these
+    // Placements without a known product, variant or size are reported by validateLayout
+    // ('unknown-product'); they have no footprint, so they cannot take part in the other rules.
+    if (product === undefined || variant === undefined || variant.widthUm === null || variant.depthUm === null) continue;
     const rect = footprint(placement, variant);
     out.push({
       placement,
@@ -123,19 +128,18 @@ function distanceToOutline(p: Point, polygon: readonly Point[]): number {
   return best;
 }
 
-/** The entrance door of a room, if it has one. */
+/** The main entrance of a room (the first entrance door in document order), if it has one. */
 export function entranceOf(room: Room): Opening | undefined {
-  return room.openings.find((o) => o.door?.isEntrance === true);
+  return entrancesOf(room)[0];
 }
 
-/** The connected piece of walkable floor a person stepping through the entrance stands on. */
+/** The connected piece of walkable floor a person stepping through `entrance` stands on. */
 export function entrancePiece(
   room: Room,
+  entrance: Opening,
   region: readonly PolygonWithHoles[],
   widthUm: number,
 ): PolygonWithHoles | undefined {
-  const entrance = entranceOf(room);
-  if (entrance === undefined) return undefined;
   const band = openingBand(room, entrance, widthUm / 2 + ENTRANCE_PROBE_EXTRA_UM);
   if (band === null) return undefined;
   const probe = { x: round((band[2]!.x + band[3]!.x) / 2), y: round((band[2]!.y + band[3]!.y) / 2) };
@@ -235,14 +239,48 @@ export function snapToWall(room: Room, rect: OrientedRect, config: PlanningConfi
 // The rules
 
 /**
- * All rule violations of a document, sorted by rule and fixture ids.
- * The main-aisle rule is skipped when the layout has no checkout counter, and the walking rules
- * are skipped when the room has no entrance.
+ * All rule violations of a document, sorted by rule and fixture ids. [] means the layout is valid
+ * and that every rule was really checked:
+ * - a room that fails `validateRoom` (broken outline, opening off its wall, no entrance, ...)
+ *   gives 'invalid-room' errors and nothing else, because the other rules need a sound room;
+ * - a placement without a known product, variant or size gives 'unknown-product';
+ * - with several entrances, every fixture must be reachable from each of them;
+ * - the main-aisle rule applies only when the layout has a checkout counter, and is measured
+ *   from the main (first) entrance.
  */
 export function validateLayout(doc: DesignDocument, config: PlanningConfig = defaultConfig): Violation[] {
   const room = doc.room;
+  const roomProblems = validateRoom(room);
+  if (roomProblems.length > 0) {
+    return roomProblems.map((p) => ({
+      rule: 'invalid-room' as const,
+      severity: 'error' as const,
+      placementIds: [],
+      ...(p.openingId === undefined ? {} : { openingId: p.openingId }),
+      message: p.message,
+    }));
+  }
   const fixtures = placedFixtures(doc, config);
   const out: Violation[] = [];
+  for (const placement of doc.placements) {
+    const product = doc.products.find((p) => p.id === placement.productId);
+    const variant = product?.variants.find((v) => v.id === placement.variantId);
+    if (product === undefined || variant === undefined) {
+      out.push({
+        rule: 'unknown-product',
+        severity: 'error',
+        placementIds: [placement.id],
+        message: `Placement "${placement.id}" refers to product "${placement.productId}" / "${placement.variantId}", which is not in the document.`,
+      });
+    } else if (variant.widthUm === null || variant.depthUm === null) {
+      out.push({
+        rule: 'unknown-product',
+        severity: 'error',
+        placementIds: [placement.id],
+        message: `"${product.name}" (${placement.id}) has no known size, so it cannot be checked or drawn.`,
+      });
+    }
+  }
   const label = (f: PlacedFixture): string => `"${f.product.name}" (${f.placement.id})`;
 
   // 1. overlap
@@ -361,15 +399,19 @@ export function validateLayout(doc: DesignDocument, config: PlanningConfig = def
   }
 
   // 8 and 9. walking: unreachable, aisle-too-narrow, main-aisle
-  const entrance = entranceOf(room);
-  if (entrance !== undefined && fixtures.length > 0) {
+  const entrances = entrancesOf(room); // validateRoom guarantees at least one
+  if (fixtures.length > 0) {
     const obstacles: Point[][] = [...fixtures.map((f) => f.corners), ...room.columns.map((c) => c.outline)];
-    const pieceAt = (widthUm: number): PolygonWithHoles | undefined =>
-      entrancePiece(room, walkableRegion(room, obstacles, widthUm, config), widthUm);
-    const secondary = pieceAt(config.secondaryAisleUm);
-    const passage = pieceAt(config.staffPassageUm);
-    const touches = (zone: AccessZone, piece: PolygonWithHoles | undefined): boolean =>
-      piece !== undefined && rectTouchesPiece(zone.rect, piece);
+    // For one aisle width: the floor a walker can stand on, as seen from each entrance.
+    const piecesAt = (widthUm: number, from: readonly Opening[]): (PolygonWithHoles | undefined)[] => {
+      const region = walkableRegion(room, obstacles, widthUm, config);
+      return from.map((e) => entrancePiece(room, e, region, widthUm));
+    };
+    const secondary = piecesAt(config.secondaryAisleUm, entrances);
+    const passage = piecesAt(config.staffPassageUm, entrances);
+    // Reachable means reachable from every entrance.
+    const touches = (zone: AccessZone, pieces: readonly (PolygonWithHoles | undefined)[]): boolean =>
+      pieces.every((piece) => piece !== undefined && rectTouchesPiece(zone.rect, piece));
 
     for (const f of fixtures) {
       const open = f.zones.filter((z) => !blockedZones.has(`${f.placement.id}/${z.side}`));
@@ -409,7 +451,7 @@ export function validateLayout(doc: DesignDocument, config: PlanningConfig = def
     const counter = fixtures.find((f) => f.product.placement === 'counter');
     const front = counter?.zones.find((z) => z.kind === 'customer');
     if (counter !== undefined && front !== undefined && touches(front, secondary)) {
-      if (!touches(front, pieceAt(config.mainAisleUm))) {
+      if (!touches(front, piecesAt(config.mainAisleUm, entrances.slice(0, 1)))) {
         out.push({
           rule: 'main-aisle',
           severity: 'error',

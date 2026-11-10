@@ -34,8 +34,9 @@ import {
   keepClearZones,
   openingBand,
   validateLayout,
+  validateRoom,
 } from '../rules/index';
-import type { AccessZone, KeepClearZone, PlanningConfig } from '../rules/index';
+import type { AccessZone, KeepClearZone, PlanningConfig, RoomProblem } from '../rules/index';
 
 // ---------------------------------------------------------------------------------------------
 // Public types
@@ -103,7 +104,12 @@ export type LayoutOption = {
   aisles: MeasuredAisle[];
 };
 
-export type LayoutResult = { options: LayoutOption[] };
+export type LayoutResult = {
+  /** Ranked options, best first. Empty when the room has problems. */
+  options: LayoutOption[];
+  /** Why the room cannot be laid out (see `validateRoom`); empty for a sound room. */
+  problems: RoomProblem[];
+};
 
 // ---------------------------------------------------------------------------------------------
 // Constants (every number named)
@@ -786,6 +792,8 @@ function counterWalls(request: LayoutRequest): number[] {
  * list of what did not fit and why.
  */
 export function autoLayout(request: LayoutRequest): LayoutResult {
+  const problems = validateRoom(request.room);
+  if (problems.length > 0) return { options: [], problems };
   const wallsForCounter: (number | null)[] = counterWalls(request);
   if (wallsForCounter.length === 0) wallsForCounter.push(null);
   const strategies: LayoutStrategy[] = [];
@@ -809,5 +817,8 @@ export function autoLayout(request: LayoutRequest): LayoutResult {
     results.push(result);
   }
   results.sort((a, b) => b.score - a.score || cmp(a.strategy.id, b.strategy.id));
-  return { options: results.slice(0, request.maxOptions ?? DEFAULT_MAX_OPTIONS).map((r, i) => ({ rank: i + 1, ...r })) };
+  return {
+    options: results.slice(0, request.maxOptions ?? DEFAULT_MAX_OPTIONS).map((r, i) => ({ rank: i + 1, ...r })),
+    problems: [],
+  };
 }
