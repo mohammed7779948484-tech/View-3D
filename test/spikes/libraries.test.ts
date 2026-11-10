@@ -3,6 +3,13 @@
  * If a library upgrade breaks one of these, the upgrade is rejected.
  */
 import { describe, expect, it } from 'vitest';
+import { existsSync, readFileSync, rmSync } from 'node:fs';
+import { join, resolve } from 'node:path';
+import { build } from 'electron-vite';
+import i18next from 'i18next';
+import { I18nextProvider, initReactI18next, useTranslation } from 'react-i18next';
+import { createElement } from 'react';
+import { renderToString } from 'react-dom/server';
 import fc from 'fast-check';
 import { z } from 'zod';
 import { Resvg } from '@resvg/resvg-js';
@@ -58,5 +65,35 @@ describe('spike: @resvg/resvg-js (SVG to PNG)', () => {
     expect(png.width).toBe(400);
     expect(png.height).toBe(200);
     expect(Array.from(png.asPng().subarray(1, 4))).toEqual([0x50, 0x4e, 0x47]); // "PNG"
+  });
+});
+
+describe('spike: electron-vite 6 (build main, preload, renderer)', () => {
+  const dir = resolve(import.meta.dirname, 'electron-vite-app');
+  it('builds the three targets with a CommonJS preload and relative renderer paths', async () => {
+    rmSync(join(dir, 'out'), { recursive: true, force: true });
+    await build({ configFile: join(dir, 'electron.vite.config.mjs'), root: dir });
+    expect(existsSync(join(dir, 'out/main/index.js'))).toBe(true);
+    expect(existsSync(join(dir, 'out/preload/index.cjs'))).toBe(true);
+    const html = readFileSync(join(dir, 'out/renderer/index.html'), 'utf8');
+    expect(html).toMatch(/<script[^>]*src="\.\/assets\//);
+    expect(readFileSync(join(dir, 'out/preload/index.cjs'), 'utf8')).toContain('require("electron")');
+  }, 120_000);
+});
+
+describe('spike: i18next + react-i18next', () => {
+  const instance = i18next.createInstance();
+  instance.use(initReactI18next).init({
+    lng: 'en',
+    initAsync: false,
+    resources: { en: { translation: { start: { noProject: 'No project is open.' } } } },
+  });
+
+  it('renders a translated string and knows text direction', () => {
+    const Hello = () => createElement('p', null, useTranslation().t('start.noProject'));
+    const html = renderToString(createElement(I18nextProvider, { i18n: instance }, createElement(Hello)));
+    expect(html).toContain('No project is open.');
+    expect(instance.dir('ar')).toBe('rtl');
+    expect(instance.dir('en')).toBe('ltr');
   });
 });
