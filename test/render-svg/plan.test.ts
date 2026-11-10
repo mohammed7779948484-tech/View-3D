@@ -159,3 +159,27 @@ describe('PNG export', () => {
     }
   });
 });
+
+describe('unverified and assumed sizes are visible on the drawing itself', () => {
+  const showcase = seedProducts.find((p) => p.id === 'nhf-6ft-extra-view-showcase')!;
+  const counter = seedProducts.find((p) => p.id === 'nhf-c')!; // axis order assumed
+  const svg = renderPlanSvg(makeDoc(lShapeWithColumn, [showcase, counter], [place('x', showcase, 2000, 5000), place('c', counter, 2000, 3000)]));
+
+  it('says so in the title block', () => {
+    expect(svg).toContain('Sizes marked * are from the website and not yet confirmed by the owner');
+  });
+
+  it('marks each such fixture on the plan with an asterisk', () => {
+    expect(svg).toMatch(/data-label-for="x"[^>]*>A\*</);
+  });
+
+  it('says in the legend which sizes rest on an assumption', () => {
+    expect(svg).toContain('size assumed');
+  });
+
+  it('a verified product carries no mark', () => {
+    const verified = renderPlanSvg(makeDoc(lShapeWithColumn, testProducts, [place('x', testShowcase, 2000, 5000)]));
+    expect(verified).not.toContain('not yet confirmed');
+    expect(verified).toMatch(/data-label-for="x"[^>]*>A</);
+  });
+});

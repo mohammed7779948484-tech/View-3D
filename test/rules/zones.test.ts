@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Product, Room } from '../../src/core/index';
 import { areaMm2, pointInPolygon, rectCorners } from '../../src/geometry/index';
-import { accessZones, configSources, defaultConfig, footprint, keepClearZones } from '../../src/rules/index';
+import { accessZones, adjacentRect, configSources, defaultConfig, footprint, keepClearZones } from '../../src/rules/index';
 import { protectedDoorway } from '../fixtures/rooms';
 import { testCounterLong, testGondolaDouble, testShowcase, testWallShelf } from '../fixtures/products';
 import { mm, place, pt } from './helpers';
@@ -174,5 +174,19 @@ describe('accessZones', () => {
       ['staff', 'back', mm(915)],
     ]);
     expect(rectCorners(zones[1]!.rect)).toEqual([pt(2100, 1785), pt(3900, 1785), pt(3900, 2700), pt(2100, 2700)]);
+  });
+});
+
+describe('access zones on turned fixtures', () => {
+  it('stay exactly in line with a thin fixture at an odd angle', () => {
+    // A 1200 x 50 mm panel turned by 33.3 degrees: its zone must not drift sideways.
+    const rect = { center: pt(3000, 3000), widthUm: mm(1200), depthUm: mm(50), rotationUdeg: 33_300_000 };
+    const zone = adjacentRect(rect, 'front', mm(915));
+    const a = (33.3 * Math.PI) / 180;
+    const along = { x: Math.cos(a), y: Math.sin(a) };
+    const sideways = (zone.center.x - rect.center.x) * along.x + (zone.center.y - rect.center.y) * along.y;
+    expect(Math.abs(sideways)).toBeLessThan(2); // micrometres
+    const ahead = (zone.center.x - rect.center.x) * -along.y + (zone.center.y - rect.center.y) * along.x;
+    expect(Math.abs(ahead - (mm(25) + mm(457.5)))).toBeLessThan(2);
   });
 });
