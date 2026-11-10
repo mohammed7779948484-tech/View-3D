@@ -31,6 +31,7 @@ from the folder's index, not from files inside another folder.
 | `src/rules` | Planning numbers and every validity rule | `defaultConfig`, `configSources`, `validateRoom`, `normalizeOutline`, `keepClearZones`, `accessZones`, `validateLayout`, `walkingViolations`, `snapToWall` |
 | `src/layout` | Automatic layout | `autoLayout`, `describeObstacles`, types `LayoutRequest`, `LayoutOption`, `LayoutResult` |
 | `src/render-svg` | The 2D plan as SVG; PNG export | `renderPlanSvg` (portable), `svgToPng` in `png.ts` (Node only) |
+| `src/capture` | A room typed wall by wall and its checks | `wallsToOutline`, `outlineToWalls`, `checkClosure`, `checkDiagonal`, `suspectsMatchingDiagonal`, `sanityWarnings` |
 
 ## 3. Dependency direction
 
@@ -43,12 +44,13 @@ catalog     -> core
 rules       -> core, geometry
 layout      -> core, geometry, rules
 render-svg  -> core, geometry
+capture     -> core, geometry, rules
 ```
 
 - Nothing under `src/` imports from `test/`.
 - `clipper2-ts` is imported only by `src/geometry/clip.ts`; `@resvg/resvg-js` only by
   `src/render-svg/png.ts`. A wrapped library has one importer so it can be replaced in one place.
-- `core`, `geometry`, `catalog`, `rules` and `layout` are portable: no Node built-ins and no
+- `core`, `geometry`, `catalog`, `rules`, `layout` and `capture` are portable: no Node built-ins and no
   DOM. They must run unchanged in a browser, a Web Worker and Node.
 - `rules` does not import `catalog`: rules work on the products embedded in the document.
 
@@ -148,7 +150,8 @@ app/                          the desktop app                         imports ->
     worker/                   runs src/layout off the UI thread
     catalog/  storage/  i18n/ owner's catalog, project files (via preload), Arabic/English
 src/                          the engine (this document)              never imports app/
-  capture/        (M2)        wall-by-wall entry, closure and diagonal checks   -> core, geometry
+  capture/        (M2)        wall-by-wall entry, closure and diagonal checks   -> core, geometry, rules
+                              (rules for its tolerances in src/rules/config.ts)
   import-scan/    (M2)        one adapter per scan app -> one scan model -> shared normalization
                               -> core, geometry, rules
   export-bom/     (M4)        bill of materials and quote                       -> core
