@@ -35,6 +35,10 @@ Every agent reads this file before acting. Source: the owner's intake answers an
 - Milestone 1 ships as one draft PR from `claude/sleepy-wright-wno1ub`, one commit per issue.
 - Reports go to the owner at the end of each milestone and whenever a decision is needed.
 
+- Subagents (owner, 2026-11-10): do not use them, they cost too many tokens. If one is ever
+  unavoidable it runs on Sonnet 5.5. The Lead writes the code; the Prover step is a fresh-clone
+  run of every check.
+
 ## Product principles
 
 1. The measurement is the truth: what is on screen matches reality.

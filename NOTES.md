@@ -63,6 +63,18 @@ Running log and decisions. Checkpointed after every step so work survives a rest
   display stand, Dip and cigarettes rack.
 - No "tower" category exists on the site today.
 
+### Auto-layout: what is and is not in V1
+- Counter candidates are parallel to a wall with staff space behind. A counter standing free in
+  the room (island cash wrap) is not tried.
+- Showcases go in one line with the counter; an L-shaped counter line is not tried.
+- Gondola rows follow one direction per option, taken from the entrance wall. Rows are packed on
+  a 100 mm grid, then centred.
+- No random search: every option is the result of fixed rules, so it can be explained.
+- The planned "local improvement pass" is the row centring only. Swapping or re-ordering fixtures
+  to squeeze more in is not implemented; the over-full report says what did not fit instead.
+- Score weights (50 placed, 15 counter near entrance, 10 counter facing, 10 showcases near
+  counter, 10 gondolas in rows, 5 open entrance) are our own first guess, to be tuned with the owner.
+
 ## Open questions for the owner
 4. Tall-unit threshold: we treat fixtures taller than 54 in (1372 mm) as tall (not allowed in
    front of windows). Our own rule; confirm.
@@ -78,4 +90,12 @@ Running log and decisions. Checkpointed after every step so work survives a rest
 - 2026-11-10 Issue 2: units + schema, 35 tests. 16 mutations of the implementation each failed a test.
 - 2026-11-10 Issue 4: catalog seed (9 products, 3 unknown) + test fixtures, 44 tests.
 - 2026-11-10 Issue 3: geometry, 89 tests; 4 mutations each failed tests. Suite 173 green. Draft PR #1 open.
-- 2026-11-10 Issues 5 (rules) and 6 (SVG/PNG renderer) assigned to two builders.
+- 2026-11-10 Issues 5 and 6 were assigned to two builders; both were cut off by the usage limit
+  before writing any implementation. Owner instruction: continue without subagents (Sonnet 5.5 if
+  one is ever needed). From here the Lead writes the code; the Prover step is a fresh clone run.
+- 2026-11-10 Issue 5: validation rules, 40 tests; 11 mutations each failed a test (one gap found
+  and closed: the window sill check). validateLayout on 40 fixtures: 36 ms.
+- 2026-11-10 Issue 6: SVG/PNG renderer, 9 tests + 5 room snapshots. Worst deviation between the
+  SVG and the document: 0.64 um (tolerance 1 mm).
+- 2026-11-10 Issues 7-9: auto-layout engine, 30 tests + 15 layout snapshots. Each scenario runs
+  in under 1 s. Suite: 261 tests green.
