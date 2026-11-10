@@ -10,11 +10,20 @@ Running log and decisions. Checkpointed after every step so work survives a rest
 - Why integers: no floating-point drift, exact equality, and Clipper works on integers.
 - Every entered value keeps what was typed (value + unit) beside the µm value, so the owner sees
   his own number back.
-- Tolerances: geometry comparisons 1 µm; "touching" is not overlapping; rendered and exported
-  dimensions must match the document within **±1 mm**.
+- Tolerances: geometry contact tolerance 2 µm (`DEFAULT_TOLERANCE_UM`): penetration of 2 µm or
+  less is touching, not overlapping. It absorbs integer rounding of rotated corners. Rendered and
+  exported dimensions must match the document within **±1 mm**.
 - Precision: a 100 m coordinate is 1e8 µm, so a product of two coordinates reaches 1e16, above
   2^53 (about 9.007e15). Cross products and areas therefore must not use plain floating-point
-  multiplication. Issue 2 carries the test that proves the chosen method exact at 100 m × 100 m.
+  multiplication. `src/geometry/exact.ts` uses exact integer math; `test/geometry/exact.test.ts`
+  proves it at 100 m × 100 m and shows the naive formula failing:
+
+  | Input | Naive float | Exact |
+  |---|---|---|
+  | twice the area, shop 99 999 999 × 100 000 001 µm | 20000000000000000 | 19999999999999998 |
+  | orientation of 3 points 1 µm off a line at 100 m | 0 (collinear) | −1 (clockwise) |
+- Rotation is stored as integer micro-degrees, so a 1.2 m fixture on an angled wall is aligned to
+  about 0.02 µm, below rounding.
 
 ### Coordinates
 - 2D plan: x to the right, y up, counter-clockwise room outline, origin chosen by the document.
@@ -55,6 +64,10 @@ Running log and decisions. Checkpointed after every step so work survives a rest
 - No "tower" category exists on the site today.
 
 ## Open questions for the owner
+4. Tall-unit threshold: we treat fixtures taller than 54 in (1372 mm) as tall (not allowed in
+   front of windows). Our own rule; confirm.
+5. Cigarette display stand and dip rack: category and placement type are not stated on the site;
+   assumed wall units.
 1. Secondary aisle: 900 mm as specified, or 915 mm to meet ADA?
 2. "4 FT FULL VIEW" showcase: is it 48 in or 72 in long?
 3. Stand showcase 48*20*72: confirm which number is width, depth and height.
@@ -62,3 +75,7 @@ Running log and decisions. Checkpointed after every step so work survives a rest
 ## Log
 - 2026-11-10 Plan approved with changes. Initial README commit pushed to `main`.
 - 2026-11-10 Issue 1: scaffold, pinned dependencies, library spikes green (5 tests), typecheck clean.
+- 2026-11-10 Issue 2: units + schema, 35 tests. 16 mutations of the implementation each failed a test.
+- 2026-11-10 Issue 4: catalog seed (9 products, 3 unknown) + test fixtures, 44 tests.
+- 2026-11-10 Issue 3: geometry, 89 tests; 4 mutations each failed tests. Suite 173 green. Draft PR #1 open.
+- 2026-11-10 Issues 5 (rules) and 6 (SVG/PNG renderer) assigned to two builders.
