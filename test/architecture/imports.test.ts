@@ -109,13 +109,14 @@ describe('architecture: app/', () => {
   const MAIN = join(APP, 'main');
   const PRELOAD = join(APP, 'preload');
   const RENDERER = join(APP, 'renderer');
+  const SHARED = join(APP, 'shared');
   const all = sourceFiles(APP);
   const rel = (f: string): string => posix(relative(APP, f));
   const relativeTargets = (file: string): string[] => imports(file).filter((s) => s.startsWith('.')).map((s) => resolve(file, '..', s));
 
   it('app has the known parts', () => {
     const folders = existsSync(APP) ? readdirSync(APP, { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name) : [];
-    for (const f of folders) expect(['main', 'preload', 'renderer'], f).toContain(f);
+    for (const f of folders) expect(['main', 'preload', 'renderer', 'shared'], f).toContain(f);
     expect(folders).toContain('main');
     expect(folders).toContain('renderer');
   });
@@ -150,6 +151,40 @@ describe('architecture: app/', () => {
       .filter((f) => underDir(f, MAIN))
       .filter((f) => relativeTargets(f).some((t) => underDir(t, RENDERER)))
       .map((f) => `${rel(f)} imports the renderer`);
+    expect(violations).toEqual([]);
+  });
+
+  it('shared holds types only', () => {
+    // Simple check: imports must be `import type`/`export type ... from` app/shared or src/core, and every
+    // non-empty, non-comment line must look like part of a type declaration: it starts with `export type`,
+    // `import type`, `type`, `|`, `&`, `{`, `}`, `)`, `]`, `>` or `;`, or it is a continuation (indented line).
+    const violations: string[] = [];
+    for (const file of all.filter((f) => underDir(f, SHARED))) {
+      const code = stripComments(readFileSync(file, 'utf8'));
+      for (const m of code.matchAll(/^\s*(?:import|export)\s[^;]*?from\s+['"]([^'"]+)['"]/gm)) {
+        if (!/^\s*(?:import|export)\s+type\s/.test(m[0])) violations.push(`${rel(file)}: runtime import of ${m[1]}`);
+        const spec = m[1]!;
+        const target = spec.startsWith('.') ? resolve(file, '..', spec) : '';
+        if (!(spec.startsWith('.') && (underDir(target, SHARED) || underDir(target, join(APP, '..', 'src', 'core'))))) {
+          violations.push(`${rel(file)}: imports ${spec}, only app/shared and src/core are allowed`);
+        }
+      }
+      code.split('\n').forEach((line, i) => {
+        if (line.trim() === '' || /^\s/.test(line)) return;
+        if (!/^(?:export type|import type|type|[|&{}\])>;])/.test(line)) violations.push(`${rel(file)}:${i + 1}: not a type declaration: ${line.trim()}`);
+      });
+    }
+    expect(violations).toEqual([]);
+  });
+
+  it('the preload imports only electron and app/shared', () => {
+    const violations: string[] = [];
+    for (const file of all.filter((f) => underDir(f, PRELOAD))) {
+      for (const spec of imports(file)) {
+        const ok = spec === 'electron' || (spec.startsWith('.') && underDir(resolve(file, '..', spec), SHARED));
+        if (!ok) violations.push(`${rel(file)} imports ${spec}`);
+      }
+    }
     expect(violations).toEqual([]);
   });
 
