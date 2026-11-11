@@ -294,6 +294,16 @@ export function App() {
     return variant === undefined || variant.widthUm === null || variant.depthUm === null ? [] : [{ id: p.id, corners: rectCorners(footprint(p, variant)), problem }];
   });
   const selected = project.placements.find((p) => p.id === selectedId);
+  /** The same commands in 2D and 3D: an edit in either view gives the same document. */
+  const moveFixture = (id: string, dx: number, dy: number): boolean => editFixtures(together(movePlacement(id, dx, dy), snapPlacement(id)));
+  const placeAt = (point: Point): void => {
+    if (picked === null) return;
+    const id = nextPlacementId(project);
+    if (editFixtures(together(placeProduct(picked.product, picked.variantId, point, 0), snapPlacement(id)))) {
+      setSelectedId(id);
+      setPicked(null);
+    }
+  };
   /** Every edit of the room says why when the document refuses it, instead of silently snapping back. */
   const editRoom = (change: (room: DesignDocument['room']) => void): boolean => {
     const result = documentStore.edit((draft) => change(draft.room));
@@ -427,7 +437,13 @@ export function App() {
           </button>
         </div>
         {view === '3d' ? (
-          <View3D document={project} problemIds={problemIds} />
+          <View3D
+            document={project}
+            problemIds={problemIds}
+            onSelect={setSelectedId}
+            onMove={moveFixture}
+            {...(picked === null ? {} : { onPlace: placeAt })}
+          />
         ) : (
         <Plan
           openings={project.room.openings}
@@ -440,15 +456,9 @@ export function App() {
           fixtures={fixtures}
           selectedId={selectedId}
           {...(picked === null
-            ? { onSelect: setSelectedId, onFixtureMoved: (id: string, dx: number, dy: number) => editFixtures(together(movePlacement(id, dx, dy), snapPlacement(id))) }
+            ? { onSelect: setSelectedId, onFixtureMoved: moveFixture }
             : {
-                onPlanClick: (point: Point) => {
-                  const id = nextPlacementId(project);
-                  if (editFixtures(together(placeProduct(picked.product, picked.variantId, point, 0), snapPlacement(id)))) {
-                    setSelectedId(id);
-                    setPicked(null);
-                  }
-                },
+                onPlanClick: placeAt,
               })}
         />
         )}

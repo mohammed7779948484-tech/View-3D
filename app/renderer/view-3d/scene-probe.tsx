@@ -5,13 +5,14 @@
 import { useEffect } from 'react';
 import { useThree } from '@react-three/fiber';
 import { Box3, InstancedMesh, Matrix4, Mesh, Quaternion, Vector3 } from 'three';
+import type { Camera } from 'three';
 import type { Object3D } from 'three';
 
 export type DescribedBox = { id: string; center: [number, number, number]; size: [number, number, number]; yawRad: number; problem: boolean };
 
 declare global {
   interface Window {
-    __view3dScene?: { describe(): { boxes: DescribedBox[] } };
+    __view3dScene?: { describe(): { boxes: DescribedBox[] }; screenOf(xMm: number, yMm: number): { x: number; y: number } };
   }
 }
 
@@ -52,15 +53,25 @@ export function describeScene(scene: Object3D): { boxes: DescribedBox[] } {
   return { boxes };
 }
 
-/** Exposes `window.__view3dScene.describe()` while mounted inside a Canvas; tells the parent when it is ready. */
+/** Where the floor point at plan (xMm, yMm) is on the page, under the camera as it is now. */
+function screenOf(camera: Camera, canvas: HTMLCanvasElement, xMm: number, yMm: number): { x: number; y: number } {
+  camera.updateMatrixWorld();
+  const v = new Vector3(xMm / 1000, 0, -yMm / 1000).project(camera);
+  const rect = canvas.getBoundingClientRect();
+  return { x: rect.left + ((v.x + 1) / 2) * rect.width, y: rect.top + ((1 - v.y) / 2) * rect.height };
+}
+
+/** Exposes `window.__view3dScene` (describe, screenOf) while mounted inside a Canvas; tells the parent when it is ready. */
 export function SceneProbe({ onReady }: { onReady?: () => void }) {
   const scene = useThree((state) => state.scene);
+  const camera = useThree((state) => state.camera);
+  const canvas = useThree((state) => state.gl.domElement);
   useEffect(() => {
-    window.__view3dScene = { describe: () => describeScene(scene) };
+    window.__view3dScene = { describe: () => describeScene(scene), screenOf: (x, y) => screenOf(camera, canvas, x, y) };
     onReady?.();
     return () => {
       delete window.__view3dScene;
     };
-  }, [scene, onReady]);
+  }, [scene, camera, canvas, onReady]);
   return null;
 }
