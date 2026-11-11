@@ -7,6 +7,18 @@ import { readProjectFile, writeProjectFile } from './project-files';
 
 const FILE_NAME = 'catalog.json';
 
+/**
+ * Catalog reads and writes run one after another, in the order they were asked for. Two screens
+ * may ask at once (at a first start both would write the seed through the same temporary file,
+ * and one would fail), so nothing touches the file while another call is still working on it.
+ */
+let queue: Promise<unknown> = Promise.resolve();
+function inTurn<T>(work: () => Promise<T>): Promise<T> {
+  const next = queue.then(work, work);
+  queue = next.catch(() => undefined);
+  return next;
+}
+
 async function exists(path: string): Promise<boolean> {
   return access(path).then(
     () => true,
@@ -15,7 +27,11 @@ async function exists(path: string): Promise<boolean> {
 }
 
 /** Reads the catalog; with no file yet, writes the website seed first (no network). Never rewrites a bad file. */
-export async function loadCatalogFile(dir: string): Promise<CatalogLoadResult> {
+export function loadCatalogFile(dir: string): Promise<CatalogLoadResult> {
+  return inTurn(() => load(dir));
+}
+
+async function load(dir: string): Promise<CatalogLoadResult> {
   const path = join(dir, FILE_NAME);
   if (!(await exists(path))) {
     const text = serializeCatalog(seedCatalog());
@@ -30,7 +46,11 @@ export async function loadCatalogFile(dir: string): Promise<CatalogLoadResult> {
 }
 
 /** Writes the catalog atomically, only when the text is a valid catalog. */
-export async function saveCatalogFile(dir: string, text: string): Promise<CatalogSaveResult> {
+export function saveCatalogFile(dir: string, text: string): Promise<CatalogSaveResult> {
+  return inTurn(() => save(dir, text));
+}
+
+async function save(dir: string, text: string): Promise<CatalogSaveResult> {
   const parsed = parseCatalog(text);
   if (!parsed.ok) return { status: 'failed', code: 'not-a-catalog', message: `not a valid catalog: ${parsed.errors[0] ?? parsed.code}` };
   const written = await writeProjectFile(join(dir, FILE_NAME), text);
