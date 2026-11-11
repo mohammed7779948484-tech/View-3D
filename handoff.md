@@ -13,8 +13,8 @@
 | Spike: 3D (three + R3F, WebGL) | proven | CI green Ubuntu + Windows; laptop number waits for the owner's run |
 | Spike: worker from file:// | proven | worker bytes = Node bytes; CI green |
 | 1 catalog | proven | 35 Vitest + 8 e2e; CI green |
-| 2 place/move/rotate 2D | proven locally, CI pending | 26 Vitest + 6 e2e |
-| 3 live validation | in progress | test-writer handoff next |
+| 2 place/move/rotate 2D | proven | 26 Vitest + 12 e2e (incl. 6 drag regression); CI green Ubuntu, Windows, installer |
+| 3 live validation | in progress | test-writer writing the tests |
 | 4 snapping | to do | |
 | 5 worker | to do | |
 | 6 option picker | to do | |
