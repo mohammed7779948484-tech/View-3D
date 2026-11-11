@@ -15,10 +15,10 @@
 | 1 catalog | proven | 35 Vitest + 8 e2e; CI green |
 | 2 place/move/rotate 2D | proven | 26 Vitest + 12 e2e (incl. 6 drag regression); CI green Ubuntu, Windows, installer |
 | 3 live validation | proven | 70 Vitest + 3 e2e; 16.2 ms for 40 fixtures; CI green |
-| 4 snapping | proven locally, CI pending | 15 Vitest + 2 e2e |
-| 5 worker | proven locally, CI pending | 9 Vitest + 2 e2e; same bytes as Node |
-| 6 option picker | in progress | test-writer handoff next |
-| 7 3D view | to do | |
+| 4 snapping | proven | 15 Vitest + 2 e2e; CI green |
+| 5 worker | proven | 9 Vitest + 2 e2e; same bytes as Node; CI green |
+| 6 option picker | proven locally, CI pending | 52 Vitest + 3 e2e |
+| 7 3D view | in progress | test-writer handoff next |
 | 8 3D select/move | to do | |
 | 9 model contract | to do | |
 | 10b ranking | to do | |
@@ -29,13 +29,17 @@
 | 10g score weights | to do | will be parked: owner looks at the gallery |
 
 ## 3. Next step
-Issue 6, option picker. `app.tsx` keeps the last result JSON (`setLayoutResult`, unused so far).
-Show each option: rank, score with its breakdown (term, points / weight, note), what did not fit
-(name, quantity, reason). "Use option N" replaces the document's placements with the option's
-placements and embeds the option's products (one undo step, through the document store).
-Test-writer: Playwright on the protectedDoorway run of issue 5: pick option 2 -> saved placements
-equal autoLayout(request).options[1].document.placements exactly and products include them;
-Undo -> the placements before; Redo -> option 2 again. Strings en/ar.
+Issue 7, the 3D view of the open project (reuse `app/renderer/view-3d/`: units.ts, boxes.ts
+`sceneBoxes(doc)`, fixture-boxes.tsx instanced, scene-probe.tsx). A "2D / 3D" switch on the project
+screen; 3D shows the room floor and walls (walls: thin boxes along the outline, ceiling height),
+every placement as an exact box, fixtures with a problem in red (ruling), camera: three.js
+OrbitControls from three/examples (no drei), presets "Top" and "Corner"; frameloop demand.
+No WebGL -> a translated message, 2D keeps working (test: launch WITHOUT --enable-unsafe-swiftshader
+on Linux is the no-WebGL case; launch.ts needs an option to leave it out).
+Tests (test-writer): Playwright reads `window.__view3dScene.describe()` for a hand-built document on
+the angled room: every box equals the document within 1 mm and 1e-4 rad (tower on wall 2 at
+(6 731 672, 3 865 836) um, 116 565 051 udeg: corners by hand); problem fixtures marked in the
+description (`problem: true`); the switch keeps the document unchanged.
 
 ## 4. Waiting for the owner
 - Run Diagnostics > Test 3D speed on the laptop once, send a photo (30 fps proof).
@@ -52,6 +56,7 @@ Traps: Electron needs `--no-sandbox` as root (the e2e launcher adds it). With no
 WebGL unless Electron starts with `--enable-unsafe-swiftshader` (tests only).
 
 ## 6. Decisions made this milestone
+- Option picker: `useLayoutOption` in placement-commands; `unplacedText` words did-not-fit by code.
 - Live validation: `violationText` in `app/renderer/i18n/messages.ts`, keys `violations.<rule>.<detail|default>`.
 - 2D editing: commands in `app/renderer/state/placement-commands.ts` (recipes, one undo step each); `quarterTurn` in `src/rules/snap.ts`.
 - Catalog: `src/catalog/catalog-file.ts` (pure) + `app/main/catalog-file.ts`; tests isolate it with `launchApp({ userDataDir })` (`--user-data-dir`).
