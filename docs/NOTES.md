@@ -131,6 +131,18 @@ Running log and decisions. Checkpointed after every step so work survives a rest
     open view; pair 2 flips only if the open view gets more than about 21 points (the others as
     proposed; today it has 5). Nothing is changed in the app until you answer.
 
+16. M3 10d (counter not only parallel to a wall) is built as a trial and parked; nothing of it is in
+    the app. Measured: a checkout block in open floor, facing the entrance, becomes option 1 in the
+    angled-entrance shop (counter 3100 mm from the door instead of 5801, all 10 fixtures) and in
+    the L-shaped shop (2702 instead of 3406, all 17). In the glass-fronted corner shop it is valid
+    and nearer (2354 instead of 3163 mm, all 7) but ranks 5th, because it stands in the view
+    straight in from the door. Costs: the benchmark shop takes about 2.9 s instead of 2.2 s (the
+    budget is 3 s), and it showed that the search's pick between two nearly equal arrangements can
+    flip when the same shop is drawn at an angle. Please choose: (a) try the open-floor block
+    instead of the third counter wall (no extra time; options from the third wall disappear), (b)
+    add it and raise the time budget to 4 s, or (c) leave it until one of your shops needs it.
+    Recommended: (a).
+
 Answered on 2026-11-11 (Milestone 2 detail plan): order 1, 2, 3, 4, 5, 8, 10, 6, 7, 9, 11; strings
 through t() from issue 1; closure check gives the smallest suspect set; document null until a room
 exists; unknown scan sill stays pending; JSON scan adapter only (DXF waits for a sample); room checks
@@ -215,3 +227,4 @@ W48 × D20 × H72 in; single-sided units go on walls or back to back; entrance d
 - 2026-11-11 M3, Windows installed-app job red once (catalog never loaded): two first-start catalog loads raced on the same temporary file (my issue 2 added the second caller). Catalog file operations now queue in call order; 4 concurrency tests red every run before, green after.
 - 2026-11-11 M3 10c parked (question 13): no scenario leaves room for more (brute force on small-overfull: 0 extra wall spots in every option); a relocation pass would be speculative.
 - 2026-11-11 M3 issue 10f: optional `serviceSide` on products; a rear-served product needs a 915 mm staff zone behind it (never its back to a wall), the engine and the oracle agree, the catalog form has "Served from". No real product set (question 14). One test-writer spec fix: the engine test first also forbade a side flush to a wall. Suite 895 Vitest, 107 e2e.
+- 2026-11-11 M3 issue 10d: trial of an open-floor checkout block (facing the entrance first, then side on, then back to it; 200 mm grid, 5 m reach). Measured gains in 2 of 5 shops, +0.6 s on the benchmark, rounding-sensitive search picks (rotation test). Parked with question 16; failing tests kept on the local branch parked/m3-10d (container-local; the spec is in this note and the handoff).

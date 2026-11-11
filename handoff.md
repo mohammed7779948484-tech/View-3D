@@ -23,21 +23,26 @@
 | 9 model contract | proven | 15 Vitest; three's loader agrees; CI green |
 | 10b ranking | proven | 24 Vitest; one option pair swapped (gallery); CI green |
 | 10c swap and relocate | parked | no shop leaves room for more (measured); owner question 13 |
-| 10d free-standing counter | to do | |
+| 10d free-standing counter | parked | trial measured (gains in 2 shops, +0.6 s benchmark, rounding-sensitive pick); owner question 16 |
 | 10e L-block without right angle | to do | |
 | 10f service side | built, parked | proven, CI green (Ubuntu, Windows, installer); no real product set: owner question 14 |
 | 10g score weights | prepared, parked | proposal 30/12/8/10/10/15/15 moves nothing in the test shops; two trade-off pairs in snapshots/README.md; owner question 15 |
 
 ## 3. Next step
-10d, counter not only parallel to a wall. First measure whether it can help: brute force a
-free-standing counter (quarter turns, 100 mm grid, all rules) in each test shop and in a glass-fronted
-corner shop, and compare its best distance to the entrance with option 1's counter (today 2351 to
-3163 mm). Build it only with a shop that gains; otherwise park with a question, as 10c. Then 10e.
-Possible later: put rear-served products on walls with the staff gap behind.
+10e, L-shaped checkout block without a right-angled inside corner (turns in open floor or at an
+angled corner): measure first, as for 10c and 10d, whether any shop gains; then the final report.
+If the owner answers question 16 with (a): rebuild 10d. The trial: `placeFreeCashWrap` in
+`src/layout/cash-wrap.ts` tries counter + showcases in one line, quarter turns from the entrance
+wall (facing it first, then side on, then back to it), 200 mm grid up to 5 m in front of the
+entrance, nearest first; `search.ts` adds a 'free' counter candidate and `LayoutStrategy.counterFree`.
+Tests: `test/layout/free-counter.test.ts` (on local branch `parked/m3-10d` while this container lives;
+its 3000 mm bound for the angled entrance must be 3200 mm: the 3000 came from the counter alone).
+The search must then replace its kept arrangement only when the score is better by more than 0.5
+(rounding noise), or the rotation tests fail.
 
 ## 4. Waiting for the owner
 - Run Diagnostics > Test 3D speed on the laptop once, send a photo (30 fps proof).
-- Open questions in `docs/NOTES.md` (13: 10c; 14: which products are served from the back; 15: score weights, two pairs to pick).
+- Open questions in `docs/NOTES.md` (13: 10c; 14: which products are served from the back; 15: score weights, two pairs to pick; 16: open-floor counter, a/b/c).
 
 ## 5. How to resume
 ```bash
