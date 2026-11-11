@@ -1,7 +1,7 @@
 /** Issue M2-10: open, save, save as, save a copy, undo and redo, and the unsaved-changes prompt. */
 import { expect, test } from '@playwright/test';
 import type { ElectronApplication, Page } from '@playwright/test';
-import { copyFileSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { launchApp } from './launch';
@@ -235,5 +235,7 @@ test('the close prompt can save and close', async () => {
   await closed;
   expect(a.windows().length).toBe(0);
   expect(readJson(path).name).toBe('Saved on close');
-  expect(await calls(a, '__save')).toBe(0);
+  // The app has quit once its window closed, so ask the disk, not the app: the stubbed save dialog
+  // would have written here.
+  expect(existsSync(join(dir, 'must-not-be-used.json'))).toBe(false);
 });
