@@ -161,3 +161,5 @@ W48 × D20 × H72 in; single-sided units go on walls or back to back; entrance d
   Found while planning: with no GPU, Electron has no WebGL unless started with --enable-unsafe-swiftshader (probe in this container: none without it, SwiftShader WebGL2 with it).
 - 2026-11-11 M3 10a: engine.ts (1273 lines) split verbatim into 8 phase files, largest state.ts at 299 lines. Proof: golden SHA-256 of the full autoLayout JSON for all 7 scenarios and every SVG snapshot byte-identical after regeneration; suite 619 green.
   `snapshots/before-m3/` frozen as the "before" for the rest of issue 10.
+- 2026-11-11 M3 3D spike: three 0.187.0 + @react-three/fiber 9.8.2 on WebGL. Diagnostics, "Test 3D speed": 60 real products, every box read back from the scene graph within 1 mm; CI (SwiftShader) 16.7 ms median for all four setups (capped by 60 Hz), 2 draw calls instanced vs 61 without.
+  Owner: please run Diagnostics > Test 3D speed once on the laptop and send a photo; that is the only proof of the 30 fps target on integrated graphics.

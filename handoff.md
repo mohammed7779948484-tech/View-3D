@@ -9,9 +9,9 @@
 ## 2. Status
 | Item | Status | Note |
 |---|---|---|
-| 10a engine split | proven | golden hashes + snapshots unchanged; CI pending |
-| Spike: 3D (three + R3F, WebGL) | in progress | test-writer handoff next |
-| Spike: worker from file:// | to do | |
+| 10a engine split | proven | golden hashes + snapshots unchanged; CI green Ubuntu + Windows |
+| Spike: 3D (three + R3F, WebGL) | proven locally, CI pending | laptop number waits for the owner's run |
+| Spike: worker from file:// | in progress | test-writer handoff next |
 | 1 catalog | to do | |
 | 2 place/move/rotate 2D | to do | |
 | 3 live validation | to do | |
@@ -29,14 +29,16 @@
 | 10g score weights | to do | will be parked: owner looks at the gallery |
 
 ## 3. Next step
-3D spike (plan section 2, rulings): add three 0.187.0, @types/three 0.187.0, @react-three/fiber 9.8.2
-(no drei). Test-writer writes `test/spikes/three.spec.ts` (Playwright for Electron): Diagnostics page,
-"Test 3D speed" runs 4 setups (instanced/shadows off at 60 and 120 fixtures, shadows on, one mesh each)
-of real seed products in a 15 x 10 m room; asserts WebGL2, instance count, draw calls, sizes within 1 mm;
-logs frame times. Launcher adds `--enable-unsafe-swiftshader` (tests only). Then STACK.md entry.
+Worker spike: Diagnostics gets "Test layout speed": `app/renderer/worker/layout.worker.ts` runs
+`autoLayout` on a fixed real-product request (room 7 x 5 m, entrance on wall 0 at 3000 mm, back-room
+door on wall 1; 1 nhf-c, 2 extra-view, 1 full-view h42, 2 nhf-s-1, 3 nhf-g) and the page shows
+`data-layout-sha256` of the JSON and the time. Test-writer: Playwright compares that hash with
+SHA-256 of `JSON.stringify(autoLayout(request))` in Node (the requirement itself), plus no remote or
+blocked request. If Electron's V8 differs from Node's, record it and compare with the renderer's own call.
 
 ## 4. Waiting for the owner
-- Nothing new yet. Open questions in `docs/NOTES.md`.
+- Run Diagnostics > Test 3D speed on the laptop once, send a photo (30 fps proof).
+- Open questions in `docs/NOTES.md`.
 
 ## 5. How to resume
 ```bash
@@ -49,6 +51,7 @@ Traps: Electron needs `--no-sandbox` as root (the e2e launcher adds it). With no
 WebGL unless Electron starts with `--enable-unsafe-swiftshader` (tests only).
 
 ## 6. Decisions made this milestone
+- 3D: three 0.187.0 + R3F 9.8.2, instanced Lambert boxes, units.ts only conversion; tests read `window.__view3dScene.describe()` (`docs/STACK.md`).
 - 10a: layout engine in phase files; `test/layout/golden-hashes.json` guards output (`pnpm snapshots:update` rewrites it).
 - Ranking key `placed + complete block`, tie: complete block, then score (`docs/decisions/0003`).
 - Catalog file on the laptop, seeded from the repo; Confirm marks a product verified (plan, rulings).
