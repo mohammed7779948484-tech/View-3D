@@ -16,8 +16,8 @@
 | 2 place/move/rotate 2D | proven | 26 Vitest + 12 e2e (incl. 6 drag regression); CI green Ubuntu, Windows, installer |
 | 3 live validation | proven | 70 Vitest + 3 e2e; 16.2 ms for 40 fixtures; CI green |
 | 4 snapping | proven locally, CI pending | 15 Vitest + 2 e2e |
-| 5 worker | in progress | test-writer handoff next |
-| 6 option picker | to do | |
+| 5 worker | proven locally, CI pending | 9 Vitest + 2 e2e; same bytes as Node |
+| 6 option picker | in progress | test-writer handoff next |
 | 7 3D view | to do | |
 | 8 3D select/move | to do | |
 | 9 model contract | to do | |
@@ -29,16 +29,13 @@
 | 10g score weights | to do | will be parked: owner looks at the gallery |
 
 ## 3. Next step
-Issue 5, automatic layout in the worker with progress and cancel. Engine: optional
-`autoLayout(request, { onProgress(done, total) })` in `src/layout/search.ts`; the result bytes are
-identical with and without it (golden hashes); total = number of search runs actually built.
-App: an "Automatic layout" panel on the project screen: products and quantities from the catalog
-(placeable sizes only), Run, a progress bar (`role=progressbar`, aria-valuenow/max), Cancel (ends the
-worker; the document is untouched and a second run still works). The worker already exists
-(`app/renderer/worker/`); give it progress messages. Tests: Vitest for onProgress (strictly rising,
-ends at total, same bytes); Playwright: run on a room with real products, the result JSON's SHA-256
-equals autoLayout in Node for the same request; cancel mid-run leaves the saved file byte-identical.
-Issue 6 then shows the options.
+Issue 6, option picker. `app.tsx` keeps the last result JSON (`setLayoutResult`, unused so far).
+Show each option: rank, score with its breakdown (term, points / weight, note), what did not fit
+(name, quantity, reason). "Use option N" replaces the document's placements with the option's
+placements and embeds the option's products (one undo step, through the document store).
+Test-writer: Playwright on the protectedDoorway run of issue 5: pick option 2 -> saved placements
+equal autoLayout(request).options[1].document.placements exactly and products include them;
+Undo -> the placements before; Redo -> option 2 again. Strings en/ar.
 
 ## 4. Waiting for the owner
 - Run Diagnostics > Test 3D speed on the laptop once, send a photo (30 fps proof).
