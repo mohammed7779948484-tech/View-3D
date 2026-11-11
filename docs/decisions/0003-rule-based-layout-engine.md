@@ -24,8 +24,8 @@ No random numbers, no clock, no AI.
    fewer with a complete block beats one more without) and is a total order: the first wording
    ("placed first, except when two options differ by exactly one ...") could loop, for example
    10 placed incomplete with a high score > 10 placed complete with a low score > 9 placed complete
-   > the first one. A fast-check property proves the order never loops. Status: decided;
-   implemented in M3 issue 10b.
+   > the first one. A fast-check property proves the order never loops. Status: implemented in
+   M3 issue 10b (`src/layout/rank.ts`); it moved one pair of options in one test shop.
 6. Every rejected position is counted by reason; what did not fit is reported with the causes
    most positions failed on.
 

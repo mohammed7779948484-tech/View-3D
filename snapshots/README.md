@@ -13,6 +13,16 @@ website and are not yet confirmed by the owner.
 unchanged). Each later item of issue 10 that changes a layout adds its own before/after table
 here, comparing `before-m3/` with `layouts/`, with the reason for the change.
 
+### 10b, ranking rule (owner ruling 2026-11-11)
+
+Only the L-shaped shop changed, and only the order of two options: both place 17 fixtures; the
+option with the complete checkout block (counter and both showcases in the block) now ranks above
+the one with a slightly higher score but an incomplete block. Option 1 is the same in every shop.
+
+| Before (option 2) | After (option 2) |
+|---|---|
+| ![before](before-m3/l-shape-with-column/option-2.svg) | ![after](layouts/l-shape-with-column/option-2.svg) |
+
 ## Before and after the first review
 
 "Before" is the first engine (frozen under `before/`). "After" follows the owner's review:
