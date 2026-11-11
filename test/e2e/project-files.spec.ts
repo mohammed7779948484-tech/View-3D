@@ -214,3 +214,26 @@ test('closing right after undoing back to the saved state does not ask', async (
   await closed;
   expect(a.windows().length).toBe(0);
 });
+
+test('the close prompt can save and close', async () => {
+  const { page, app: a } = await start();
+  const path = projectCopy();
+  await openProject(page, a, path);
+  await rename(page, 'Saved on close');
+  // The file is known, so no save dialog may be asked for.
+  await stubSave(a, join(dir, 'must-not-be-used.json'));
+
+  await closeFirstWindow(a);
+  const closed = page.waitForEvent('close');
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: 'Save and close', exact: true })
+    .click({ timeout: 5000 })
+    .catch((error: unknown) => {
+      if (!String(error).includes('has been closed')) throw error;
+    });
+  await closed;
+  expect(a.windows().length).toBe(0);
+  expect(readJson(path).name).toBe('Saved on close');
+  expect(await calls(a, '__save')).toBe(0);
+});
