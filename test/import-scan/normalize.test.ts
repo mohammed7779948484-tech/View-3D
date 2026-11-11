@@ -278,3 +278,21 @@ describe('errors are data, never thrown', () => {
     expect(errorCodes(scan(bow))).toEqual(['outline-invalid']);
   });
 });
+
+describe('a window that overhangs its wall', () => {
+  it('is moved onto the wall, and the move is reported before the sill finding', () => {
+    // Centred at x 0.4 on the bottom wall (0,0)-(5,0), 1.2 m wide: it spans -0.2 to 1.0, so 0.2 m hangs past the start.
+    const r = ok(importRoomTrace(scan(RECT, { windows: [{ id: 'w-edge', at: [0.4, 0], width: 1.2, height: 1.2 }] })));
+    expect(r.pendingWindows).toEqual([{ id: 'w-edge', wallIndex: 0, offsetUm: 0, widthUm: 1_200_000, heightUm: 1_200_000 }]);
+    expect(codes(r.findings)).toEqual(['window-moved', 'window-sill-unknown', 'no-doors', 'axes-assumed']);
+    expect(r.findings[0]).toMatchObject({ code: 'window-moved', windowId: 'w-edge', wallIndex: 0, movedUm: 200_000 });
+    expect(r.findings[0]!.message.length).toBeGreaterThan(0);
+  });
+
+  it('a window wider than its wall is left out as not on the wall', () => {
+    const r = ok(importRoomTrace(scan(RECT, { windows: [{ id: 'w-wide', at: [2.5, 0], width: 6, height: 1.2 }] })));
+    expect(r.pendingWindows).toEqual([]);
+    expect(codes(r.findings)).toContain('window-not-on-wall');
+    expect(r.findings.find((f) => f.code === 'window-not-on-wall')).toMatchObject({ windowId: 'w-wide' });
+  });
+});
