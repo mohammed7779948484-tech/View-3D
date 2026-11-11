@@ -167,3 +167,4 @@ W48 × D20 × H72 in; single-sided units go on walls or back to back; entrance d
   CI 3D numbers from both runners recorded in STACK.md (Windows CI also uses SwiftShader).
 - 2026-11-11 M3 issue 1: catalog file `<userData>/catalog.json`, seeded from `seedProducts` on first start; add, edit (several sizes per product), remove (asks first), confirm. 29 + 6 Vitest, 8 e2e; the bridge now has 7 functions (test list updated in its own commit).
   The owner can now answer open questions 1 to 3 and 5 in the app: type the missing sizes, confirm or correct website sizes and prices.
+- 2026-11-11 M3 issue 2: place, move (snapped drag delta), rotate in quarter turns relative to the nearest wall (angled wall: 26.565051, 116.565051, 206.565051, 296.565051 degrees), duplicate (beside along local +x), delete; exact X, Y, Rotation fields. 10 + 16 Vitest, 6 e2e; suite 678 Vitest, 80 e2e.
