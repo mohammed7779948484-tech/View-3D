@@ -13,9 +13,12 @@ const REPO_ROOT = resolve(import.meta.dirname, '../..');
  * Starts the app. With VIEW3D_EXE set (installed or packaged executable) it runs that;
  * otherwise it runs the build output through package.json `main` (out/main/index.js).
  */
-export async function launchApp(): Promise<{ app: ElectronApplication; page: Page }> {
+export async function launchApp(options: { userDataDir?: string } = {}): Promise<{ app: ElectronApplication; page: Page }> {
   const exe = process.env['VIEW3D_EXE'];
-  const app = await electron.launch(exe ? { executablePath: exe, args: testArgs } : { args: [REPO_ROOT, ...testArgs] });
+  // --user-data-dir keeps Electron's userData (and so catalog.json) in a folder the test owns.
+  const extra = options.userDataDir === undefined ? [] : [`--user-data-dir=${options.userDataDir}`];
+  const args = [...testArgs, ...extra];
+  const app = await electron.launch(exe ? { executablePath: exe, args } : { args: [REPO_ROOT, ...args] });
   const page = await app.firstWindow();
   await page.waitForLoadState('domcontentloaded');
   return { app, page };
