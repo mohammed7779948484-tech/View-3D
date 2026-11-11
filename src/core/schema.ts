@@ -287,6 +287,11 @@ export const ProductSchema = z
     flags: z.array(z.string()),
     /** True only for synthetic products made for tests; never true in the real catalog. */
     testOnly: z.boolean(),
+    /**
+     * Which side staff serve it from. "rear" (e.g. rear sliding doors) needs staff space behind it,
+     * so it never stands with its back to a wall. Absent means "front". Set only by the owner.
+     */
+    serviceSide: z.enum(['front', 'rear']).optional(),
   })
   .superRefine((product, ctx) => {
     checkUniqueIds(product.variants, ['variants'], ctx);

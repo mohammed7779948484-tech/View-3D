@@ -53,6 +53,8 @@ export type OwnerProductInput = {
   placement: Product['placement'];
   variants: OwnerSize[];
   priceCents: number | null;
+  /** 'rear' when staff serve it from behind; omitted or 'front' stores nothing. */
+  serviceSide?: 'front' | 'rear';
 };
 
 const typed = (e: Entered | null): string => (e === null ? '?' : `${e.value} ${e.unit}`);
@@ -89,6 +91,7 @@ export function ownerProduct(input: OwnerProductInput): { ok: true; product: Pro
     source: { url: null, dimensionsAsWritten: null },
     flags: [FLAG_CLEARANCES],
     testOnly: false,
+    ...(input.serviceSide === 'rear' ? { serviceSide: 'rear' } : {}),
   });
   return parsed.success ? { ok: true, product: parsed.data } : { ok: false, code: 'invalid-product', errors: issues(parsed.error) };
 }

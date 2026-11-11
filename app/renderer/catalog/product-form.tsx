@@ -44,6 +44,7 @@ export function ProductForm({ initial, existingIds, unit, onSave, onCancel }: Pr
   const [category, setCategory] = useState<Product['category']>(initial?.category ?? 'showcase');
   const [placement, setPlacement] = useState<Product['placement']>(initial?.placement ?? 'freestanding');
   const [price, setPrice] = useState(priceText(initial?.priceCents ?? null));
+  const [servedFrom, setServedFrom] = useState<'front' | 'rear'>(initial?.serviceSide ?? 'front');
   const [sizes, setSizes] = useState<SizeRow[]>(
     initial?.variants.map((v) => ({
       id: v.id,
@@ -74,7 +75,7 @@ export function ProductForm({ initial, existingIds, unit, onSave, onCancel }: Pr
     if (cents === 'invalid') problems.push(t('catalog.badPrice'));
     if (name.trim() === '') problems.push(t('catalog.noName'));
     if (problems.length > 0 || cents === 'invalid') return setErrors(problems);
-    const made = ownerProduct({ id: initial?.id ?? nextOwnerId(existingIds), name, category, placement, variants, priceCents: cents });
+    const made = ownerProduct({ id: initial?.id ?? nextOwnerId(existingIds), name, category, placement, variants, priceCents: cents, serviceSide: servedFrom });
     if (!made.ok) return setErrors(made.errors);
     // Editing keeps where the data came from and the open doubts; the owner's own sizes make it his.
     onSave(initial === null ? made.product : { ...made.product, source: initial.source, flags: initial.flags.length > 0 ? initial.flags : [FLAG_CLEARANCES], clearances: initial.clearances });
@@ -119,6 +120,13 @@ export function ProductForm({ initial, existingIds, unit, onSave, onCancel }: Pr
               {t(`catalog.placements.${p}`)}
             </option>
           ))}
+        </select>
+      </div>
+      <div className="field">
+        <label htmlFor="product-served-from">{t('catalog.servedFrom')}</label>
+        <select id="product-served-from" value={servedFrom} onChange={(e) => setServedFrom(e.currentTarget.value as 'front' | 'rear')}>
+          <option value="front">{t('catalog.servedFromOptions.front')}</option>
+          <option value="rear">{t('catalog.servedFromOptions.rear')}</option>
         </select>
       </div>
       <p className="hint">{t('catalog.sizesHint')}</p>

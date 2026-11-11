@@ -308,6 +308,11 @@
       "slatwall": "لوح جداري",
       "accessory": "ملحق"
     },
+    "servedFrom": "تتم الخدمة من",
+    "servedFromOptions": {
+      "front": "الأمام (جهة الزبون)",
+      "rear": "الخلف (مساحة للموظفين خلفه)"
+    },
     "placements": {
       "wall": "على الجدار",
       "island": "جزيرة",

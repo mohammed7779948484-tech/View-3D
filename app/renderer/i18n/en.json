@@ -308,6 +308,11 @@
       "slatwall": "Slatwall",
       "accessory": "Accessory"
     },
+    "servedFrom": "Served from",
+    "servedFromOptions": {
+      "front": "The front (customer side)",
+      "rear": "The back (staff space behind it)"
+    },
     "placements": {
       "wall": "Against a wall",
       "island": "Island",
