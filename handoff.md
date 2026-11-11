@@ -4,7 +4,7 @@
 - Milestone 3 (plan: `docs/plans/M2-M4-plan.md` section 2, with the owner's rulings of 2026-11-11).
 - Branch `claude/milestone-2-delivery-wgd3q6` (restarted from `main` after PR #2 merged). Draft PR: see the PR table.
 - Draft PR: https://github.com/mohammed7779948484-tech/View-3D/pull/3
-- Last commit: the 10f checkpoint (see `git log -1`).
+- Last commit: the 10g checkpoint (see `git log -1`).
 
 ## 2. Status
 | Item | Status | Note |
@@ -25,20 +25,19 @@
 | 10c swap and relocate | parked | no shop leaves room for more (measured); owner question 13 |
 | 10d free-standing counter | to do | |
 | 10e L-block without right angle | to do | |
-| 10f service side | built, parked | field, staff zone, engine, form proven (23 Vitest + 3 e2e); no real product set: owner question 14 |
-| 10g score weights | to do | will be parked: owner looks at the gallery |
+| 10f service side | built, parked | proven, CI green (Ubuntu, Windows, installer); no real product set: owner question 14 |
+| 10g score weights | prepared, parked | proposal 30/12/8/10/10/15/15 moves nothing in the test shops; two trade-off pairs in snapshots/README.md; owner question 15 |
 
 ## 3. Next step
-10g, score weights (prepare only, the owner decides): build a before/after gallery with the current
-`SCORE_WEIGHTS` and a proposed set, write the proposal and its reasons in `docs/NOTES.md`, do not
-change the weights in the engine. Then 10d (free-standing or angled counter near the entrance) and
-10e (L-block without a right-angled corner), each with test-writer tests first.
-Possible later: put rear-served products on walls with the staff gap behind (today they go to the
-island grid when they miss the checkout block; no test asks for more).
+10d, counter not only parallel to a wall. First measure whether it can help: brute force a
+free-standing counter (quarter turns, 100 mm grid, all rules) in each test shop and in a glass-fronted
+corner shop, and compare its best distance to the entrance with option 1's counter (today 2351 to
+3163 mm). Build it only with a shop that gains; otherwise park with a question, as 10c. Then 10e.
+Possible later: put rear-served products on walls with the staff gap behind.
 
 ## 4. Waiting for the owner
 - Run Diagnostics > Test 3D speed on the laptop once, send a photo (30 fps proof).
-- Open questions in `docs/NOTES.md` (13: 10c; 14: which products are served from the back).
+- Open questions in `docs/NOTES.md` (13: 10c; 14: which products are served from the back; 15: score weights, two pairs to pick).
 
 ## 5. How to resume
 ```bash
