@@ -19,8 +19,8 @@
 | 5 worker | proven | 9 Vitest + 2 e2e; same bytes as Node; CI green |
 | 6 option picker | proven locally, CI pending | 52 Vitest + 3 e2e |
 | 7 3D view | proven locally, CI pending | 4 e2e; boxes = document within 1 mm |
-| 8 3D select/move | in progress | test-writer handoff next |
-| 9 model contract | to do | |
+| 8 3D select/move | proven locally, CI pending | 4 e2e; 2D edit = 3D edit, byte-identical |
+| 9 model contract | in progress | test-writer handoff next |
 | 10b ranking | to do | |
 | 10c swap and relocate | to do | |
 | 10d free-standing counter | to do | |
@@ -29,16 +29,17 @@
 | 10g score weights | to do | will be parked: owner looks at the gallery |
 
 ## 3. Next step
-Issue 8, select and move in 3D on the same document. In View3D: clicking a box selects it (R3F
-pointer event `instanceId` -> placement id; shares `selectedId` with 2D, so the Selected fixture panel
-works in 3D too); dragging a selected box moves it on the floor plane (y = 0): plan point = scene
-(x, -z), snapped to the same grid as 2D (`snap` in editor-2d/geometry.ts with the 100 mm grid), the
-move = `together(movePlacement, snapPlacement)` exactly as 2D. Proof (test-writer): the same edit
-sequence done in 2D and done in 3D (Top view, so screen points map to the floor deterministically:
-expose the floor point under a screen point? simpler: drive the 3D drag with the Top view camera and
-compute the screen point from the camera in the test via a `window.__view3dScene.screenOf(x, z)`
-helper) gives byte-identical saved files: place a Counter via the panel, move +1000 mm x, Rotate 90°,
-Duplicate, Delete the copy.
+Issue 9, the model contract (no real model is built). `docs/MODEL_CONTRACT.md`: a single
+self-contained .glb, glTF 2.0, metres, +Y up, front +Z (our front is -Z in the scene: a fixed half
+turn when placed), origin at the footprint centre on the floor, named `<productId>__<variantId>.glb`,
+size = the variant's W x H x D within 1 mm (W along X, D along Z). `src/model-contract` (imports core
+only; add its arrow to ARCHITECTURE section 3 and test/architecture/imports.test.ts): our own GLB
+reader using the POSITION accessor min/max and node transforms. Codes: not-glb, unsupported-version,
+external-resource, no-mesh, size-mismatch (with mm), not-on-floor, not-centred, unknown-size,
+bad-name. Tests (test-writer): synthetic box .glb files built in the test (test-only product);
+1.2005 m passes, 1.2015 m fails "+1.5 mm"; depth 0.41 m fails "+10 mm"; bottom 0.05 m -> not-on-floor
+50 mm; external buffer uri; glTF 1; unknown-size product. Independent oracle: three's GLTFLoader
+(`three/examples/jsm/loaders/GLTFLoader.js` .parse in Node) measures the same file.
 
 ## 4. Waiting for the owner
 - Run Diagnostics > Test 3D speed on the laptop once, send a photo (30 fps proof).
@@ -55,6 +56,7 @@ Traps: Electron needs `--no-sandbox` as root (the e2e launcher adds it). A visib
 software WebGL without a GPU; the no-WebGL case needs `--disable-gpu --disable-software-rasterizer`.
 
 ## 6. Decisions made this milestone
+- 3D editing: `BoxEditing` in view-3d.tsx uses the 2D commands; tests drive it via `__view3dScene.screenOf` in Top view.
 - 3D: `app/renderer/view-3d/view-3d.tsx`; no-WebGL test = `--disable-gpu --disable-software-rasterizer` (a visible window has software WebGL otherwise).
 - Option picker: `useLayoutOption` in placement-commands; `unplacedText` words did-not-fit by code.
 - Live validation: `violationText` in `app/renderer/i18n/messages.ts`, keys `violations.<rule>.<detail|default>`.
