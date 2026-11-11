@@ -43,7 +43,11 @@ const SIZE_MM: Record<string, [number, number, number]> = {
 };
 
 async function describe(page: Page): Promise<Box[]> {
+  // The canvas mounts its scene a moment after the click, so wait for the probe first.
   // A string, because the test project has no DOM types.
+  await expect
+    .poll(() => page.evaluate('typeof window.__view3dScene?.describe === "function"'), FIRST)
+    .toBe(true);
   const r = (await page.evaluate(`window.__view3dScene.describe()`)) as { boxes: Box[] };
   return r.boxes;
 }
@@ -147,8 +151,8 @@ test('switching views and moving the camera never changes the document', async (
 });
 
 test('without WebGL the 3D view says so and 2D keeps working', async () => {
-  test.skip(process.platform !== 'linux', 'only the Linux CI machine is known to have no WebGL without the software switch');
-  const page = await h.launch({ softwareGl: false });
+  // --disable-gpu with --disable-software-rasterizer leaves no WebGL on any platform (see launch.ts).
+  const page = await h.launch({ webgl: false });
   await h.openDocument(baseDoc());
   await page.getByRole('button', { name: '3D view', exact: true }).click();
   await expect(page.getByRole('alert').filter({ hasText: '3D is not available on this computer' })).toBeVisible(FIRST);

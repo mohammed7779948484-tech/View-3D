@@ -13,12 +13,15 @@ const REPO_ROOT = resolve(import.meta.dirname, '../..');
  * Starts the app. With VIEW3D_EXE set (installed or packaged executable) it runs that;
  * otherwise it runs the build output through package.json `main` (out/main/index.js).
  */
-export async function launchApp(options: { userDataDir?: string; softwareGl?: boolean } = {}): Promise<{ app: ElectronApplication; page: Page }> {
+export async function launchApp(options: { userDataDir?: string; webgl?: boolean } = {}): Promise<{ app: ElectronApplication; page: Page }> {
   const exe = process.env['VIEW3D_EXE'];
   // --user-data-dir keeps Electron's userData (and so catalog.json) in a folder the test owns.
   const extra = options.userDataDir === undefined ? [] : [`--user-data-dir=${options.userDataDir}`];
-  // softwareGl false leaves the switch out: the no-WebGL case on a machine without a GPU.
-  const args = [...(options.softwareGl === false ? [] : softwareArgs), ...rootArgs, ...extra];
+  // webgl false is the no-WebGL case. Leaving the SwiftShader switch out is not enough: a visible Electron 45
+  // window still falls back to software WebGL. Only --disable-gpu with --disable-software-rasterizer removes it
+  // (getContext('webgl2') returns null), on Linux and Windows alike.
+  const glArgs = options.webgl === false ? ['--disable-gpu', '--disable-software-rasterizer'] : softwareArgs;
+  const args = [...glArgs, ...rootArgs, ...extra];
   const app = await electron.launch(exe ? { executablePath: exe, args } : { args: [REPO_ROOT, ...args] });
   const page = await app.firstWindow();
   await page.waitForLoadState('domcontentloaded');
