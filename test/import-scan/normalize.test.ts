@@ -2,6 +2,8 @@
  * Issue M2-11: messy scans, normalized. Every scan here is synthetic test data in the RoomTrace
  * shape (metres), built by hand. Expected values are worked out by hand, in um.
  */
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { importRoomTrace } from '../../src/import-scan/index';
 import type { ScanFinding, ScanImportResult } from '../../src/import-scan/index';
@@ -320,5 +322,52 @@ describe('a coordinate too far away', () => {
     }).not.toThrow();
     expect(r?.ok).toBe(false);
     if (r !== undefined && !r.ok) expect(r.errors.map((e) => e.code)).toEqual(['bad-wall']);
+  });
+});
+
+describe('numbering does not depend on how walls are stored', () => {
+  type RawWall = { startPoint: unknown; endPoint: unknown };
+  const swap = (w: RawWall): void => {
+    [w.startPoint, w.endPoint] = [w.endPoint, w.startPoint];
+  };
+  const sample = (): { rooms: { walls: RawWall[] }[] } =>
+    JSON.parse(readFileSync(resolve(import.meta.dirname, '../fixtures/scans/roomtrace-sample.json'), 'utf8')) as { rooms: { walls: RawWall[] }[] };
+
+  it('the owner sample with every wall swapped end for end gives the same import', () => {
+    const base = importRoomTrace(sample());
+    expect(base.ok).toBe(true);
+    const flipped = sample();
+    flipped.rooms[0]!.walls.forEach(swap);
+    expect(importRoomTrace(flipped)).toEqual(base);
+  });
+
+  it('the owner sample with one wall swapped gives the same import', () => {
+    const base = importRoomTrace(sample());
+    const one = sample();
+    swap(one.rooms[0]!.walls[3]!);
+    expect(importRoomTrace(one)).toEqual(base);
+  });
+
+  it('the same rectangle without wall ids, listed in two orders, gives the same import', () => {
+    const noIds = (walls: WallSpec[]): Record<string, unknown> => {
+      const s = scan(walls, { windows: [{ id: 'w-r', at: [5, 2], width: 1, height: 1.2 }] }) as { rooms: { walls: Record<string, unknown>[] }[] };
+      for (const w of s.rooms[0]!.walls) delete w['id'];
+      return s as unknown as Record<string, unknown>;
+    };
+    const a = importRoomTrace(noIds(RECT));
+    expect(a.ok).toBe(true);
+    expect(importRoomTrace(noIds([...RECT].reverse()))).toEqual(a);
+    expect(importRoomTrace(noIds([...RECT.slice(2), ...RECT.slice(0, 2)]))).toEqual(a);
+  });
+});
+
+describe('numbering with every wall stored backwards', () => {
+  it('the rectangle with a window and a gap, every wall swapped end for end, gives the same import', () => {
+    const windows: WindowSpec[] = [{ id: 'w-r', at: [5, 2], width: 1, height: 1.2 }];
+    const gappy: WallSpec[] = RECT.map((w) => (w.id === 'bottom' ? { ...w, to: [4.997, 0] as Pt } : w));
+    const base = importRoomTrace(scan(gappy, { windows }));
+    expect(base.ok).toBe(true);
+    const swapped = gappy.map((w) => ({ ...w, from: w.to, to: w.from }));
+    expect(importRoomTrace(scan(swapped, { windows }))).toEqual(base);
   });
 });
