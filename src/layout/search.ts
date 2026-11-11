@@ -28,6 +28,7 @@ import type { Unit, UnitGroup } from './state';
 import { cashWrapPhase, placeCashWrap } from './cash-wrap';
 import { centreGrid, islandPhase } from './island-grid';
 import type { Built } from './island-grid';
+import { compareOptions, rankFacts } from './rank';
 import { report } from './report';
 import type { RunResult } from './report';
 import { SCORE_WEIGHTS } from './score';
@@ -184,12 +185,8 @@ export function autoLayout(request: LayoutRequest, options: LayoutOptions = {}):
     seen.add(signature);
     results.push(result);
   }
-  // Ranking: an option that places more of what was asked for always comes first; the score
-  // decides between options that place the same number.
-  results.sort(
-    (a, b) =>
-      b.document.placements.length - a.document.placements.length || b.score - a.score || cmp(a.strategy.id, b.strategy.id),
-  );
+  // Ranking (decisions/0003 point 5): fixtures placed plus one for a complete checkout block.
+  results.sort((a, b) => compareOptions(rankFacts(a, request), rankFacts(b, request)));
   return {
     options: results.slice(0, request.maxOptions ?? DEFAULT_MAX_OPTIONS).map((r, i) => ({ rank: i + 1, ...r })),
     problems: [],

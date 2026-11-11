@@ -3,3 +3,5 @@ export type { IslandRow, LayoutItem, LayoutOption, LayoutRequest, LayoutResult, 
 export { SCORE_WEIGHTS } from './score';
 export { describeObstacles } from './report';
 export { autoLayout } from './search';
+export { compareOptions, rankFacts } from './rank';
+export type { RankFacts } from './rank';
