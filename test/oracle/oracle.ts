@@ -89,8 +89,11 @@ function accessSides(f: Fixture, aisle: number, mainAisle: number, staff: number
       return [{ side: 1, depth: aisle, staff: false }, { side: -1, depth: aisle, staff: false }];
     case 'counter':
       return [{ side: 1, depth: mainAisle, staff: false }, { side: -1, depth: staff, staff: true }];
-    default:
-      return [{ side: 1, depth: Math.max(aisle, f.product.clearances.frontUm), staff: false }];
+    default: {
+      const front = { side: 1 as const, depth: Math.max(aisle, f.product.clearances.frontUm), staff: false };
+      // Served from behind: staff need floor behind it as well as customers in front.
+      return f.product.serviceSide === 'rear' ? [front, { side: -1 as const, depth: staff, staff: true }] : [front];
+    }
   }
 }
 

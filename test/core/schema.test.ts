@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import {
   DesignDocumentSchema,
   ProductSchema,
@@ -317,5 +319,50 @@ describe('part schemas', () => {
     expect(RoomSchema.safeParse(doc.room).success).toBe(true);
     expect(ProductSchema.safeParse(doc.products[0]).success).toBe(true);
     expect(DesignDocumentSchema.safeParse(doc).success).toBe(true);
+  });
+});
+
+describe('ProductSchema: serviceSide (which side the staff serve a fixture from)', () => {
+  const withServiceSide = (value: unknown) => ({ ...validDocument().products[0], serviceSide: value });
+
+  it("keeps 'rear' on a product", () => {
+    const result = ProductSchema.safeParse(withServiceSide('rear'));
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data.serviceSide).toBe('rear');
+  });
+
+  it("keeps 'front' on a product", () => {
+    const result = ProductSchema.safeParse(withServiceSide('front'));
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data.serviceSide).toBe('front');
+  });
+
+  it("refuses any other value, such as 'side'", () => {
+    expect(ProductSchema.safeParse(withServiceSide('side')).success).toBe(false);
+  });
+
+  it('a document with a rear product parses and keeps the field', () => {
+    const doc = validDocument();
+    doc.products[0] = withServiceSide('rear');
+    const result = parseDesignDocument(doc);
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.document.products[0]!.serviceSide).toBe('rear');
+  });
+
+  it('a product without the field still parses and gets no key added (absent means front)', () => {
+    const result = ProductSchema.safeParse(validDocument().products[0]);
+    expect(result.success).toBe(true);
+    if (result.success) expect('serviceSide' in result.data).toBe(false);
+  });
+
+  it('a document from Milestone 1 still parses, unchanged', () => {
+    const raw = JSON.parse(readFileSync(resolve(import.meta.dirname, '../fixtures/m1-document.json'), 'utf8')) as unknown;
+    const result = parseDesignDocument(raw);
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.document).toEqual(raw);
+      expect(result.document.schemaVersion).toBe(1);
+      for (const product of result.document.products) expect('serviceSide' in product).toBe(false);
+    }
   });
 });

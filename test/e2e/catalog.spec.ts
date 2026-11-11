@@ -52,7 +52,7 @@ async function openCatalog(): Promise<Page> {
 }
 const row = (page: Page, id: string) => page.locator(`[data-product="${id}"]`);
 
-type Form = { name: string; category?: string; placement?: string; width?: string; depth?: string; height?: string; price?: string };
+type Form = { name: string; category?: string; placement?: string; width?: string; depth?: string; height?: string; price?: string; servedFrom?: string };
 async function fillForm(page: Page, form: Form): Promise<void> {
   await page.getByLabel('Name', { exact: true }).fill(form.name);
   if (form.category !== undefined) await page.getByLabel('Category', { exact: true }).selectOption(form.category);
@@ -61,6 +61,7 @@ async function fillForm(page: Page, form: Form): Promise<void> {
   if (form.depth !== undefined) await page.getByLabel('Depth', { exact: true }).fill(form.depth);
   if (form.height !== undefined) await page.getByLabel('Height', { exact: true }).fill(form.height);
   if (form.price !== undefined) await page.getByLabel('Price (USD)', { exact: true }).fill(form.price);
+  if (form.servedFrom !== undefined) await page.getByLabel('Served from', { exact: true }).selectOption(form.servedFrom);
   await page.getByRole('button', { name: 'Save product' }).click();
 }
 async function addProductThroughForm(page: Page, form: Form): Promise<void> {
@@ -111,6 +112,50 @@ test('adding a product with every size known writes a verified owner-1', async (
   expect(added.testOnly).toBe(false);
   expect(readCatalog().products.slice(0, 9)).toEqual(seedProducts);
   await expect(row(page, 'owner-1')).toHaveAttribute('data-verification', 'verified', FIRST);
+});
+
+test("the form has a \"Served from\" select with front (default) and rear; rear is written to catalog.json", async () => {
+  const page = await openCatalog();
+  await page.getByRole('button', { name: 'Add a product' }).click();
+  const served = page.getByLabel('Served from', { exact: true });
+  await expect(served).toBeVisible(FIRST);
+  await expect(served).toHaveValue('front');
+  expect(await served.locator('option').evaluateAll((os) => os.map((o) => (o as HTMLOptionElement).value))).toEqual(['front', 'rear']);
+  await fillForm(page, {
+    name: 'Owner rear showcase',
+    category: 'showcase',
+    placement: 'freestanding',
+    width: '60 in',
+    depth: '20 in',
+    height: '40 in',
+    price: '',
+    servedFrom: 'rear',
+  });
+  await expect.poll(() => productsOnDisk()?.length, FIRST).toBe(10);
+  const added = readCatalog().products[9]!;
+  expect(added.id).toBe('owner-1');
+  expect(added.serviceSide).toBe('rear');
+  expect(readCatalog().products.slice(0, 9)).toEqual(seedProducts);
+});
+
+test('a product added with the default "Served from" has no serviceSide key', async () => {
+  const page = await openCatalog();
+  await addProductThroughForm(page, { name: 'Owner plain', category: 'accessory', placement: 'freestanding', width: '30 cm', depth: '30 cm', height: '30 cm' });
+  await expect.poll(() => productsOnDisk()?.length, FIRST).toBe(10);
+  expect('serviceSide' in readCatalog().products[9]!).toBe(false);
+});
+
+test('editing a seed product without touching "Served from" leaves no serviceSide key', async () => {
+  const page = await openCatalog();
+  const name = seed('nhf-c').name;
+  await expect.poll(productsOnDisk, FIRST).not.toBeNull();
+  await page.getByRole('button', { name: `Edit ${name}`, exact: true }).click();
+  await expect(page.getByLabel('Served from', { exact: true })).toHaveValue('front', FIRST);
+  await page.getByLabel('Name', { exact: true }).fill(`${name} 2`);
+  await page.getByRole('button', { name: 'Save product' }).click();
+  await expect.poll(() => productsOnDisk()?.find((p) => p.id === 'nhf-c')?.name, FIRST).toBe(`${name} 2`);
+  const edited = readCatalog().products.find((p) => p.id === 'nhf-c')!;
+  expect('serviceSide' in edited).toBe(false);
 });
 
 test('a product with the height left empty is unknown and cannot be placed', async () => {

@@ -10,6 +10,7 @@ import {
   testGondolaDouble,
   testProducts,
   testShowcase,
+  testShowcaseRear,
   testTower,
   testWallShelf,
 } from '../fixtures/products';
@@ -287,6 +288,49 @@ describe('main-aisle', () => {
     expect(v.map((x) => x.rule)).toEqual(['main-aisle']);
     expect(v[0]!.requiredUm).toBe(mm(1200));
     expect(v[0]!.placementIds).toEqual(['counter']);
+  });
+});
+
+describe('rear-access product (service side)', () => {
+  // Front faces -y (180 degrees), so the back is toward +y and the staff space lies behind it.
+  // 1500 x 500, back edge at y = centre + 250. Room 6 m x 6 m, entrance x 2500..3500 on y = 0.
+  const rearDoc = (room: Room, placements: Placement[]) => makeDoc(room, [...testProducts, testShowcaseRear], placements);
+
+  it('back flush to the wall: one access-blocked, staff-back-wall, needs 915 mm', () => {
+    // centre y 5750, back edge y 6000 = the top wall; the staff zone would be y 6000..6915.
+    const v = validateLayout(rearDoc(rectRoom(6000, 6000), [place('r', testShowcaseRear, 4500, 5750, 180)]));
+    expect(v.map((x) => x.rule)).toEqual(['access-blocked']);
+    expect(v[0]!.placementIds).toEqual(['r']);
+    expect(v[0]!.detail).toBe('staff-back-wall');
+    expect(v[0]!.values).toEqual({ requiredUm: mm(915) });
+    expect(v[0]!.requiredUm).toBe(mm(915));
+  });
+
+  it('back edge 915 mm from the wall, open at the side: no violation', () => {
+    // Back edge 915 mm off the wall is y 5085, centre y 4835; staff zone y 5085..6000, x 3750..5250.
+    const v = validateLayout(rearDoc(rectRoom(6000, 6000), [place('r', testShowcaseRear, 4500, 4835, 180)]));
+    expect(v).toEqual([]);
+  });
+
+  it('back edge only 600 mm from the wall: the staff zone does not fit, access-blocked', () => {
+    // back edge y 5400, centre y 5150; staff zone y 5400..6315 runs through the wall.
+    const v = validateLayout(rearDoc(rectRoom(6000, 6000), [place('r', testShowcaseRear, 4500, 5150, 180)]));
+    expect(v.map((x) => x.rule)).toEqual(['access-blocked']);
+    expect(v[0]!.detail).toBe('staff-back-wall');
+  });
+
+  it('a plain testShowcase with its back flush to the wall is still fine', () => {
+    expect(validateLayout(rearDoc(rectRoom(6000, 6000), [place('s', testShowcase, 4500, 5750, 180)]))).toEqual([]);
+  });
+
+  it('sealed in so staff cannot walk behind it: unreachable, detail staff', () => {
+    // A 1500 mm wide room: the showcase spans wall to wall, so both short ends of the strip behind
+    // it (y 5085..6000) are walls. Entrance x 250..1250. The front is open to the entrance.
+    const v = validateLayout(rearDoc(rectRoom(1500, 6000), [place('r', testShowcaseRear, 750, 4835, 180)]));
+    expect(v.map((x) => x.rule)).toEqual(['unreachable']);
+    expect(v[0]!.placementIds).toEqual(['r']);
+    expect(v[0]!.detail).toBe('staff');
+    expect(v[0]!.values).toEqual({ requiredUm: mm(600) });
   });
 });
 

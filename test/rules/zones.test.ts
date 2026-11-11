@@ -3,7 +3,7 @@ import type { Product, Room } from '../../src/core/index';
 import { areaMm2, pointInPolygon, rectCorners } from '../../src/geometry/index';
 import { accessZones, adjacentRect, configSources, defaultConfig, footprint, keepClearZones } from '../../src/rules/index';
 import { protectedDoorway } from '../fixtures/rooms';
-import { testCounterLong, testGondolaDouble, testShowcase, testWallShelf } from '../fixtures/products';
+import { testCounterLong, testGondolaDouble, testShowcase, testShowcaseRear, testWallShelf } from '../fixtures/products';
 import { mm, place, pt } from './helpers';
 
 const bounds = (polygon: readonly { x: number; y: number }[]) => ({
@@ -174,6 +174,32 @@ describe('accessZones', () => {
       ['staff', 'back', mm(915)],
     ]);
     expect(rectCorners(zones[1]!.rect)).toEqual([pt(2100, 1785), pt(3900, 1785), pt(3900, 2700), pt(2100, 2700)]);
+  });
+
+  it('rear-access freestanding product: customers in front PLUS a staff zone behind (915 mm)', () => {
+    // 1500 x 500 at (3000, 3000), front faces +y: body x 2250..3750, y 2750..3250.
+    const p = place('r', testShowcaseRear, 3000, 3000);
+    const zones = accessZones(p, testShowcaseRear, variantOf(testShowcaseRear), defaultConfig);
+    expect(zones.map((z) => [z.kind, z.side, z.depthUm])).toEqual([
+      ['customer', 'front', mm(915)],
+      ['staff', 'back', mm(915)],
+    ]);
+    expect(rectCorners(zones[0]!.rect)).toEqual([pt(2250, 3250), pt(3750, 3250), pt(3750, 4165), pt(2250, 4165)]);
+    expect(rectCorners(zones[1]!.rect)).toEqual([pt(2250, 1835), pt(3750, 1835), pt(3750, 2750), pt(2250, 2750)]);
+  });
+
+  it('the staff depth follows the config, not a fixed number', () => {
+    const p = place('r', testShowcaseRear, 3000, 3000);
+    const zones = accessZones(p, testShowcaseRear, variantOf(testShowcaseRear), { ...defaultConfig, staffSpaceUm: mm(1000) });
+    expect(zones.find((z) => z.kind === 'staff')!.depthUm).toBe(mm(1000));
+  });
+
+  it("serviceSide 'front' or absent changes nothing for a freestanding product", () => {
+    const front: Product = { ...testShowcase, serviceSide: 'front' };
+    for (const product of [testShowcase, front]) {
+      const zones = accessZones(place('s', product, 3000, 3000), product, variantOf(product), defaultConfig);
+      expect(zones.map((z) => [z.kind, z.side, z.depthUm])).toEqual([['customer', 'front', mm(915)]]);
+    }
   });
 });
 

@@ -222,3 +222,13 @@ describe('catalog helpers', () => {
     expect(isPlaceable(wood, 'default')).toBe(false);
   });
 });
+
+describe('service side of the seed products', () => {
+  it('no seed product sets serviceSide: which real products are rear-access is the owner\'s data', () => {
+    expect(seedProducts.length).toBeGreaterThan(0);
+    for (const product of seedProducts) {
+      expect(product.serviceSide, product.id).toBeUndefined();
+      expect('serviceSide' in product, product.id).toBe(false);
+    }
+  });
+});
