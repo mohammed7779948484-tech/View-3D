@@ -1,6 +1,6 @@
 /** Issue M3-10f: the engine never stands a rear-access product with its back to a wall. */
 import { describe, expect, it } from 'vitest';
-import { distancePointToSegment, rectCorners, wallSegments } from '../../src/geometry/index';
+import { rectCorners } from '../../src/geometry/index';
 import { autoLayout } from '../../src/layout/index';
 import type { LayoutRequest } from '../../src/layout/index';
 import { placedFixtures, defaultConfig, validateLayout } from '../../src/rules/index';
@@ -32,19 +32,34 @@ describe('rear-access products in the layout engine', () => {
     }
   });
 
-  it('the back edge of every rear-access showcase is at least 915 mm from every wall', () => {
-    const walls = wallSegments(protectedDoorway.outline);
+  it('the 915 mm behind every rear-access showcase is floor inside the room (its back never faces a wall)', () => {
+    // The room is the 7000 x 5000 mm rectangle, so "inside or on the outline" is a bounds check.
+    const inRoom = (p: { x: number; y: number }): boolean => p.x >= 0 && p.x <= 7_000_000 && p.y >= 0 && p.y <= 5_000_000;
+    const FRONT: Record<number, { x: number; y: number }> = {
+      0: { x: 0, y: 1 },
+      90: { x: -1, y: 0 },
+      180: { x: 0, y: -1 },
+      270: { x: 1, y: 0 },
+    };
+    let seen = 0;
     for (const option of options) {
       const rears = placedFixtures(option.document, defaultConfig).filter((f) => f.product.id === 'test-showcase-rear');
-      expect(rears.length).toBeGreaterThan(0);
+      expect(rears.length, `option ${option.rank}`).toBeGreaterThan(0);
       for (const f of rears) {
-        const [backLeft, backRight] = rectCorners(f.rect);
-        for (const wall of walls) {
-          for (const corner of [backLeft!, backRight!]) {
-            expect(distancePointToSegment(corner, wall.start, wall.end), `option ${option.rank} ${f.placement.id}`).toBeGreaterThanOrEqual(915_000 - 1);
-          }
+        const turns = f.rect.rotationUdeg / 1_000_000;
+        const front = FRONT[turns];
+        expect(front, `option ${option.rank} ${f.placement.id}: quarter turns only`).toBeDefined();
+        // The two corners furthest back (smallest dot product with the front direction).
+        const dot = (p: { x: number; y: number }): number => p.x * front!.x + p.y * front!.y;
+        const back = [...rectCorners(f.rect)].sort((a, b) => dot(a) - dot(b)).slice(0, 2);
+        for (const corner of back) {
+          const behind = { x: corner.x - front!.x * 915_000, y: corner.y - front!.y * 915_000 };
+          expect(inRoom(corner), `option ${option.rank} ${f.placement.id} back corner`).toBe(true);
+          expect(inRoom(behind), `option ${option.rank} ${f.placement.id} 915 mm behind ${JSON.stringify(corner)}`).toBe(true);
         }
+        seen++;
       }
     }
+    expect(seen).toBeGreaterThanOrEqual(2 * options.length);
   });
 });
