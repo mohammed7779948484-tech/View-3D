@@ -58,3 +58,14 @@ test('no application menu: no reload, quit or dev tools shortcuts', async () => 
   await expect(page.getByRole('textbox', { name: 'Project name' })).toHaveValue('Kept');
 });
 
+// G4
+test('the wall table says when the last wall was redrawn to close', async () => {
+  const page = await h.launch();
+  await typeWalls(page, ['400', '300', '400', '309'], RECT_ANGLES);
+  const status = page.getByRole('status');
+  await expect(status).toContainText('The walls close');
+  await expect(status).toContainText('0.9 cm');
+  await page.getByRole('textbox', { name: 'Wall 4 length', exact: true }).fill('300');
+  await expect(status).toHaveText('The walls close.');
+});
+
