@@ -43,3 +43,18 @@ for (const corner of ['0', '7']) {
   });
 }
 
+// G2
+test('no application menu: no reload, quit or dev tools shortcuts', async () => {
+  const page = await h.launch();
+  const menu = await h.app!.evaluate(({ Menu }) => Menu.getApplicationMenu());
+  expect(menu).toBeNull();
+
+  await h.openRoom({ outline: [um(0, 0), um(4000, 0), um(4000, 3000), um(0, 3000)], ceilingHeightUm: 3_000_000, columns: [], openings: [] });
+  const name = page.getByRole('textbox', { name: 'Project name' });
+  await name.fill('Kept');
+  await name.press('Enter');
+  await page.keyboard.press('Control+R');
+  await page.waitForTimeout(1000); // a reload would take the project away within this time
+  await expect(page.getByRole('textbox', { name: 'Project name' })).toHaveValue('Kept');
+});
+
