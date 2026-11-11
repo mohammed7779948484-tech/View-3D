@@ -2,8 +2,9 @@
  * Every change to a fixture, as one immer recipe for `documentStore.edit`: one undo step each.
  * The 2D plan and the 3D view call these same commands, so the same action gives the same document.
  */
+import { current } from 'immer';
 import type { DesignDocument, Placement, Point, Product } from '../../../src/core/index';
-import { quarterTurn } from '../../../src/rules/index';
+import { defaultConfig, footprint, placedFixtures, quarterTurn, snapBackToBack, snapToWall } from '../../../src/rules/index';
 
 type Recipe = (draft: DesignDocument) => void;
 
@@ -71,4 +72,32 @@ export const deletePlacement =
   (id: string): Recipe =>
   (draft) => {
     draft.placements = draft.placements.filter((p) => p.id !== id);
+  };
+
+/**
+ * A single-sided unit (product placement 'wall') lands flush on the nearest wall within the snap
+ * distance, sliding off doors; failing that, back to back with another single-sided unit. Other
+ * fixtures stay where they were put. Applied in the same edit as the move, so it is one undo step.
+ */
+export const snapPlacement =
+  (id: string): Recipe =>
+  (draft) => {
+    const p = find(draft, id);
+    const product = draft.products.find((q) => q.id === p?.productId);
+    const variant = product?.variants.find((v) => v.id === p?.variantId);
+    if (p === undefined || product?.placement !== 'wall' || variant === undefined || variant.widthUm === null || variant.depthUm === null) return;
+    const rect = footprint(p, variant);
+    const onWall = snapToWall(draft.room, rect, defaultConfig);
+    const others = onWall === null ? placedFixtures(current(draft), defaultConfig).filter((f) => f.placement.id !== id) : [];
+    const pose = onWall ?? snapBackToBack(rect, others, defaultConfig);
+    if (pose === null) return;
+    p.center = { ...pose.center };
+    p.rotationUdeg = pose.rotationUdeg;
+  };
+
+/** Several recipes as one edit (one undo step). */
+export const together =
+  (...recipes: Recipe[]): Recipe =>
+  (draft) => {
+    for (const recipe of recipes) recipe(draft);
   };

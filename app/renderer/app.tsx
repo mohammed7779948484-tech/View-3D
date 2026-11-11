@@ -27,6 +27,8 @@ import {
   placeProduct,
   rotatePlacement,
   setPlacementPose,
+  snapPlacement,
+  together,
 } from './state/placement-commands';
 import { rectCorners } from '../../src/geometry/index';
 import { footprint } from '../../src/rules/index';
@@ -415,11 +417,11 @@ export function App() {
           fixtures={fixtures}
           selectedId={selectedId}
           {...(picked === null
-            ? { onSelect: setSelectedId, onFixtureMoved: (id: string, dx: number, dy: number) => editFixtures(movePlacement(id, dx, dy)) }
+            ? { onSelect: setSelectedId, onFixtureMoved: (id: string, dx: number, dy: number) => editFixtures(together(movePlacement(id, dx, dy), snapPlacement(id))) }
             : {
                 onPlanClick: (point: Point) => {
                   const id = nextPlacementId(project);
-                  if (editFixtures(placeProduct(picked.product, picked.variantId, point, 0))) {
+                  if (editFixtures(together(placeProduct(picked.product, picked.variantId, point, 0), snapPlacement(id)))) {
                     setSelectedId(id);
                     setPicked(null);
                   }

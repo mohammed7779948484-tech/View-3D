@@ -256,7 +256,8 @@ export function backIsCovered(f: PlacedFixture, all: readonly PlacedFixture[], c
   for (let i = 0; i < BACK_COVER_SAMPLES; i++) {
     // Sample just inside the ends, so two partners meeting at a point still cover it.
     const t = (i + 0.5) / BACK_COVER_SAMPLES;
-    const p = { x: backLeft.x + (backRight.x - backLeft.x) * t, y: backLeft.y + (backRight.y - backLeft.y) * t };
+    // Whole micrometres: the exact geometry takes integers (an off-axis edge gave fractions and threw).
+    const p = { x: round(backLeft.x + (backRight.x - backLeft.x) * t), y: round(backLeft.y + (backRight.y - backLeft.y) * t) };
     const covered = partners.some((o) => {
       const [a, b] = o.corners as [Point, Point];
       return distancePointToSegment(p, a, b) <= config.wallSnapMaxGapUm;
@@ -283,6 +284,23 @@ export function poseOnWall(wall: WallSegment, widthUm: number, depthUm: number, 
 }
 
 /**
+ * Where along `wall` a back `widthUm` wide may stand nearest to `alongUm`: on the wall, and never
+ * across a door (the wall-unit rule refuses that). Null when the wall has no such spot.
+ */
+function freeSpotAlong(room: Room, wall: WallSegment, widthUm: number, alongUm: number, config: PlanningConfig): number | null {
+  const lo = widthUm / 2;
+  const hi = wall.lengthUm - widthUm / 2;
+  if (hi < lo) return null;
+  const doors = room.openings.filter((o) => o.kind === 'door' && o.wallIndex === wall.index);
+  const free = (t: number): boolean =>
+    t >= lo && t <= hi && doors.every((o) => Math.min(t + lo, o.offsetUm + o.widthUm) - Math.max(t - lo, o.offsetUm) <= config.wallSnapMaxGapUm);
+  const wanted = Math.min(Math.max(alongUm, lo), hi);
+  const spots = [wanted, ...doors.flatMap((o) => [o.offsetUm - lo, o.offsetUm + o.widthUm + lo])].filter(free);
+  if (spots.length === 0) return null;
+  return spots.reduce((best, t) => (Math.abs(t - wanted) < Math.abs(best - wanted) || (Math.abs(t - wanted) === Math.abs(best - wanted) && t < best) ? t : best));
+}
+
+/**
  * The nearest pose with the rectangle's back flush against a wall and its front facing the room,
  * when its centre is within the snap distance of where it would stand; otherwise null.
  */
@@ -295,7 +313,8 @@ export function snapToWall(room: Room, rect: OrientedRect, config: PlanningConfi
     const fromWall = dx * wall.inwardNormal.x + dy * wall.inwardNormal.y;
     const gap = Math.abs(fromWall - rect.depthUm / 2);
     if (gap > config.wallSnapDistanceUm || gap >= bestGap) continue;
-    const pose = poseOnWall(wall, rect.widthUm, rect.depthUm, dx * wall.direction.x + dy * wall.direction.y);
+    const along = freeSpotAlong(room, wall, rect.widthUm, dx * wall.direction.x + dy * wall.direction.y, config);
+    const pose = along === null ? null : poseOnWall(wall, rect.widthUm, rect.depthUm, along);
     if (pose === null) continue;
     best = pose;
     bestGap = gap;
