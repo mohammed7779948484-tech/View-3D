@@ -143,6 +143,13 @@ Running log and decisions. Checkpointed after every step so work survives a rest
     add it and raise the time budget to 4 s, or (c) leave it until one of your shops needs it.
     Recommended: (a).
 
+17. M3 10e (L-shaped checkout block without a right-angled corner) is parked. Measured on all 7 test
+    shops: the two with angled corners (153 and 117 degrees) already have the counter and every
+    showcase in one block in their best options; only options 3 and 4 of the angled-wall shop have
+    an incomplete block. Turning the block in open floor needs the open-floor block of question 16
+    first. Recommended: decide 16 first; then 10e is built only if one of your shops shows a split
+    checkout block next to an angled corner.
+
 Answered on 2026-11-11 (Milestone 2 detail plan): order 1, 2, 3, 4, 5, 8, 10, 6, 7, 9, 11; strings
 through t() from issue 1; closure check gives the smallest suspect set; document null until a room
 exists; unknown scan sill stays pending; JSON scan adapter only (DXF waits for a sample); room checks
@@ -228,3 +235,4 @@ W48 × D20 × H72 in; single-sided units go on walls or back to back; entrance d
 - 2026-11-11 M3 10c parked (question 13): no scenario leaves room for more (brute force on small-overfull: 0 extra wall spots in every option); a relocation pass would be speculative.
 - 2026-11-11 M3 issue 10f: optional `serviceSide` on products; a rear-served product needs a 915 mm staff zone behind it (never its back to a wall), the engine and the oracle agree, the catalog form has "Served from". No real product set (question 14). One test-writer spec fix: the engine test first also forbade a side flush to a wall. Suite 895 Vitest, 107 e2e.
 - 2026-11-11 M3 issue 10d: trial of an open-floor checkout block (facing the entrance first, then side on, then back to it; 200 mm grid, 5 m reach). Measured gains in 2 of 5 shops, +0.6 s on the benchmark, rounding-sensitive search picks (rotation test). Parked with question 16; failing tests kept on the local branch parked/m3-10d (container-local; the spec is in this note and the handoff).
+- 2026-11-11 M3 issue 10e: measured, parked (question 17): every shop with an angled corner already has a complete checkout block in its best options; the open-floor turn depends on 10d.

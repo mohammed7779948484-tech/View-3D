@@ -4,7 +4,7 @@
 - Milestone 3 (plan: `docs/plans/M2-M4-plan.md` section 2, with the owner's rulings of 2026-11-11).
 - Branch `claude/milestone-2-delivery-wgd3q6` (restarted from `main` after PR #2 merged). Draft PR: see the PR table.
 - Draft PR: https://github.com/mohammed7779948484-tech/View-3D/pull/3
-- Last commit: the 10g checkpoint (see `git log -1`).
+- Last commit: the 10e checkpoint (see `git log -1`).
 
 ## 2. Status
 | Item | Status | Note |
@@ -24,14 +24,14 @@
 | 10b ranking | proven | 24 Vitest; one option pair swapped (gallery); CI green |
 | 10c swap and relocate | parked | no shop leaves room for more (measured); owner question 13 |
 | 10d free-standing counter | parked | trial measured (gains in 2 shops, +0.6 s benchmark, rounding-sensitive pick); owner question 16 |
-| 10e L-block without right angle | to do | |
+| 10e L-block without right angle | parked | no shop gains in its best options (measured); depends on 10d; owner question 17 |
 | 10f service side | built, parked | proven, CI green (Ubuntu, Windows, installer); no real product set: owner question 14 |
 | 10g score weights | prepared, parked | proposal 30/12/8/10/10/15/15 moves nothing in the test shops; two trade-off pairs in snapshots/README.md; owner question 15 |
 
 ## 3. Next step
-10e, L-shaped checkout block without a right-angled inside corner (turns in open floor or at an
-angled corner): measure first, as for 10c and 10d, whether any shop gains; then the final report.
-If the owner answers question 16 with (a): rebuild 10d. The trial: `placeFreeCashWrap` in
+Every item is proven or parked with an owner question (13 to 17). Next: the owner's answers. If
+he picks new weights (15), change `SCORE_WEIGHTS`, regenerate snapshots and golden hashes as an
+intended change. If the owner answers question 16 with (a): rebuild 10d. The trial: `placeFreeCashWrap` in
 `src/layout/cash-wrap.ts` tries counter + showcases in one line, quarter turns from the entrance
 wall (facing it first, then side on, then back to it), 200 mm grid up to 5 m in front of the
 entrance, nearest first; `search.ts` adds a 'free' counter candidate and `LayoutStrategy.counterFree`.
@@ -42,7 +42,7 @@ The search must then replace its kept arrangement only when the score is better 
 
 ## 4. Waiting for the owner
 - Run Diagnostics > Test 3D speed on the laptop once, send a photo (30 fps proof).
-- Open questions in `docs/NOTES.md` (13: 10c; 14: which products are served from the back; 15: score weights, two pairs to pick; 16: open-floor counter, a/b/c).
+- Open questions in `docs/NOTES.md` (13: 10c; 14: which products are served from the back; 15: score weights, two pairs to pick; 16: open-floor counter, a/b/c; 17: 10e).
 
 ## 5. How to resume
 ```bash
