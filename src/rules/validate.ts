@@ -48,6 +48,10 @@ export type Violation = {
   message: string;
   measuredUm?: number;
   requiredUm?: number;
+  /** Which wording of the rule's message applies, as a stable code (translation by code). */
+  detail?: string;
+  /** The numbers in the message, by name, in um (translation by code). */
+  values?: Record<string, number>;
 };
 
 /** A placement with everything the rules need, worked out once. */
@@ -346,6 +350,7 @@ export function walkingViolations(
                 placementIds: [f.placement.id],
                 message: `The way from the entrance to ${label(f)} is narrower than ${mmText(config.secondaryAisleUm)} somewhere.`,
                 requiredUm: config.secondaryAisleUm,
+                values: { requiredUm: config.secondaryAisleUm },
               }
             : {
                 rule: 'unreachable',
@@ -353,6 +358,8 @@ export function walkingViolations(
                 placementIds: [f.placement.id],
                 message: `Customers cannot walk from the entrance to ${label(f)}.`,
                 requiredUm: config.secondaryAisleUm,
+                detail: 'customer',
+                values: { requiredUm: config.secondaryAisleUm },
               },
         );
       }
@@ -363,6 +370,8 @@ export function walkingViolations(
           placementIds: [f.placement.id],
           message: `Staff cannot get behind ${label(f)}: the way in is narrower than ${mmText(config.staffPassageUm)}.`,
           requiredUm: config.staffPassageUm,
+          detail: 'staff',
+          values: { requiredUm: config.staffPassageUm },
         });
       }
     }
@@ -377,6 +386,7 @@ export function walkingViolations(
           placementIds: [counter.placement.id],
           message: `The main aisle from the entrance to ${label(counter)} is narrower than ${mmText(config.mainAisleUm)} somewhere.`,
           requiredUm: config.mainAisleUm,
+          values: { requiredUm: config.mainAisleUm },
         });
       }
     }
@@ -490,6 +500,7 @@ export function validateLayout(doc: DesignDocument, config: PlanningConfig = def
         placementIds: [id],
         openingId: zone.openingId,
         message: `${label(f)} blocks ${isEntrance ? 'the entrance' : `door "${zone.openingId}"`}. ${zone.reason}`,
+        detail: zone.kind,
       });
     }
 
@@ -508,6 +519,7 @@ export function validateLayout(doc: DesignDocument, config: PlanningConfig = def
             message: `${label(f)} is ${mmText(f.variant.heightUm)} high and stands in front of window "${opening.id}", whose sill is at ${mmText(opening.sillHeightUm)}.`,
             measuredUm: f.variant.heightUm,
             requiredUm: opening.sillHeightUm,
+            values: { heightUm: f.variant.heightUm, sillUm: opening.sillHeightUm },
           });
         }
       }
@@ -531,7 +543,7 @@ export function validateLayout(doc: DesignDocument, config: PlanningConfig = def
     for (const zone of f.zones) {
       const who = zone.kind === 'staff' ? 'staff space' : 'aisle';
       const where = zone.side === 'front' ? 'in front of' : 'behind';
-      const report = (others: string[], what: string): void => {
+      const report = (others: string[], what: string, blocker: 'wall' | 'column' | 'fixture', columnId?: string): void => {
         blockedZones.add(`${id}/${zone.side}`);
         out.push({
           rule: 'access-blocked',
@@ -539,15 +551,18 @@ export function validateLayout(doc: DesignDocument, config: PlanningConfig = def
           placementIds: [id, ...others],
           message: `The ${who} ${where} ${label(f)} needs ${mmText(zone.depthUm)} clear, but ${what}.`,
           requiredUm: zone.depthUm,
+          ...(columnId === undefined ? {} : { columnId }),
+          detail: `${zone.kind}-${zone.side}-${blocker}`,
+          values: { requiredUm: zone.depthUm },
         });
       };
-      if (!rectInsidePolygon(zone.rect, room.outline)) report([], 'a wall is in the way');
+      if (!rectInsidePolygon(zone.rect, room.outline)) report([], 'a wall is in the way', 'wall');
       for (const column of room.columns) {
-        if (rectIntersectsPolygon(zone.rect, column.outline)) report([], `column "${column.id}" is in the way`);
+        if (rectIntersectsPolygon(zone.rect, column.outline)) report([], `column "${column.id}" is in the way`, 'column', column.id);
       }
       for (const other of fixtures) {
         if (other !== f && rectsOverlap(zone.rect, other.rect)) {
-          report([other.placement.id], `${label(other)} is in the way`);
+          report([other.placement.id], `${label(other)} is in the way`, 'fixture');
         }
       }
     }

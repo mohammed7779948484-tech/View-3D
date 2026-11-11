@@ -339,5 +339,67 @@
     "duplicate": "Duplicate",
     "delete": "Delete",
     "refused": "That change was refused: it would make the project invalid."
+  },
+  "violations": {
+    "theEntrance": "the entrance",
+    "door": "door \"{{id}}\"",
+    "invalid-room": {
+      "default": "The room has a problem; see the room problems."
+    },
+    "unknown-product": {
+      "default": "Placement \"{{id}}\" refers to product \"{{product}}\" / \"{{variant}}\", which is not in the document."
+    },
+    "overlap": {
+      "default": "{{a}} and {{b}} overlap."
+    },
+    "outside-room": {
+      "default": "{{a}} is not fully inside the room."
+    },
+    "column": {
+      "default": "{{a}} stands on column \"{{column}}\"."
+    },
+    "blocked-door": {
+      "default": "{{a}} blocks {{door}}.",
+      "door-swing": "{{a}} blocks {{door}}. The leaf of {{door}} sweeps this area when it opens.",
+      "door-approach": "{{a}} blocks {{door}}. People need clear floor in front of {{door}} to open it and walk through.",
+      "entrance-clear": "{{a}} blocks {{door}}. Customers need clear floor just inside the entrance.",
+      "decompression": "{{a}} blocks {{door}}. Customers arriving need open floor and a clear view straight in from the entrance."
+    },
+    "window-blocked": {
+      "default": "{{a}} is {{height}} mm high and stands in front of window \"{{window}}\", whose sill is at {{sill}} mm."
+    },
+    "wall-unit-not-on-wall": {
+      "default": "{{a}} is single-sided: its back must stand against a wall (clear of doors) or against the back of another single-sided unit."
+    },
+    "access-blocked": {
+      "default": "The space beside {{a}} needs {{required}} mm clear.",
+      "customer-front-wall": "The aisle in front of {{a}} needs {{required}} mm clear, but a wall is in the way.",
+      "customer-front-column": "The aisle in front of {{a}} needs {{required}} mm clear, but column \"{{column}}\" is in the way.",
+      "customer-front-fixture": "The aisle in front of {{a}} needs {{required}} mm clear, but {{b}} is in the way.",
+      "customer-back-wall": "The aisle behind {{a}} needs {{required}} mm clear, but a wall is in the way.",
+      "customer-back-column": "The aisle behind {{a}} needs {{required}} mm clear, but column \"{{column}}\" is in the way.",
+      "customer-back-fixture": "The aisle behind {{a}} needs {{required}} mm clear, but {{b}} is in the way.",
+      "staff-front-wall": "The staff space in front of {{a}} needs {{required}} mm clear, but a wall is in the way.",
+      "staff-front-column": "The staff space in front of {{a}} needs {{required}} mm clear, but column \"{{column}}\" is in the way.",
+      "staff-front-fixture": "The staff space in front of {{a}} needs {{required}} mm clear, but {{b}} is in the way.",
+      "staff-back-wall": "The staff space behind {{a}} needs {{required}} mm clear, but a wall is in the way.",
+      "staff-back-column": "The staff space behind {{a}} needs {{required}} mm clear, but column \"{{column}}\" is in the way.",
+      "staff-back-fixture": "The staff space behind {{a}} needs {{required}} mm clear, but {{b}} is in the way."
+    },
+    "aisle-too-narrow": {
+      "default": "The way from the entrance to {{a}} is narrower than {{required}} mm somewhere."
+    },
+    "unreachable": {
+      "default": "{{a}} cannot be reached.",
+      "customer": "Customers cannot walk from the entrance to {{a}}.",
+      "staff": "Staff cannot get behind {{a}}: the way in is narrower than {{required}} mm."
+    },
+    "main-aisle": {
+      "default": "The main aisle from the entrance to {{a}} is narrower than {{required}} mm somewhere."
+    }
+  },
+  "layoutProblems": {
+    "title": "Layout problems",
+    "none": "No layout problems."
   }
 }

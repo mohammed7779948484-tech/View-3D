@@ -4,9 +4,9 @@
  */
 import type { TFunction } from 'i18next';
 import type { CaptureProblem, SanityWarning } from '../../../src/capture/index';
-import type { AngleInputCode, LengthInputCode, Room } from '../../../src/core/index';
+import type { AngleInputCode, DesignDocument, LengthInputCode, Room } from '../../../src/core/index';
 import { captureConfig } from '../../../src/rules/index';
-import type { RoomProblem } from '../../../src/rules/index';
+import type { RoomProblem, Violation } from '../../../src/rules/index';
 
 const mm = (um: number | undefined): string => `${Math.round((um ?? 0) / 1000)} mm`;
 
@@ -52,4 +52,33 @@ export function warningText(t: TFunction, w: SanityWarning): string {
   const limit =
     w.code === 'wall-very-short' ? `${captureConfig.shortWallUm / 1000} mm` : w.code === 'wall-very-long' ? `${captureConfig.longWallUm / 1_000_000} m` : '';
   return t(`warnings.${w.code}`, { n: w.index + 1, limit });
+}
+
+/**
+ * A layout problem in words, in the chosen language, from its rule, `detail` and `values`. In English
+ * it is exactly the engine's own message. Fixtures are named `"name" (id)` as the engine names them.
+ */
+export function violationText(t: TFunction, doc: DesignDocument, v: Violation): string {
+  const label = (id: string | undefined): string => {
+    if (id === undefined) return '';
+    const placement = doc.placements.find((p) => p.id === id);
+    const name = doc.products.find((p) => p.id === placement?.productId)?.name ?? placement?.productId ?? id;
+    return `"${name}" (${id})`;
+  };
+  const value = (key: string): number => Math.round((v.values?.[key] ?? 0) / 1000);
+  const ghost = doc.placements.find((p) => p.id === v.placementIds[0]);
+  const opening = doc.room.openings.find((o) => o.id === v.openingId);
+  return t(`violations.${v.rule}.${v.detail ?? 'default'}`, {
+    a: label(v.placementIds[0]),
+    b: label(v.placementIds[1]),
+    id: v.placementIds[0],
+    product: ghost?.productId,
+    variant: ghost?.variantId,
+    door: opening?.door?.isEntrance === true ? t('violations.theEntrance') : t('violations.door', { id: v.openingId }),
+    window: v.openingId,
+    column: v.columnId,
+    height: value('heightUm'),
+    sill: value('sillUm'),
+    required: value('requiredUm'),
+  });
 }

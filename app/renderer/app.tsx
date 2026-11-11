@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { DesignDocument, DisplayUnit, Point } from '../../src/core/index';
-import { validateRoom } from '../../src/rules/index';
+import { validateLayout, validateRoom } from '../../src/rules/index';
 import { outlineToWalls } from '../../src/capture/index';
 import { formatAngle, formatDisplayLength } from '../../src/core/index';
 import { viewBoxAround } from './editor-2d/geometry';
@@ -35,7 +35,7 @@ import type { ScanImportResult } from '../../src/import-scan/index';
 import type { Room } from '../../src/core/index';
 import { documentStore, useDocumentState } from './state/index';
 import { LANGUAGES } from './i18n';
-import { problemText } from './i18n/messages';
+import { problemText, violationText } from './i18n/messages';
 import { bridge } from './storage/bridge';
 import { readDocument, serializeDocument } from './storage/project-file';
 
@@ -71,6 +71,9 @@ export function App() {
   const catalogProducts = useCatalogProducts();
   const [picked, setPicked] = useState<Picked | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  // Live validation: every rule, on every change of the document (about 25 ms for 40 fixtures).
+  // A broken room is listed by the room checks, not here.
+  const violations = useMemo(() => (project === null ? [] : validateLayout(project).filter((v) => v.rule !== 'invalid-room')), [project]);
   // Undoing back to the saved document counts as saved: compare by reference.
   const unsaved = project !== null && project !== saved;
   const unsavedRef = useRef(unsaved);
@@ -276,7 +279,8 @@ export function App() {
   };
   const fixtures = project.placements.flatMap((p) => {
     const variant = project.products.find((q) => q.id === p.productId)?.variants.find((v) => v.id === p.variantId);
-    return variant === undefined || variant.widthUm === null || variant.depthUm === null ? [] : [{ id: p.id, corners: rectCorners(footprint(p, variant)) }];
+    const problem = violations.some((v) => v.placementIds.includes(p.id));
+    return variant === undefined || variant.widthUm === null || variant.depthUm === null ? [] : [{ id: p.id, corners: rectCorners(footprint(p, variant)), problem }];
   });
   const selected = project.placements.find((p) => p.id === selectedId);
   /** Every edit of the room says why when the document refuses it, instead of silently snapping back. */
@@ -423,6 +427,17 @@ export function App() {
               })}
         />
       </div>
+      <section className="layout-problems">
+        <h2 id="layout-problems-title">{t('layoutProblems.title')}</h2>
+        <ul aria-labelledby="layout-problems-title">
+          {violations.map((v) => (
+            <li key={`${v.rule}:${v.placementIds.join(',')}:${v.openingId ?? ''}:${v.columnId ?? ''}:${v.detail ?? ''}`} data-rule={v.rule}>
+              {violationText(t, project, v)}
+            </li>
+          ))}
+        </ul>
+        {violations.length === 0 && <p className="status ok">{t('layoutProblems.none')}</p>}
+      </section>
       <ul className="room-problems" aria-label={t('room.problems')}>
         {roomProblems.map((p) => (
           <li key={`${p.code}${p.index ?? ''}${p.openingId ?? ''}${p.columnId ?? ''}`}>{problemText(t, project.room, p)}</li>

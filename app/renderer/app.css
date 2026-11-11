@@ -87,3 +87,6 @@ input[aria-invalid='true'] { border-color: var(--problem); }
 .plan-fixture-front { stroke: var(--ink); stroke-width: 4px; vector-effect: non-scaling-stroke; pointer-events: none; }
 /* The plan stays in view while the panels beside it scroll (a laptop window is shorter than the panels). */
 .workspace > .plan { position: sticky; inset-block-start: 0.5rem; max-block-size: calc(100vh - 1rem); }
+.plan-fixture.problem { fill: #f6c9c1; stroke: var(--problem); }
+.plan-fixture.problem.selected { fill: #f3b0a4; }
+.layout-problems ul { color: var(--problem); padding-inline-start: 1.25rem; }

@@ -17,7 +17,7 @@ type Props = {
   openings?: readonly Opening[];
   columns?: readonly Column[];
   /** Fixture footprints: corners [back-left, back-right, front-right, front-left], um. */
-  fixtures?: readonly { id: string; corners: readonly Point[] }[];
+  fixtures?: readonly { id: string; corners: readonly Point[]; problem?: boolean }[];
   selectedId?: string | null;
   onSelect?: (id: string) => void;
   /** A fixture was dragged and released, moved by this snapped delta. */
@@ -93,8 +93,9 @@ export function Plan({ outline, closed, unit, view, onPlanClick, onCornerMoved, 
           return (
             <g key={f.id} transform={offset}>
               <polygon
-                className={`plan-fixture${f.id === selectedId ? ' selected' : ''}`}
+                className={`plan-fixture${f.id === selectedId ? ' selected' : ''}${f.problem === true ? ' problem' : ''}`}
                 data-placement={f.id}
+                data-problem={f.problem === true ? 'true' : undefined}
                 points={f.corners.map((p) => `${mm(p.x)},${mm(p.y)}`).join(' ')}
                 onClick={(event) => {
                   if (onSelect === undefined) return;
