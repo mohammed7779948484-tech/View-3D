@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { parseDesignDocument } from '../../src/core/index';
 import type { DesignDocument, Placement } from '../../src/core/index';
 import { rectsOverlap } from '../../src/geometry/index';
-import { autoLayout } from '../../src/layout/index';
+import { autoLayout, compareOptions, rankFacts } from '../../src/layout/index';
 import type { LayoutOption, LayoutRequest } from '../../src/layout/index';
 import { defaultConfig, entranceOf, flushWall, openingBand, placedFixtures, validateLayout } from '../../src/rules/index';
 import { scenarios } from './scenarios';
@@ -25,12 +25,11 @@ describe.each(scenarios.map((s) => [s.id, s] as const))('auto layout: %s', (_id,
     const options = run(request);
     expect(options.length).toBeGreaterThanOrEqual(2);
     expect(options.map((o) => o.rank)).toEqual(options.map((_, i) => i + 1));
-    // Best first: more fixtures placed wins; the score decides between equals.
+    // Best first by the owner's ranking rule (docs/decisions/0003-rule-based-layout-engine.md, point 5):
+    // placed + a complete checkout block, then the score, then the strategy id.
     for (let i = 1; i < options.length; i++) {
       const [better, worse] = [options[i - 1]!, options[i]!];
-      const [n1, n2] = [better.document.placements.length, worse.document.placements.length];
-      expect(n1).toBeGreaterThanOrEqual(n2);
-      if (n1 === n2) expect(better.score).toBeGreaterThanOrEqual(worse.score);
+      expect(compareOptions(rankFacts(better, request), rankFacts(worse, request))).toBeLessThanOrEqual(0);
     }
     const signatures = options.map((o) => JSON.stringify(o.document.placements));
     expect(new Set(signatures).size).toBe(options.length); // no two options are the same layout
