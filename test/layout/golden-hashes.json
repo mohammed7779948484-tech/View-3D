@@ -1,0 +1,30 @@
+{
+  "l-shape-with-column": {
+    "sha256": "d848c4e3c1ff4e23e6c504e7d6d6c65b9e0a1f39d951379e48e9e1a248b3b8dc",
+    "length": 32805
+  },
+  "angled-wall": {
+    "sha256": "5c2e6efc1ed1a8248a15e0b61a0137b3e35049cb41d7fbbdc585468052efa184",
+    "length": 21926
+  },
+  "small-overfull": {
+    "sha256": "7717be7e8b393ea65bab5e785795f147d53f512a1311bacd6d4f956978e9f933",
+    "length": 19645
+  },
+  "protected-doorway-real-products": {
+    "sha256": "e9489ab5c301121206bdd2608c4c973be6e819eec04873e76b48c3bad50be67f",
+    "length": 34007
+  },
+  "angled-entrance": {
+    "sha256": "83cd7b3a3336824cdbdb572ae0fd00476a5f4da37389d2366ab6dc47a60e5873",
+    "length": 21879
+  },
+  "walls-full": {
+    "sha256": "e223607f74bc799f257994322f2286d2d352e282f1b00393cd47aae197b57879",
+    "length": 24094
+  },
+  "benchmark-15x10": {
+    "sha256": "650a0b8b64df984b1f1330fec5b790c67efb8edb24958ae865fb4e8dc1b8d936",
+    "length": 38783
+  }
+}
