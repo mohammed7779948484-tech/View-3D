@@ -14,9 +14,9 @@
 | Spike: worker from file:// | proven | worker bytes = Node bytes; CI green |
 | 1 catalog | proven | 35 Vitest + 8 e2e; CI green |
 | 2 place/move/rotate 2D | proven | 26 Vitest + 12 e2e (incl. 6 drag regression); CI green Ubuntu, Windows, installer |
-| 3 live validation | proven locally, CI pending | 70 Vitest + 3 e2e; 16.2 ms for 40 fixtures |
-| 4 snapping | in progress | test-writer handoff next |
-| 5 worker | to do | |
+| 3 live validation | proven | 70 Vitest + 3 e2e; 16.2 ms for 40 fixtures; CI green |
+| 4 snapping | proven locally, CI pending | 15 Vitest + 2 e2e |
+| 5 worker | in progress | test-writer handoff next |
 | 6 option picker | to do | |
 | 7 3D view | to do | |
 | 8 3D select/move | to do | |
@@ -29,13 +29,16 @@
 | 10g score weights | to do | will be parked: owner looks at the gallery |
 
 ## 3. Next step
-Issue 4, snapping (`src/rules/snap.ts`, `src/rules/validate.ts` snapToWall). Property (fast-check, fixed
-seed): every non-null `snapToWall` pose passes the wall-unit rule (today it can land across a door:
-fix by refusing or sliding off the door). New `snapBackToBack(fixtures, movingRect, config)`: partner
-wall shelf 1200 x 400 at (3000, 2000) mm, 0 deg; mover 180 deg dropped at (3100, 1500) mm (back 100 mm
-away, within 300 mm) -> (3000, 1600) mm, 180 000 000; the same mover at 0 deg does not snap. Hand
-case on the angled wall: tower 600 x 600 dropped at (6776.393, 3888.197) mm -> (6 731 672, 3 865 836) um,
-116 565 051. Then the editor applies the snaps on drop (Playwright: drop near a wall -> flush).
+Issue 5, automatic layout in the worker with progress and cancel. Engine: optional
+`autoLayout(request, { onProgress(done, total) })` in `src/layout/search.ts`; the result bytes are
+identical with and without it (golden hashes); total = number of search runs actually built.
+App: an "Automatic layout" panel on the project screen: products and quantities from the catalog
+(placeable sizes only), Run, a progress bar (`role=progressbar`, aria-valuenow/max), Cancel (ends the
+worker; the document is untouched and a second run still works). The worker already exists
+(`app/renderer/worker/`); give it progress messages. Tests: Vitest for onProgress (strictly rising,
+ends at total, same bytes); Playwright: run on a room with real products, the result JSON's SHA-256
+equals autoLayout in Node for the same request; cancel mid-run leaves the saved file byte-identical.
+Issue 6 then shows the options.
 
 ## 4. Waiting for the owner
 - Run Diagnostics > Test 3D speed on the laptop once, send a photo (30 fps proof).
