@@ -10,9 +10,9 @@
 | Item | Status | Note |
 |---|---|---|
 | 10a engine split | proven | golden hashes + snapshots unchanged; CI green Ubuntu + Windows |
-| Spike: 3D (three + R3F, WebGL) | proven locally, CI pending | laptop number waits for the owner's run |
-| Spike: worker from file:// | in progress | test-writer handoff next |
-| 1 catalog | to do | |
+| Spike: 3D (three + R3F, WebGL) | proven | CI green Ubuntu + Windows; laptop number waits for the owner's run |
+| Spike: worker from file:// | proven locally, CI pending | worker bytes = Node bytes |
+| 1 catalog | in progress | test-writer handoff next |
 | 2 place/move/rotate 2D | to do | |
 | 3 live validation | to do | |
 | 4 snapping | to do | |
@@ -29,12 +29,16 @@
 | 10g score weights | to do | will be parked: owner looks at the gallery |
 
 ## 3. Next step
-Worker spike: Diagnostics gets "Test layout speed": `app/renderer/worker/layout.worker.ts` runs
-`autoLayout` on a fixed real-product request (room 7 x 5 m, entrance on wall 0 at 3000 mm, back-room
-door on wall 1; 1 nhf-c, 2 extra-view, 1 full-view h42, 2 nhf-s-1, 3 nhf-g) and the page shows
-`data-layout-sha256` of the JSON and the time. Test-writer: Playwright compares that hash with
-SHA-256 of `JSON.stringify(autoLayout(request))` in Node (the requirement itself), plus no remote or
-blocked request. If Electron's V8 differs from Node's, record it and compare with the renderer's own call.
+Issue 1, catalog (ruling: one file `userData/catalog.json`, filled from `seedProducts` on first start,
+no network; website products `unverified` until Confirm; owner-typed products `verified`).
+Test-writer, Vitest `test/catalog/catalog-file.test.ts` for a new `src/catalog/catalog-file.ts`:
+file schema `{ schemaVersion: 1, products: Product[] }`; pure edits returning `{ ok, catalog }` or
+`{ ok: false, code }`: add (48 x 24 x 38 in -> 1 219 200 / 609 600 / 965 200 um; empty height ->
+verification 'unknown', isPlaceable false), duplicate id refused, update, remove, confirm
+(unverified -> verified; unknown cannot be confirmed); serialize/parse round trip byte-identical;
+a corrupt file -> readable error code. Then Playwright for the panel (add, edit, remove, confirm;
+unknown listed greyed out) and for the main-process file (never overwritten when corrupt). Files:
+`app/main/catalog-file.ts`, preload `loadCatalog`/`saveCatalog`, `app/shared`, `app/renderer/catalog/`.
 
 ## 4. Waiting for the owner
 - Run Diagnostics > Test 3D speed on the laptop once, send a photo (30 fps proof).
@@ -51,6 +55,7 @@ Traps: Electron needs `--no-sandbox` as root (the e2e launcher adds it). With no
 WebGL unless Electron starts with `--enable-unsafe-swiftshader` (tests only).
 
 ## 6. Decisions made this milestone
+- Worker: `app/renderer/worker/layout.worker.ts` answers with JSON text; same bytes as Node (`docs/STACK.md`).
 - 3D: three 0.187.0 + R3F 9.8.2, instanced Lambert boxes, units.ts only conversion; tests read `window.__view3dScene.describe()` (`docs/STACK.md`).
 - 10a: layout engine in phase files; `test/layout/golden-hashes.json` guards output (`pnpm snapshots:update` rewrites it).
 - Ranking key `placed + complete block`, tie: complete block, then score (`docs/decisions/0003`).

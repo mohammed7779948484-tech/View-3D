@@ -163,3 +163,5 @@ W48 × D20 × H72 in; single-sided units go on walls or back to back; entrance d
   `snapshots/before-m3/` frozen as the "before" for the rest of issue 10.
 - 2026-11-11 M3 3D spike: three 0.187.0 + @react-three/fiber 9.8.2 on WebGL. Diagnostics, "Test 3D speed": 60 real products, every box read back from the scene graph within 1 mm; CI (SwiftShader) 16.7 ms median for all four setups (capped by 60 Hz), 2 draw calls instanced vs 61 without.
   Owner: please run Diagnostics > Test 3D speed once on the laptop and send a photo; that is the only proof of the 30 fps target on integrated graphics.
+- 2026-11-11 M3 worker spike: autoLayout runs in a Web Worker loaded from file:// under the existing CSP; its JSON is byte-identical (SHA-256) to a direct call in Node 22, so Electron's V8 and Node agree. 200 ms in the worker for the 9-product test shop. Diagnostics, "Test layout speed" lets the owner time it.
+  CI 3D numbers from both runners recorded in STACK.md (Windows CI also uses SwiftShader).
