@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { formatDisplayLength, parseLength } from '../../../src/core/index';
 import type { DisplayUnit, Opening, Room } from '../../../src/core/index';
 import { validateRoom } from '../../../src/rules/index';
+import { lengthInputText, problemText } from '../i18n/messages';
 import { typedUnit } from './length-field';
 
 type Kind = 'door' | 'window' | 'column';
@@ -55,7 +56,7 @@ export function OpeningsPanel({ room, unit, onRoom }: Props) {
       }
       const result = parseLength(text, typedUnit(unit));
       if (result.ok) read[field] = result.um;
-      else problems.push(`${t(`openings.${kind}.${field}`)}: ${result.message}`);
+      else problems.push(`${t(`openings.${kind}.${field}`)}: ${lengthInputText(t, result.code)}`);
     }
     if (problems.length > 0) return setErrors(problems);
     const id = nextId(room, kind);
@@ -78,7 +79,7 @@ export function OpeningsPanel({ room, unit, onRoom }: Props) {
       candidate = { ...room, openings: [...room.openings, opening] };
     }
     const objections = validateRoom(candidate).filter((p) => p.openingId === id || p.otherOpeningId === id || p.columnId === id);
-    if (objections.length > 0) return setErrors(objections.map((p) => p.message));
+    if (objections.length > 0) return setErrors(objections.map((p) => problemText(t, candidate, p)));
     onRoom(candidate);
     setKind(null);
   }

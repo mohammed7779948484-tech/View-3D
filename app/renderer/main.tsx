@@ -3,10 +3,9 @@ import { createRoot } from 'react-dom/client';
 import { I18nextProvider } from 'react-i18next';
 import './app.css';
 import { App } from './app';
-import { i18n } from './i18n';
+import { i18n, showLanguage } from './i18n';
 
-document.documentElement.lang = i18n.language;
-document.documentElement.dir = i18n.dir();
+showLanguage();
 
 const root = document.getElementById('root');
 if (root === null) throw new Error('main.tsx: the #root element is missing from index.html');

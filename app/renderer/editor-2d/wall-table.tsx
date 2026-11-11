@@ -6,6 +6,7 @@ import { formatAngle, formatDisplayLength, parseAngle, parseLength } from '../..
 import type { DisplayUnit, Point } from '../../../src/core/index';
 import { validateRoomOutline } from '../../../src/geometry/index';
 import { viewBoxAround } from './geometry';
+import { angleInputText, captureProblemText, lengthInputText, warningText } from '../i18n/messages';
 import { typedUnit } from './length-field';
 import { Plan } from './plan';
 
@@ -63,22 +64,22 @@ export function WallTable({ unit, onCreate, onBack }: Props) {
   let status = t('walls.incomplete');
   if (closure?.closes === true) status = t('walls.closes');
   else if (closure !== null) status = t('walls.open', { gap: formatDisplayLength(closure.gapUm, unit) });
-  else if (drawn?.ok === false) status = drawn.problems.map((p) => p.message).join(' ');
+  else if (drawn?.ok === false) status = drawn.problems.map((p) => captureProblemText(t, p)).join(' ');
 
   return (
     <div className="workspace">
     <section className="panel">
       <h2>{t('walls.title')}</h2>
       <p className="hint">{t('walls.hint')}</p>
-      <Field label={t('room.ceiling')} value={ceiling} onChange={setCeiling} error={ceilingRead?.ok === false ? ceilingRead.message : null} />
+      <Field label={t('room.ceiling')} value={ceiling} onChange={setCeiling} error={ceilingRead?.ok === false ? lengthInputText(t, ceilingRead.code) : null} />
       <ol className="wall-rows">
         {rows.map((row, i) => {
           const l = lengths[i];
           const a = angles[i];
           return (
             <li key={i} className="wall-row">
-              <Field label={t('walls.length', { n: i + 1 })} value={row.length} onChange={(v) => setRow(i, { length: v })} error={l?.ok === false ? l.message : null} />
-              <Field label={t('walls.angle', { n: i + 1 })} value={row.angle} onChange={(v) => setRow(i, { angle: v })} error={a?.ok === false ? a.message : null} />
+              <Field label={t('walls.length', { n: i + 1 })} value={row.length} onChange={(v) => setRow(i, { length: v })} error={l?.ok === false ? lengthInputText(t, l.code) : null} />
+              <Field label={t('walls.angle', { n: i + 1 })} value={row.angle} onChange={(v) => setRow(i, { angle: v })} error={a?.ok === false ? angleInputText(t, a.code) : null} />
               {rows.length > 3 && (
                 <button type="button" className="quiet" onClick={() => setRows((all) => all.filter((_, k) => k !== i))}>
                   {t('walls.remove', { n: i + 1 })}
@@ -120,7 +121,7 @@ export function WallTable({ unit, onCreate, onBack }: Props) {
       {warnings.length > 0 && (
         <ul className="warnings">
           {warnings.map((w) => (
-            <li key={`${w.code}${w.index}`}>{w.message}</li>
+            <li key={`${w.code}${w.index}`}>{warningText(t, w)}</li>
           ))}
         </ul>
       )}

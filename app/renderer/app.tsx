@@ -11,6 +11,8 @@ import { OpeningsPanel } from './editor-2d/openings-panel';
 import { RoomPanel } from './editor-2d/room-panel';
 import { WallTable } from './editor-2d/wall-table';
 import { documentStore, useDocumentState } from './state/index';
+import { LANGUAGES } from './i18n';
+import { problemText } from './i18n/messages';
 import { bridge } from './storage/bridge';
 import { readDocument, serializeDocument } from './storage/project-file';
 
@@ -23,7 +25,7 @@ const PLAN_MARGIN_MM = 1500;
 
 /** The start screen (no document until a room exists) and the open project with its file actions. */
 export function App() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { document: project, canUndo, canRedo } = useDocumentState();
   const [fileName, setFileName] = useState<string | null>(null);
   const [saved, setSaved] = useState<DesignDocument | null>(null);
@@ -126,6 +128,16 @@ export function App() {
   const header = (
     <header className="app-header">
       <h1>{t('app.title')}</h1>
+      <label className="unit">
+        {t('language.label')}
+        <select value={i18n.language} onChange={(event) => void i18n.changeLanguage(event.currentTarget.value)}>
+          {LANGUAGES.map((l) => (
+            <option key={l.code} value={l.code}>
+              {l.name}
+            </option>
+          ))}
+        </select>
+      </label>
       <label className="unit">
         {t('unit.label')}
         <select value={unit} onChange={(event) => setUnit(event.currentTarget.value as DisplayUnit)}>
@@ -239,7 +251,7 @@ export function App() {
       </div>
       <ul className="room-problems" aria-label={t('room.problems')}>
         {roomProblems.map((p) => (
-          <li key={`${p.code}${p.index ?? ''}${p.openingId ?? ''}${p.columnId ?? ''}`}>{p.message}</li>
+          <li key={`${p.code}${p.index ?? ''}${p.openingId ?? ''}${p.columnId ?? ''}`}>{problemText(t, project.room, p)}</li>
         ))}
       </ul>
       {askClose && (

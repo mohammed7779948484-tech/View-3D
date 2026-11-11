@@ -37,6 +37,14 @@ jobs:
           xvfb-run -a pnpm exec playwright test
       - if: matrix.os == 'windows-latest'
         run: pnpm exec playwright test
+      # English and Arabic screenshots for the owner to review (test/e2e/arabic.spec.ts).
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screens-${{ matrix.os }}
+          path: test-results/screens
+          if-no-files-found: ignore
+          retention-days: 14
       - if: failure()
         uses: actions/upload-artifact@v4
         with:

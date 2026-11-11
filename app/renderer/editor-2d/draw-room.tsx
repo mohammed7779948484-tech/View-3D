@@ -4,6 +4,7 @@ import { parseLength } from '../../../src/core/index';
 import type { DisplayUnit, Point } from '../../../src/core/index';
 import { validateRoomOutline } from '../../../src/geometry/index';
 import { normalizeOutline } from '../../../src/rules/index';
+import { lengthInputText } from '../i18n/messages';
 import { typedUnit } from './length-field';
 import { Plan } from './plan';
 
@@ -38,7 +39,7 @@ export function DrawRoom({ unit, onCreate, onBack }: Props) {
         <div className="field">
           <label htmlFor="draw-ceiling">{t('room.ceiling')}</label>
           <input id="draw-ceiling" value={ceiling} dir="ltr" onChange={(e) => setCeiling(e.currentTarget.value)} />
-          {ceiling.trim() !== '' && !ceilingRead.ok && <p className="field-error">{ceilingRead.message}</p>}
+          {ceiling.trim() !== '' && !ceilingRead.ok && <p className="field-error">{lengthInputText(t, ceilingRead.code)}</p>}
         </div>
         {problem !== null && <p role="alert">{problem}</p>}
         <div className="actions">

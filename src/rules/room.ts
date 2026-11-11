@@ -24,6 +24,8 @@ export type RoomProblem = {
   columnId?: string;
   /** Zero-based wall or corner index, when the problem is about one. */
   index?: number;
+  /** The numbers in the message (lengths in um), so the app can word it in any language by code. */
+  values?: Record<string, number>;
 };
 
 /** Openings may touch end to end; they overlap when they share more than this length. */
@@ -72,6 +74,7 @@ export function validateRoom(room: Room): RoomProblem[] {
         code: 'opening-wall-missing',
         message: `${kindName(o)} "${o.id}" is on wall ${o.wallIndex + 1}, but the room has only ${walls.length} walls.`,
         openingId: o.id,
+        values: { wallNumber: o.wallIndex + 1, wallCount: walls.length },
       });
       continue;
     }
@@ -85,6 +88,7 @@ export function validateRoom(room: Room): RoomProblem[] {
             : `${kindName(o)} "${o.id}" does not lie on wall ${o.wallIndex + 1}: check its position and width.`,
         openingId: o.id,
         index: o.wallIndex,
+        values: { widthUm: o.widthUm, offsetUm: o.offsetUm, wallLengthUm: wall.lengthUm, ...(over > 0.5 ? { overUm: over } : {}) },
       });
       continue;
     }
@@ -103,6 +107,7 @@ export function validateRoom(room: Room): RoomProblem[] {
           openingId: a.id,
           otherOpeningId: b.id,
           index: a.wallIndex,
+          values: { sharedUm: shared },
         });
       }
     }
@@ -115,6 +120,7 @@ export function validateRoom(room: Room): RoomProblem[] {
         message: `${kindName(o)} "${o.id}" reaches ${mm(topUm)} above the floor, higher than the ${mm(room.ceilingHeightUm)} ceiling.`,
         openingId: o.id,
         index: o.wallIndex,
+        values: { topUm, ceilingUm: room.ceilingHeightUm },
       });
     }
   }
