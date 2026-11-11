@@ -30,9 +30,9 @@ async function stubOpen(path: string): Promise<void> {
     dialog.showOpenDialog = (async () => ({ canceled: false, filePaths: [p] })) as typeof dialog.showOpenDialog;
   }, path);
 }
-async function importScan(page: Page, path: string = SAMPLE): Promise<void> {
+async function importScan(page: Page, path: string = SAMPLE, label = 'Import a room scan'): Promise<void> {
   await stubOpen(path);
-  const button = page.getByRole('button', { name: 'Import a room scan' });
+  const button = page.getByRole('button', { name: label });
   await expect(button).toBeVisible(FIRST);
   await button.click();
 }
@@ -163,7 +163,7 @@ test('in Arabic the review heading and the findings are in Arabic', async () => 
   await language.selectOption({ label: ARABIC });
   await expect(page.getByRole('combobox', { name: 'اللغة', exact: true })).toBeVisible(FIRST);
 
-  await importScan(page);
+  await importScan(page, SAMPLE, arabic('start.importScan'));
   await expect(page.getByRole('heading', { name: arabic('scan.title') })).toBeVisible(FIRST);
   await expect(page.getByRole('heading', { name: 'Check the scan' })).toBeHidden();
   const items = page.getByRole('listitem').filter({ hasText: /[؀-ۿ]/ });
