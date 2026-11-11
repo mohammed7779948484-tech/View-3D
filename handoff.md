@@ -21,23 +21,20 @@
 | 7 3D view | proven locally, CI pending | 4 e2e; boxes = document within 1 mm |
 | 8 3D select/move | proven locally, CI pending | 4 e2e; 2D edit = 3D edit, byte-identical |
 | 9 model contract | proven locally, CI pending | 15 Vitest; three's loader agrees |
-| 10b ranking | in progress | test-writer handoff next |
-| 10c swap and relocate | to do | |
+| 10b ranking | proven locally, CI pending | 24 Vitest; one option pair swapped (gallery) |
+| 10c swap and relocate | in progress | design next |
 | 10d free-standing counter | to do | |
 | 10e L-block without right angle | to do | |
 | 10f service side | to do | will be parked: owner names rear-access products |
 | 10g score weights | to do | will be parked: owner looks at the gallery |
 
 ## 3. Next step
-10b, ranking rule (decision 0003, owner ruling): key = placed + (complete checkout block ? 1 : 0),
-highest first; tie: complete block first, then higher score, then strategy id (today's last
-tie-break). "Complete" = the counter is placed and every requested glass showcase (category
-showcase, placement freestanding) stands in `cashWrap`. Make the comparator a pure exported function
-in `src/layout/rank.ts` (`compareOptions(a, b, requested)` or on a small key), used by search.ts.
-Tests: a comparison table (10 inc, 80) vs (9 comp, 70) -> the 9; (10 inc) vs (8 comp) -> the 10;
-(9 comp, 60) vs (9 inc, 90) -> comp; both complete 10 vs 9 -> 10; fast-check: the order is a total
-order (antisymmetric, transitive on triples, fixed seed). Then regenerate golden hashes and the
-gallery only if any scenario's ranking changes, with before/after against snapshots/before-m3.
+10c, swap-and-relocate improvement pass (plan: fixed step budget, no clock; accept only when the
+layout stays valid and the placed count or score rises; at least one scenario places more, none
+fewer; benchmark stays under 3 s). First measure which scenarios leave something unplaced
+(`small-overfull`, `walls-full`, `benchmark`?) and design the smallest pass that helps one of them;
+the proof needs a hand-built valid document that places more (test-writer), checked by
+validateLayout and the oracle. Then 10d, 10e; 10f and 10g prepared and parked.
 
 ## 4. Waiting for the owner
 - Run Diagnostics > Test 3D speed on the laptop once, send a photo (30 fps proof).
