@@ -189,7 +189,15 @@ test('closing with unsaved changes asks first', async () => {
 
   const closed = page.waitForEvent('close');
   await closeFirstWindow(a);
-  await page.getByRole('dialog').getByRole('button', { name: 'Close without saving' }).click();
+  // This click closes the page, so the click itself may report the page as closed before it returns.
+  // Only that is tolerated; the window must still close, which `closed` proves.
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: 'Close without saving' })
+    .click()
+    .catch((error: unknown) => {
+      if (!String(error).includes('has been closed')) throw error;
+    });
   await closed;
   expect(a.windows().length).toBe(0);
 });
