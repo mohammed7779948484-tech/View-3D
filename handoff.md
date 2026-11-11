@@ -20,8 +20,8 @@
 | 6 option picker | proven locally, CI pending | 52 Vitest + 3 e2e |
 | 7 3D view | proven locally, CI pending | 4 e2e; boxes = document within 1 mm |
 | 8 3D select/move | proven locally, CI pending | 4 e2e; 2D edit = 3D edit, byte-identical |
-| 9 model contract | in progress | test-writer handoff next |
-| 10b ranking | to do | |
+| 9 model contract | proven locally, CI pending | 15 Vitest; three's loader agrees |
+| 10b ranking | in progress | test-writer handoff next |
 | 10c swap and relocate | to do | |
 | 10d free-standing counter | to do | |
 | 10e L-block without right angle | to do | |
@@ -29,17 +29,15 @@
 | 10g score weights | to do | will be parked: owner looks at the gallery |
 
 ## 3. Next step
-Issue 9, the model contract (no real model is built). `docs/MODEL_CONTRACT.md`: a single
-self-contained .glb, glTF 2.0, metres, +Y up, front +Z (our front is -Z in the scene: a fixed half
-turn when placed), origin at the footprint centre on the floor, named `<productId>__<variantId>.glb`,
-size = the variant's W x H x D within 1 mm (W along X, D along Z). `src/model-contract` (imports core
-only; add its arrow to ARCHITECTURE section 3 and test/architecture/imports.test.ts): our own GLB
-reader using the POSITION accessor min/max and node transforms. Codes: not-glb, unsupported-version,
-external-resource, no-mesh, size-mismatch (with mm), not-on-floor, not-centred, unknown-size,
-bad-name. Tests (test-writer): synthetic box .glb files built in the test (test-only product);
-1.2005 m passes, 1.2015 m fails "+1.5 mm"; depth 0.41 m fails "+10 mm"; bottom 0.05 m -> not-on-floor
-50 mm; external buffer uri; glTF 1; unknown-size product. Independent oracle: three's GLTFLoader
-(`three/examples/jsm/loaders/GLTFLoader.js` .parse in Node) measures the same file.
+10b, ranking rule (decision 0003, owner ruling): key = placed + (complete checkout block ? 1 : 0),
+highest first; tie: complete block first, then higher score, then strategy id (today's last
+tie-break). "Complete" = the counter is placed and every requested glass showcase (category
+showcase, placement freestanding) stands in `cashWrap`. Make the comparator a pure exported function
+in `src/layout/rank.ts` (`compareOptions(a, b, requested)` or on a small key), used by search.ts.
+Tests: a comparison table (10 inc, 80) vs (9 comp, 70) -> the 9; (10 inc) vs (8 comp) -> the 10;
+(9 comp, 60) vs (9 inc, 90) -> comp; both complete 10 vs 9 -> 10; fast-check: the order is a total
+order (antisymmetric, transitive on triples, fixed seed). Then regenerate golden hashes and the
+gallery only if any scenario's ranking changes, with before/after against snapshots/before-m3.
 
 ## 4. Waiting for the owner
 - Run Diagnostics > Test 3D speed on the laptop once, send a photo (30 fps proof).
