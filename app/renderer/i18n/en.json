@@ -401,5 +401,16 @@
   "layoutProblems": {
     "title": "Layout problems",
     "none": "No layout problems."
+  },
+  "autoLayout": {
+    "title": "Automatic layout",
+    "hint": "How many of each product should the shop hold? The layout runs in the background; you can keep working or cancel it.",
+    "quantity": "Quantity of {{name}}",
+    "quantityVariant": "Quantity of {{name}}, {{size}}",
+    "run": "Run",
+    "cancel": "Cancel",
+    "progress": "Layout progress",
+    "cancelled": "Cancelled. Nothing was changed.",
+    "failed": "The automatic layout failed: {{message}}"
   }
 }

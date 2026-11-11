@@ -34,6 +34,9 @@ import { SCORE_WEIGHTS } from './score';
 import { entranceInfo, wallPhase } from './walls';
 
 /** The placement orders the search tries for every counter wall and row direction. */
+/** The two directions island rows are tried in, in this order. */
+const ROW_DIRECTIONS = ['across', 'along'] as const;
+
 export const SEARCH: { walls: WallOrder[]; start: GridStart[]; islands: IslandOrder[] } = {
   walls: ['back-first', 'front-first'],
   start: ['far', 'near'],
@@ -108,7 +111,15 @@ export function counterWalls(request: LayoutRequest, units: readonly UnitGroup[]
  * complete design document that passes every validation rule, with its score explained and a
  * list of what did not fit and why. A room with problems gives no options and the problems.
  */
-export function autoLayout(request: LayoutRequest): LayoutResult {
+export type LayoutOptions = {
+  /**
+   * Called after each block of the search (one counter wall and one row direction), with the
+   * blocks done so far and the total. It only reports; it never changes the result.
+   */
+  onProgress?: (done: number, total: number) => void;
+};
+
+export function autoLayout(request: LayoutRequest, options: LayoutOptions = {}): LayoutResult {
   const problems = validateRoom(request.room);
   if (problems.length > 0) return { options: [], problems };
   const { units, unknown } = expandUnits(request);
@@ -116,10 +127,12 @@ export function autoLayout(request: LayoutRequest): LayoutResult {
   if (wallsForCounter.length === 0) wallsForCounter.push(null);
 
   const kept: RunResult[] = [];
+  const total = wallsForCounter.length * ROW_DIRECTIONS.length;
+  let done = 0;
   for (const counterWall of wallsForCounter) {
     const afterBlock = cashWrapPhase(request, units, counterWall);
     const afterWalls = new Map(SEARCH.walls.map((walls) => [walls, wallPhase(afterBlock, units, walls)]));
-    for (const rows of ['across', 'along'] as const) {
+    for (const rows of ROW_DIRECTIONS) {
       // Search: build every combination of placement orders in full and keep the best.
       // Orders that cannot change anything are skipped: a wall order that gave the same walls as
       // an earlier one, and the second island order when there is nothing to re-order.
@@ -158,6 +171,8 @@ export function autoLayout(request: LayoutRequest): LayoutResult {
         centreGrid(best.built.state, best.built.frame);
         kept.push(report(best.built, units, unknown, true));
       }
+      done += 1;
+      options.onProgress?.(done, total);
     }
   }
 

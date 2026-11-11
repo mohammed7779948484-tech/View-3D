@@ -19,6 +19,7 @@ import { useCatalogProducts } from './catalog/use-catalog';
 import { FixturesPanel } from './editor-2d/fixtures-panel';
 import type { Picked } from './editor-2d/fixtures-panel';
 import { FixtureInspector } from './editor-2d/fixture-inspector';
+import { AutoLayoutPanel } from './editor-2d/auto-layout-panel';
 import {
   deletePlacement,
   duplicatePlacement,
@@ -73,6 +74,8 @@ export function App() {
   const catalogProducts = useCatalogProducts();
   const [picked, setPicked] = useState<Picked | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  /** The last automatic layout's result as JSON text, for the option picker (issue 6). */
+  const [, setLayoutResult] = useState<string | null>(null);
   // Live validation: every rule, on every change of the document (about 25 ms for 40 fixtures).
   // A broken room is listed by the room checks, not here.
   const violations = useMemo(() => (project === null ? [] : validateLayout(project).filter((v) => v.rule !== 'invalid-room')), [project]);
@@ -389,6 +392,7 @@ export function App() {
           }
         />
         <FixturesPanel products={catalogProducts} picked={picked} onPick={setPicked} />
+        <AutoLayoutPanel products={catalogProducts} document={project} onResult={setLayoutResult} />
         {selected !== undefined && (
           <FixtureInspector
             placement={selected}

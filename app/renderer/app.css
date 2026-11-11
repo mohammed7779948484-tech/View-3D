@@ -90,3 +90,5 @@ input[aria-invalid='true'] { border-color: var(--problem); }
 .plan-fixture.problem { fill: #f6c9c1; stroke: var(--problem); }
 .plan-fixture.problem.selected { fill: #f3b0a4; }
 .layout-problems ul { color: var(--problem); padding-inline-start: 1.25rem; }
+.quantity { display: grid; grid-template-columns: 1fr 5rem; gap: 0.5rem; align-items: center; }
+progress { inline-size: 100%; }
