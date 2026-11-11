@@ -34,7 +34,20 @@ export function Plan({ outline, closed, unit, view, onPlanClick, onCornerMoved, 
   const { t } = useTranslation();
   const world = useRef<SVGGElement>(null);
   const [drag, setDrag] = useState<{ index: number; point: Point } | null>(null);
+  // As for fixtures below: the corner drag in a ref, so no pointer event reads a stale drag.
+  const dragging = useRef<{ index: number; point: Point; down: Point | null } | null>(null);
+  const trackCorner = (next: { index: number; point: Point; down: Point | null } | null): void => {
+    dragging.current = next;
+    setDrag(next === null ? null : { index: next.index, point: next.point });
+  };
+  // The drag lives in a ref so pointer events that arrive before React re-renders still see it;
+  // the state copy only redraws the fixture where it is being dragged.
+  const moving = useRef<{ id: string; from: Point; to: Point } | null>(null);
   const [move, setMove] = useState<{ id: string; from: Point; to: Point } | null>(null);
+  const track = (next: { id: string; from: Point; to: Point } | null): void => {
+    moving.current = next;
+    setMove(next);
+  };
   const shown = drag === null ? outline : outline.map((p, i) => (i === drag.index ? drag.point : p));
   const size = Math.max(view.width, view.height);
   const handle = size / 90;
@@ -92,17 +105,21 @@ export function Plan({ outline, closed, unit, view, onPlanClick, onCornerMoved, 
                   const p = onFixtureMoved === undefined ? null : at(event);
                   if (p === null) return;
                   event.currentTarget.setPointerCapture(event.pointerId);
-                  setMove({ id: f.id, from: p, to: p });
+                  track({ id: f.id, from: p, to: p });
                 }}
                 onPointerMove={(event) => {
-                  const p = move?.id === f.id ? at(event) : null;
-                  if (p !== null && (p.x !== move?.to.x || p.y !== move.to.y)) setMove({ id: f.id, from: move!.from, to: p });
+                  const now = moving.current;
+                  const p = now?.id === f.id ? at(event) : null;
+                  if (now !== null && p !== null && (p.x !== now.to.x || p.y !== now.to.y)) track({ id: f.id, from: now.from, to: p });
                 }}
-                onPointerUp={() => {
-                  if (move?.id !== f.id) return;
-                  setMove(null);
-                  const dx = move.to.x - move.from.x;
-                  const dy = move.to.y - move.from.y;
+                onPointerUp={(event) => {
+                  const now = moving.current;
+                  if (now?.id !== f.id) return;
+                  // The release point counts too, even when no move event came before it.
+                  const p = at(event) ?? now.to;
+                  track(null);
+                  const dx = p.x - now.from.x;
+                  const dy = p.y - now.from.y;
                   if (dx !== 0 || dy !== 0) onFixtureMoved?.(f.id, dx, dy);
                 }}
               />
@@ -124,16 +141,23 @@ export function Plan({ outline, closed, unit, view, onPlanClick, onCornerMoved, 
             onPointerDown={(event) => {
               if (onCornerMoved === undefined) return;
               event.currentTarget.setPointerCapture(event.pointerId);
-              setDrag({ index: i, point: p });
+              trackCorner({ index: i, point: p, down: at(event) });
             }}
             onPointerMove={(event) => {
-              const point = drag?.index === i ? at(event) : null;
-              if (point !== null && (point.x !== drag?.point.x || point.y !== drag.point.y)) setDrag({ index: i, point });
+              const now = dragging.current;
+              const point = now?.index === i ? at(event) : null;
+              if (now !== null && point !== null && (point.x !== now.point.x || point.y !== now.point.y)) trackCorner({ ...now, point });
             }}
-            onPointerUp={() => {
-              if (drag?.index !== i) return;
-              setDrag(null);
-              if (drag.point.x !== outline[i]!.x || drag.point.y !== outline[i]!.y) onCornerMoved?.(i, drag.point);
+            onPointerUp={(event) => {
+              const now = dragging.current;
+              if (now?.index !== i) return;
+              trackCorner(null);
+              // The release point counts, even with no move event before it; a plain click (released
+              // where it was pressed) never snaps an exact corner onto the grid.
+              const released = at(event);
+              const moved = released !== null && now.down !== null && (released.x !== now.down.x || released.y !== now.down.y);
+              const point = moved ? released : now.point;
+              if (point.x !== outline[i]!.x || point.y !== outline[i]!.y) onCornerMoved?.(i, point);
             }}
           />
         ))}
