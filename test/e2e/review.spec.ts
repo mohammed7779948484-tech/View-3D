@@ -61,7 +61,7 @@ test('no application menu: no reload, quit or dev tools shortcuts', async () => 
 // G4
 test('the wall table says when the last wall was redrawn to close', async () => {
   const page = await h.launch();
-  await typeWalls(page, ['400', '300', '400', '309'], RECT_ANGLES);
+  await typeWalls(page, ['400', '300', '400', '300.9'], RECT_ANGLES);
   const status = page.getByRole('status');
   await expect(status).toContainText('The walls close');
   await expect(status).toContainText('0.9 cm');
