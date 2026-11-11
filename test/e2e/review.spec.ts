@@ -112,3 +112,34 @@ test('a refused outline edit explains itself and the field goes back', async () 
   expect(saved.room.outline).toEqual(TRIANGLE);
 });
 
+// G16
+test('the walls of an open room can be edited with lengths and angles', async () => {
+  const page = await h.launch();
+  const window2 = { id: 'window-1', kind: 'window' as const, wallIndex: 1, offsetUm: 500_000, widthUm: 1_000_000, heightUm: 1_200_000, sillHeightUm: 900_000 };
+  const rect = [um(0, 0), um(4000, 0), um(4000, 3000), um(0, 3000)];
+  await h.openRoom({ outline: rect, ceilingHeightUm: 3_000_000, columns: [], openings: [window2] });
+  await page.getByRole('button', { name: 'Edit the walls' }).click(FIRST);
+
+  const field = (name: string) => page.getByRole('textbox', { name, exact: true });
+  await expect(field('Wall 4 length')).toBeVisible(FIRST);
+  await expect(field('Wall 5 length')).toHaveCount(0);
+  const lengths = [/^400( cm)?$/, /^300( cm)?$/, /^400( cm)?$/, /^300( cm)?$/];
+  for (let i = 0; i < 4; i++) {
+    await expect(field(`Wall ${i + 1} length`)).toHaveValue(lengths[i]!);
+    await expect(field(`Wall ${i + 1} end angle`)).toHaveValue(/^90°?$/);
+  }
+  await expect(field('Ceiling height')).toHaveValue(/^300( cm)?$/);
+
+  await field('Wall 1 length').fill('500');
+  await field('Wall 3 length').fill('500');
+  await page.getByRole('button', { name: 'Update the room' }).click();
+  await expect(page.getByRole('textbox', { name: 'Project name' })).toBeVisible(FIRST);
+
+  const updated = await h.saveAs();
+  expect(updated.room.outline).toEqual([um(0, 0), um(5000, 0), um(5000, 3000), um(0, 3000)]);
+  expect(updated.room.openings).toEqual([window2]);
+
+  await page.getByRole('button', { name: 'Undo', exact: true }).click();
+  const undone = await h.saveAs();
+  expect(undone.room.outline).toEqual(rect);
+});
