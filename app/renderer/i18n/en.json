@@ -8,7 +8,8 @@
     "typeWalls": "Type the walls",
     "draw": "Draw the room",
     "importScan": "Import a room scan",
-    "diagnostics": "Diagnostics"
+    "diagnostics": "Diagnostics",
+    "catalog": "Catalog"
   },
   "open": {
     "notJson": "This file is not a View-3D project: it is not valid JSON (line {{line}}).",
@@ -257,5 +258,70 @@
     "layoutRunning": "Laying out…",
     "layoutDone": "Done in {{ms}} ms, {{options}} options.",
     "layoutFailed": "The layout test failed: {{message}}"
+  },
+  "catalog": {
+    "title": "Catalog",
+    "intro": "The products you sell. Website products are marked unverified until you confirm them; a product with an unknown size is listed but cannot be placed.",
+    "add": "Add a product",
+    "back": "Back",
+    "addTitle": "New product",
+    "editTitle": "Edit {{name}}",
+    "name": "Name",
+    "category": "Category",
+    "placement": "Placement",
+    "width": "Width",
+    "depth": "Depth",
+    "height": "Height",
+    "widthOf": "Width, size {{n}}",
+    "depthOf": "Depth, size {{n}}",
+    "heightOf": "Height, size {{n}}",
+    "sizesHint": "Width runs along the front, depth from front to back. Type the unit, for example 48 in or 120 cm. Leave a size empty when you do not know it.",
+    "addSize": "Add another size",
+    "removeSize": "Remove size {{n}}",
+    "price": "Price (USD)",
+    "priceUnknown": "Price unknown",
+    "badPrice": "The price must be a number of dollars, for example 700 or 12.50.",
+    "noName": "The product needs a name.",
+    "save": "Save product",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "editOf": "Edit {{name}}",
+    "confirm": "Confirm",
+    "confirmOf": "Confirm {{name}}",
+    "remove": "Remove",
+    "removeOf": "Remove {{name}}",
+    "yesRemove": "Yes, remove",
+    "keep": "Keep it",
+    "unknownSize": "Size unknown: cannot be placed",
+    "unreadable": "The catalog file cannot be used, so it was left as it is: {{message}}",
+    "notSaved": "The catalog could not be saved: {{message}}",
+    "verification": {
+      "verified": "confirmed",
+      "unverified": "from the website, not confirmed",
+      "unknown": "size unknown"
+    },
+    "categories": {
+      "showcase": "Showcase",
+      "counter": "Counter",
+      "gondola": "Gondola",
+      "tower": "Tower",
+      "slatwall": "Slatwall",
+      "accessory": "Accessory"
+    },
+    "placements": {
+      "wall": "Against a wall",
+      "island": "Island",
+      "freestanding": "Anywhere on the floor",
+      "counter": "Sales counter"
+    },
+    "errors": {
+      "not-json": "The catalog file is not valid JSON.",
+      "not-a-catalog": "The catalog file is not a valid catalog.",
+      "invalid-product": "This product is not valid.",
+      "duplicate-id": "A product with this id already exists.",
+      "not-found": "This product is no longer in the catalog.",
+      "cannot-confirm-unknown": "A product with an unknown size cannot be confirmed; type its size first.",
+      "test-only": "Test products cannot enter the catalog."
+    }
   }
 }

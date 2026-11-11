@@ -27,7 +27,7 @@ from the folder's index, not from files inside another folder.
 |---|---|---|
 | `src/core` | Units and the design-document schema | `toUm`, `fromUm`, `formatLength`, `DesignDocumentSchema`, `parseDesignDocument`, `migrate`, types `DesignDocument`, `Room`, `Opening`, `Product`, `Variant`, `Placement` |
 | `src/geometry` | Exact 2D geometry on integer micrometres | `cross`, `orientation`, `area2`, `pointInPolygon`, `validateRoomOutline`, `wallSegments`, `rectCorners`, `rectsOverlap`, `rectInsidePolygon`, `rectIntersectsPolygon`, `minClearance`, `openingSegment`, `doorSwingZone`, `insetPolygon`, `offsetPolygon`, `unionPolygons`, `differencePolygons`, `intersectPolygons` |
-| `src/catalog` | The real product list and helpers | `seedProducts`, `findProduct`, `isPlaceable` |
+| `src/catalog` | The real product list, the owner's catalog file and its edits | `seedProducts`, `findProduct`, `isPlaceable`, `seedCatalog`, `parseCatalog`, `serializeCatalog`, `ownerProduct`, `addProduct`, `updateProduct`, `removeProduct`, `confirmProduct` |
 | `src/rules` | Planning numbers and every validity rule | `defaultConfig`, `configSources`, `validateRoom`, `normalizeOutline`, `keepClearZones`, `accessZones`, `validateLayout`, `walkingViolations`, `snapToWall` |
 | `src/layout` | Automatic layout | `autoLayout`, `describeObstacles`, types `LayoutRequest`, `LayoutOption`, `LayoutResult` |
 | `src/render-svg` | The 2D plan as SVG; PNG export | `renderPlanSvg` (portable), `svgToPng` in `png.ts` (Node only) |
@@ -147,7 +147,8 @@ app/                          the desktop app                         imports ->
   main/                       Electron main process: windows, native open/save dialogs,
                               all disk access, printToPDF (M4)
   preload/                    the narrow, typed API the renderer may call (no Node in the renderer):
-                              window.view3d = openProject, saveProject, onCloseRequested, closeWindow
+                              window.view3d = openProject, openScan, saveProject, onCloseRequested,
+                              closeWindow, loadCatalog, saveCatalog (catalog.json in userData, M3)
   shared/                     types only, imported by main, preload and renderer
   renderer/                   the UI (React)
     state/                    the open document + undo history (the only mutable copy)
@@ -158,7 +159,9 @@ app/                          the desktop app                         imports ->
     diagnostics/              the owner's one-click 3D speed test (M3)
     worker/                   runs src/layout off the UI thread: layout.worker.ts answers with the JSON
                               text, so the page gets autoLayout's exact bytes; run-layout.ts starts and cancels a run
-    catalog/  storage/  i18n/ owner's catalog, project files (via preload), Arabic/English
+    catalog/                  the owner's catalog screen and product form (M3); the file itself is
+                              read and written by app/main/catalog-file.ts
+    storage/  i18n/           project files (via preload), Arabic/English
 src/                          the engine (this document)              never imports app/
   capture/        (M2)        wall-by-wall entry, closure and diagonal checks   -> core, geometry, rules
                               (rules for its tolerances in src/rules/config.ts)

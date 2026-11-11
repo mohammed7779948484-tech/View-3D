@@ -14,6 +14,7 @@ import { RoomPanel } from './editor-2d/room-panel';
 import { WallTable } from './editor-2d/wall-table';
 import { ScanReview } from './editor-2d/scan-review';
 import { DiagnosticsPage } from './diagnostics/diagnostics-page';
+import { CatalogScreen } from './catalog/catalog-screen';
 import { importRoomTrace } from '../../src/import-scan/index';
 import type { ScanImportResult } from '../../src/import-scan/index';
 import type { Room } from '../../src/core/index';
@@ -24,7 +25,7 @@ import { bridge } from './storage/bridge';
 import { readDocument, serializeDocument } from './storage/project-file';
 
 type Problem = { message: string; details: string[] };
-type Screen = 'start' | 'walls' | 'draw' | 'scan' | 'diagnostics';
+type Screen = 'start' | 'walls' | 'draw' | 'scan' | 'diagnostics' | 'catalog';
 
 /** Puts an outline typed from (0, 0) along +x where the room already is: same corner 1, same direction of wall 1. */
 function placeLike(outline: Point[], reference: readonly Point[]): Point[] {
@@ -217,6 +218,7 @@ export function App() {
           />
         )}
         {screen === 'diagnostics' && <DiagnosticsPage onBack={() => setScreen('start')} />}
+        {screen === 'catalog' && <CatalogScreen unit={unit} onBack={() => setScreen('start')} />}
         {screen === 'start' && (
           <section className="start">
             <p>{t('start.noProject')}</p>
@@ -232,6 +234,9 @@ export function App() {
               </button>
               <button type="button" onClick={() => void open()}>
                 {t('start.open')}
+              </button>
+              <button type="button" onClick={() => setScreen('catalog')}>
+                {t('start.catalog')}
               </button>
             </div>
             <button type="button" className="quiet" onClick={() => setScreen('diagnostics')}>
