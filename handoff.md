@@ -14,8 +14,8 @@
 | Spike: worker from file:// | proven | worker bytes = Node bytes; CI green |
 | 1 catalog | proven | 35 Vitest + 8 e2e; CI green |
 | 2 place/move/rotate 2D | proven | 26 Vitest + 12 e2e (incl. 6 drag regression); CI green Ubuntu, Windows, installer |
-| 3 live validation | in progress | test-writer writing the tests |
-| 4 snapping | to do | |
+| 3 live validation | proven locally, CI pending | 70 Vitest + 3 e2e; 16.2 ms for 40 fixtures |
+| 4 snapping | in progress | test-writer handoff next |
 | 5 worker | to do | |
 | 6 option picker | to do | |
 | 7 3D view | to do | |
@@ -29,14 +29,13 @@
 | 10g score weights | to do | will be parked: owner looks at the gallery |
 
 ## 3. Next step
-Issue 3, live validation. `Violation` gains `values?: Record<string, number>` (numbers by name, as
-`RoomProblem.values`); English messages stay byte-identical (golden hashes and snapshots unchanged).
-Renderer: `violationText(t, doc, v)` in `app/renderer/i18n/messages.ts`, one en/ar string per RuleId;
-the plan marks every fixture in `placementIds` (`data-problem` attribute, red); a "Layout problems"
-list beside the plan, each item naming the fixture. Test-writer: for every RuleId the app can reach
-(all but unknown-product and invalid-room), a hand-built document (synthetic or seed products in a
-fixture room) opened through the Harness shows the message on the right fixture, in en and ar;
-timing: `validateLayout` on a hand-built 40-fixture document, median of 5 runs < 50 ms (Vitest).
+Issue 4, snapping (`src/rules/snap.ts`, `src/rules/validate.ts` snapToWall). Property (fast-check, fixed
+seed): every non-null `snapToWall` pose passes the wall-unit rule (today it can land across a door:
+fix by refusing or sliding off the door). New `snapBackToBack(fixtures, movingRect, config)`: partner
+wall shelf 1200 x 400 at (3000, 2000) mm, 0 deg; mover 180 deg dropped at (3100, 1500) mm (back 100 mm
+away, within 300 mm) -> (3000, 1600) mm, 180 000 000; the same mover at 0 deg does not snap. Hand
+case on the angled wall: tower 600 x 600 dropped at (6776.393, 3888.197) mm -> (6 731 672, 3 865 836) um,
+116 565 051. Then the editor applies the snaps on drop (Playwright: drop near a wall -> flush).
 
 ## 4. Waiting for the owner
 - Run Diagnostics > Test 3D speed on the laptop once, send a photo (30 fps proof).
@@ -53,6 +52,7 @@ Traps: Electron needs `--no-sandbox` as root (the e2e launcher adds it). With no
 WebGL unless Electron starts with `--enable-unsafe-swiftshader` (tests only).
 
 ## 6. Decisions made this milestone
+- Live validation: `violationText` in `app/renderer/i18n/messages.ts`, keys `violations.<rule>.<detail|default>`.
 - 2D editing: commands in `app/renderer/state/placement-commands.ts` (recipes, one undo step each); `quarterTurn` in `src/rules/snap.ts`.
 - Catalog: `src/catalog/catalog-file.ts` (pure) + `app/main/catalog-file.ts`; tests isolate it with `launchApp({ userDataDir })` (`--user-data-dir`).
 - Worker: `app/renderer/worker/layout.worker.ts` answers with JSON text; same bytes as Node (`docs/STACK.md`).
