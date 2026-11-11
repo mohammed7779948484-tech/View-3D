@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatDisplayLength } from '../../../src/core/index';
-import type { DisplayUnit, Point } from '../../../src/core/index';
+import type { Column, DisplayUnit, Opening, Point } from '../../../src/core/index';
 import { pointerToPlan, wallLengthUm } from './geometry';
 
 type Props = {
@@ -14,6 +14,8 @@ type Props = {
   onPlanClick?: (point: Point) => void;
   /** A corner was dragged and released at this snapped point. */
   onCornerMoved?: (index: number, point: Point) => void;
+  openings?: readonly Opening[];
+  columns?: readonly Column[];
 };
 
 const mm = (um: number): number => um / 1000;
@@ -22,7 +24,7 @@ const mm = (um: number): number => um / 1000;
  * The plan as svg. World coordinates are millimetres with y up inside `<g data-world>`; labels sit
  * outside it so their text is not mirrored. Every label is formatted from the document.
  */
-export function Plan({ outline, closed, unit, view, onPlanClick, onCornerMoved }: Props) {
+export function Plan({ outline, closed, unit, view, onPlanClick, onCornerMoved, openings = [], columns = [] }: Props) {
   const { t } = useTranslation();
   const world = useRef<SVGGElement>(null);
   const [drag, setDrag] = useState<{ index: number; point: Point } | null>(null);
@@ -52,6 +54,19 @@ export function Plan({ outline, closed, unit, view, onPlanClick, onCornerMoved }
           ) : (
             <polyline className="plan-room open" points={shown.map((p) => `${mm(p.x)},${mm(p.y)}`).join(' ')} />
           ))}
+        {columns.map((c) => (
+          <polygon key={c.id} className="plan-column" data-column={c.id} points={c.outline.map((p) => `${mm(p.x)},${mm(p.y)}`).join(' ')} />
+        ))}
+        {openings.map((o) => {
+          const a = shown[o.wallIndex];
+          const b = shown[(o.wallIndex + 1) % shown.length];
+          if (a === undefined || b === undefined) return null;
+          const length = Math.hypot(b.x - a.x, b.y - a.y);
+          const along = (d: number) => ({ x: mm(a.x + ((b.x - a.x) * d) / length), y: mm(a.y + ((b.y - a.y) * d) / length) });
+          const from = along(o.offsetUm);
+          const to = along(o.offsetUm + o.widthUm);
+          return <line key={o.id} className={`plan-${o.kind}`} data-opening={o.id} x1={from.x} y1={from.y} x2={to.x} y2={to.y} />;
+        })}
         {shown.map((p, i) => (
           <circle
             key={i}

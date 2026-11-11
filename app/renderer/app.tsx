@@ -7,6 +7,7 @@ import { viewBoxAround } from './editor-2d/geometry';
 import { DrawRoom } from './editor-2d/draw-room';
 import { newDocument } from './editor-2d/new-document';
 import { Plan } from './editor-2d/plan';
+import { OpeningsPanel } from './editor-2d/openings-panel';
 import { RoomPanel } from './editor-2d/room-panel';
 import { WallTable } from './editor-2d/wall-table';
 import { documentStore, useDocumentState } from './state/index';
@@ -205,6 +206,7 @@ export function App() {
       </div>
       {alert}
       <div className="workspace">
+        <div>
         <RoomPanel
           room={project.room}
           unit={unit}
@@ -215,7 +217,19 @@ export function App() {
             })
           }
         />
+        <OpeningsPanel
+          room={project.room}
+          unit={unit}
+          onRoom={(room) =>
+            documentStore.edit((draft) => {
+              draft.room = room;
+            })
+          }
+        />
+        </div>
         <Plan
+          openings={project.room.openings}
+          columns={project.room.columns}
           outline={project.room.outline}
           closed
           unit={unit}
@@ -223,13 +237,11 @@ export function App() {
           onCornerMoved={(index, point) => editOutline(project.room.outline.map((p, i) => (i === index ? point : p)))}
         />
       </div>
-      {roomProblems.length > 0 && (
-        <ul className="room-problems" aria-label={t('room.problems')}>
-          {roomProblems.map((p) => (
-            <li key={`${p.code}${p.index ?? ''}${p.openingId ?? ''}`}>{p.message}</li>
-          ))}
-        </ul>
-      )}
+      <ul className="room-problems" aria-label={t('room.problems')}>
+        {roomProblems.map((p) => (
+          <li key={`${p.code}${p.index ?? ''}${p.openingId ?? ''}${p.columnId ?? ''}`}>{p.message}</li>
+        ))}
+      </ul>
       {askClose && (
         <div role="dialog" aria-modal="true" aria-labelledby="close-title">
           <h2 id="close-title">{t('close.title')}</h2>

@@ -70,5 +70,54 @@
   },
   "common": {
     "back": "Back"
+  },
+  "openings": {
+    "title": "Doors, windows and columns",
+    "addDoor": "Add a door",
+    "addWindow": "Add a window",
+    "addColumn": "Add a column",
+    "cancel": "Cancel",
+    "wallNumber": "Type the number of the wall (1, 2, 3 ...).",
+    "doorItem": "Door {{n}}: wall {{wall}}, {{offset}} from its start, {{width}} wide",
+    "entranceItem": "Entrance {{n}}: wall {{wall}}, {{offset}} from its start, {{width}} wide",
+    "windowItem": "Window {{n}}: wall {{wall}}, {{offset}} from its start, {{width}} wide",
+    "columnItem": "Column {{n}}",
+    "removeDoor": "Remove door {{n}}",
+    "removeWindow": "Remove window {{n}}",
+    "removeColumn": "Remove column {{n}}",
+    "door": {
+      "title": "New door",
+      "wall": "Door wall",
+      "offset": "Door distance from wall start",
+      "width": "Door width",
+      "height": "Door height",
+      "entrance": "Customer entrance",
+      "swing": "Door opens",
+      "swingIn": "Into the room",
+      "swingOut": "Out of the room",
+      "swingNone": "Sliding or open",
+      "hinge": "Hinge at",
+      "hingeStart": "Start of the wall",
+      "hingeEnd": "End of the wall",
+      "add": "Add the door"
+    },
+    "window": {
+      "title": "New window",
+      "wall": "Window wall",
+      "offset": "Window distance from wall start",
+      "width": "Window width",
+      "height": "Window height",
+      "sill": "Window sill height",
+      "add": "Add the window"
+    },
+    "column": {
+      "title": "New column",
+      "hint": "Measured from corner 1: x to the right, y upwards on the plan, to the column's lower-left corner.",
+      "width": "Column width",
+      "depth": "Column depth",
+      "x": "Column x from corner 1",
+      "y": "Column y from corner 1",
+      "add": "Add the column"
+    }
   }
 }

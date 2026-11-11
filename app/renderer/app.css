@@ -61,3 +61,10 @@ input[aria-invalid='true'] { border-color: var(--problem); }
 }
 [role='dialog'] { border: 2px solid var(--ink); background: white; padding: 1rem; max-inline-size: 28rem; border-radius: 4px; }
 @media (max-width: 900px) { .workspace { grid-template-columns: 1fr; } }
+.plan-door { stroke: var(--paper); stroke-width: 7px; vector-effect: non-scaling-stroke; }
+.plan-window { stroke: #7fb2d6; stroke-width: 6px; vector-effect: non-scaling-stroke; }
+.plan-column { fill: var(--ink); }
+.items { list-style: none; padding: 0; display: grid; gap: 0.25rem; }
+.items li { display: flex; justify-content: space-between; gap: 0.5rem; align-items: baseline; }
+.item-form { border: 1px solid var(--grid); border-radius: 4px; }
+.check { display: flex; gap: 0.5rem; align-items: center; margin-block: 0.5rem; }

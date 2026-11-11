@@ -22,7 +22,10 @@ export function DrawRoom({ unit, onCreate, onBack }: Props) {
 
   function finish(): void {
     if (!ceilingRead.ok) return;
-    const outline = normalizeOutline(corners);
+    // Corner 1 becomes the plan origin, so columns can be placed from it.
+    const tidy = normalizeOutline(corners);
+    const origin = tidy[0] ?? { x: 0, y: 0 };
+    const outline = tidy.map((p) => ({ x: p.x - origin.x || 0, y: p.y - origin.y || 0 }));
     if (validateRoomOutline(outline).length > 0) return setProblem(t('draw.notARoom'));
     onCreate(outline, ceilingRead.um);
   }
