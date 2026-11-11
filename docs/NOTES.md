@@ -113,10 +113,23 @@ Running log and decisions. Checkpointed after every step so work survives a rest
     is never put with its back to a wall. No real product has it set; you set it yourself in the
     catalog ("Served from: The back"), or tell me and I set it. The website text does not say which
     ones open from the back. Candidates (every showcase in the catalog):
-    - 6FT EXTRA VIEW SHOWCASE (`nhf-6ft-extra-view-showcase`, anywhere on the floor)
+    - 6FT EXTRA VIEW SHOWCASE (`nhf-6ft-extra-view-showcase`, anywhere on the floor; the M3 plan
+      says it has rear sliding doors, so it is most likely "back": please confirm)
     - 4 FT FULL VIEW LED lights Showcase (`nhf-6ft-full-view-led-lights-showcase`, anywhere on the floor)
     - Showcase 6 feet (`nhf-s`, anywhere on the floor; size still unknown)
     - Stand showcases (`nhf-s-1`, against a wall: if served from the back it cannot stand on a wall)
+
+15. M3 10g, score weights. Today: placed 45, counter near the entrance 12, counter faces the
+    entrance 8, showcases with the counter 10, islands in rows 10, even use of the floor 10, open
+    view from the entrance 5. Measured: since 10b ranks by fixtures placed first, the 45 points for
+    "placed" never decide anything; they only make the printed score look high. Proposal: placed 30,
+    even use 15, open view 15, the rest unchanged (still 100). On every test shop it moves nothing
+    and changes no rank; the printed scores change (rendered and compared, every drawing). Before
+    you decide, look at the two pairs in `snapshots/README.md` (section 10g) and say which option of
+    each you would show a customer first. Your answers set how much the open view counts against
+    even use and the counter's distance: pair 1 flips if even use counts more than 2.6 times the
+    open view; pair 2 flips only if the open view gets more than about 21 points (the others as
+    proposed; today it has 5). Nothing is changed in the app until you answer.
 
 Answered on 2026-11-11 (Milestone 2 detail plan): order 1, 2, 3, 4, 5, 8, 10, 6, 7, 9, 11; strings
 through t() from issue 1; closure check gives the smallest suspect set; document null until a room

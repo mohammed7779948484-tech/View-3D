@@ -23,6 +23,31 @@ the one with a slightly higher score but an incomplete block. Option 1 is the sa
 |---|---|
 | ![before](before-m3/l-shape-with-column/option-2.svg) | ![after](layouts/l-shape-with-column/option-2.svg) |
 
+### 10g, score weights (proposal; the owner decides)
+
+The score only orders options that place the same number of fixtures with the same checkout block
+(10b ranks those first). Measured on every test shop: the proposed weights below move no fixture and
+change no option's rank; only the printed score changes. The weights matter where two options trade
+one quality against another. There are two such pairs in the test shops. Which one of each pair
+would you show a customer first?
+
+**Pair 1, shop with an angled wall.** Option 1 keeps 4140 mm clear straight ahead of the door but
+leaves one part of the floor empty (7 of 8). Option 2 uses every part (8 of 8) but has only
+2190 mm clear ahead of the door. Today option 1 ranks first.
+
+| Option 1 (open view) | Option 2 (even floor) |
+|---|---|
+| ![option 1](layouts/angled-wall/option-1.svg) | ![option 2](layouts/angled-wall/option-2.svg) |
+
+**Pair 2, shop with a back-room door.** Option 2 has the counter 2351 mm from the entrance and
+fixtures in 6 of 9 parts of the floor, with 2632 mm clear ahead of the door. Option 3 has the
+counter 3859 mm away and fixtures in 5 of 9 parts, but 3516 mm clear ahead of the door. Today
+option 2 ranks first.
+
+| Option 2 (counter near, even floor) | Option 3 (open view) |
+|---|---|
+| ![option 2](layouts/protected-doorway-real-products/option-2.svg) | ![option 3](layouts/protected-doorway-real-products/option-3.svg) |
+
 ## Before and after the first review
 
 "Before" is the first engine (frozen under `before/`). "After" follows the owner's review:
