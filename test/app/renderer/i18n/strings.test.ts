@@ -120,4 +120,12 @@ describe('every key the renderer uses exists in en.json', () => {
     expect(access).toHaveLength(12);
     for (const key of wanted) expect(typeof en.get(key), `en.json has no ${key}`).toBe('string');
   });
+
+  it('has an unplaced.reasons key for every reason code of the layout engine (M3-6)', () => {
+    const types = readFileSync(join(ROOT, 'src/layout/types.ts'), 'utf8');
+    const union = /export type ReasonCode =([^;]*);/.exec(types)?.[1] ?? '';
+    const codes = [...union.matchAll(/'([a-z-]+)'/g)].map((m) => m[1]!);
+    expect(codes).toHaveLength(16);
+    for (const code of codes) expect(typeof en.get(`unplaced.reasons.${code}`), `en.json has no unplaced.reasons.${code}`).toBe('string');
+  });
 });
