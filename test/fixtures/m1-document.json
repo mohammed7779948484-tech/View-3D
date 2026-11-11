@@ -1,0 +1,346 @@
+{
+  "schemaVersion": 1,
+  "id": "corner-shop-1",
+  "name": "Corner shop",
+  "room": {
+    "outline": [
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 8000000,
+        "y": 0
+      },
+      {
+        "x": 8000000,
+        "y": 2000000
+      },
+      {
+        "x": 6000000,
+        "y": 6000000
+      },
+      {
+        "x": 0,
+        "y": 6000000
+      }
+    ],
+    "ceilingHeightUm": 3000000,
+    "columns": [],
+    "openings": [
+      {
+        "id": "entrance",
+        "kind": "door",
+        "wallIndex": 0,
+        "offsetUm": 3000000,
+        "widthUm": 1000000,
+        "heightUm": 2100000,
+        "sillHeightUm": 0,
+        "door": {
+          "isEntrance": true,
+          "swing": "in",
+          "hinge": "start"
+        }
+      },
+      {
+        "id": "window-1",
+        "kind": "window",
+        "wallIndex": 4,
+        "offsetUm": 2000000,
+        "widthUm": 1500000,
+        "heightUm": 1200000,
+        "sillHeightUm": 900000
+      }
+    ]
+  },
+  "products": [
+    {
+      "id": "test-counter-long",
+      "name": "TEST long counter",
+      "category": "counter",
+      "placement": "counter",
+      "variants": [
+        {
+          "id": "default",
+          "label": "1800 x 600 x 1000 mm",
+          "widthUm": 1800000,
+          "depthUm": 600000,
+          "heightUm": 1000000,
+          "entered": {
+            "width": {
+              "value": 1800,
+              "unit": "mm"
+            },
+            "depth": {
+              "value": 600,
+              "unit": "mm"
+            },
+            "height": {
+              "value": 1000,
+              "unit": "mm"
+            }
+          }
+        }
+      ],
+      "clearances": {
+        "frontUm": 600000,
+        "backUm": 915000,
+        "sideUm": 0
+      },
+      "priceCents": null,
+      "verification": "verified",
+      "source": {
+        "url": null,
+        "dimensionsAsWritten": null
+      },
+      "flags": [
+        "synthetic test product"
+      ],
+      "testOnly": true
+    },
+    {
+      "id": "test-gondola-double",
+      "name": "TEST double-sided gondola",
+      "category": "gondola",
+      "placement": "island",
+      "variants": [
+        {
+          "id": "default",
+          "label": "1200 x 900 x 1400 mm",
+          "widthUm": 1200000,
+          "depthUm": 900000,
+          "heightUm": 1400000,
+          "entered": {
+            "width": {
+              "value": 1200,
+              "unit": "mm"
+            },
+            "depth": {
+              "value": 900,
+              "unit": "mm"
+            },
+            "height": {
+              "value": 1400,
+              "unit": "mm"
+            }
+          }
+        }
+      ],
+      "clearances": {
+        "frontUm": 600000,
+        "backUm": 600000,
+        "sideUm": 0
+      },
+      "priceCents": null,
+      "verification": "verified",
+      "source": {
+        "url": null,
+        "dimensionsAsWritten": null
+      },
+      "flags": [
+        "synthetic test product"
+      ],
+      "testOnly": true
+    },
+    {
+      "id": "test-showcase",
+      "name": "TEST glass showcase",
+      "category": "showcase",
+      "placement": "freestanding",
+      "variants": [
+        {
+          "id": "default",
+          "label": "1500 x 500 x 1000 mm",
+          "widthUm": 1500000,
+          "depthUm": 500000,
+          "heightUm": 1000000,
+          "entered": {
+            "width": {
+              "value": 1500,
+              "unit": "mm"
+            },
+            "depth": {
+              "value": 500,
+              "unit": "mm"
+            },
+            "height": {
+              "value": 1000,
+              "unit": "mm"
+            }
+          }
+        }
+      ],
+      "clearances": {
+        "frontUm": 600000,
+        "backUm": 0,
+        "sideUm": 0
+      },
+      "priceCents": null,
+      "verification": "verified",
+      "source": {
+        "url": null,
+        "dimensionsAsWritten": null
+      },
+      "flags": [
+        "synthetic test product"
+      ],
+      "testOnly": true
+    },
+    {
+      "id": "test-wall-shelf",
+      "name": "TEST wall shelving unit",
+      "category": "gondola",
+      "placement": "wall",
+      "variants": [
+        {
+          "id": "default",
+          "label": "1200 x 400 x 2100 mm",
+          "widthUm": 1200000,
+          "depthUm": 400000,
+          "heightUm": 2100000,
+          "entered": {
+            "width": {
+              "value": 1200,
+              "unit": "mm"
+            },
+            "depth": {
+              "value": 400,
+              "unit": "mm"
+            },
+            "height": {
+              "value": 2100,
+              "unit": "mm"
+            }
+          }
+        }
+      ],
+      "clearances": {
+        "frontUm": 600000,
+        "backUm": 0,
+        "sideUm": 0
+      },
+      "priceCents": null,
+      "verification": "verified",
+      "source": {
+        "url": null,
+        "dimensionsAsWritten": null
+      },
+      "flags": [
+        "synthetic test product"
+      ],
+      "testOnly": true
+    }
+  ],
+  "placements": [
+    {
+      "id": "f01",
+      "productId": "test-showcase",
+      "variantId": "default",
+      "center": {
+        "x": 1165000,
+        "y": 4050000
+      },
+      "rotationUdeg": 270000000
+    },
+    {
+      "id": "f02",
+      "productId": "test-showcase",
+      "variantId": "default",
+      "center": {
+        "x": 1165000,
+        "y": 2550000
+      },
+      "rotationUdeg": 270000000
+    },
+    {
+      "id": "f03",
+      "productId": "test-counter-long",
+      "variantId": "default",
+      "center": {
+        "x": 1215000,
+        "y": 900000
+      },
+      "rotationUdeg": 270000000
+    },
+    {
+      "id": "f04",
+      "productId": "test-wall-shelf",
+      "variantId": "default",
+      "center": {
+        "x": 5055000,
+        "y": 200000
+      },
+      "rotationUdeg": 0
+    },
+    {
+      "id": "f05",
+      "productId": "test-wall-shelf",
+      "variantId": "default",
+      "center": {
+        "x": 6255000,
+        "y": 200000
+      },
+      "rotationUdeg": 0
+    },
+    {
+      "id": "f06",
+      "productId": "test-wall-shelf",
+      "variantId": "default",
+      "center": {
+        "x": 7800000,
+        "y": 1000000
+      },
+      "rotationUdeg": 90000000
+    },
+    {
+      "id": "f07",
+      "productId": "test-wall-shelf",
+      "variantId": "default",
+      "center": {
+        "x": 7552786,
+        "y": 2447214
+      },
+      "rotationUdeg": 116565051
+    },
+    {
+      "id": "f08",
+      "productId": "test-wall-shelf",
+      "variantId": "default",
+      "center": {
+        "x": 7016130,
+        "y": 3520526
+      },
+      "rotationUdeg": 116565051
+    },
+    {
+      "id": "f09",
+      "productId": "test-gondola-double",
+      "variantId": "default",
+      "center": {
+        "x": 3000000,
+        "y": 4600000
+      },
+      "rotationUdeg": 0
+    },
+    {
+      "id": "f10",
+      "productId": "test-gondola-double",
+      "variantId": "default",
+      "center": {
+        "x": 4200000,
+        "y": 4600000
+      },
+      "rotationUdeg": 0
+    },
+    {
+      "id": "f11",
+      "productId": "test-gondola-double",
+      "variantId": "default",
+      "center": {
+        "x": 5400000,
+        "y": 4600000
+      },
+      "rotationUdeg": 0
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+{ "name": "electron-vite-spike", "private": true, "type": "module", "main": "out/main/index.js" }

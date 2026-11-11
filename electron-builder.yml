@@ -1,0 +1,34 @@
+# Packaging for the owner's Windows laptop: an unsigned NSIS installer (decisions/0007).
+# Signing costs money and needs the owner's yes, so there is none; SmartScreen warns once.
+appId: app.view3d.planner
+productName: View-3D
+directories:
+  output: release
+# The main process and the renderer are fully bundled by electron-vite into out/.
+files:
+  - out/**
+  - package.json
+  # zod and clipper2-ts are bundled into out/ by electron-vite; their node_modules copies are not needed.
+  - "!node_modules/**"
+asar: true
+npmRebuild: false
+publish: null
+win:
+  target: nsis
+  # No signing tool runs: the installer is unsigned on purpose.
+  signAndEditExecutable: false
+nsis:
+  # One click, per user: no administrator rights and no questions for a non-technical owner.
+  oneClick: true
+  perMachine: false
+  artifactName: View-3D-Setup-${version}.${ext}
+linux:
+  target: dir
+electronFuses:
+  runAsNode: false
+  enableNodeOptionsEnvironmentVariable: false
+  # Kept on: Playwright drives the installed app through the inspector flags. The app is local and
+  # single-user; turning this off would leave the installed build untestable.
+  enableNodeCliInspectArguments: true
+  onlyLoadAppFromAsar: true
+  enableCookieEncryption: true

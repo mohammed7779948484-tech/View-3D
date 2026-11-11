@@ -31,6 +31,8 @@ from the folder's index, not from files inside another folder.
 | `src/rules` | Planning numbers and every validity rule | `defaultConfig`, `configSources`, `validateRoom`, `normalizeOutline`, `keepClearZones`, `accessZones`, `validateLayout`, `walkingViolations`, `snapToWall` |
 | `src/layout` | Automatic layout | `autoLayout`, `describeObstacles`, types `LayoutRequest`, `LayoutOption`, `LayoutResult` |
 | `src/render-svg` | The 2D plan as SVG; PNG export | `renderPlanSvg` (portable), `svgToPng` in `png.ts` (Node only) |
+| `src/import-scan` | Room scans: one adapter per scan app (RoomTrace JSON v2), shared normalization | `importRoomTrace`, `readRoomTrace`, `normalizeScan` |
+| `src/capture` | A room typed wall by wall and its checks | `wallsToOutline`, `outlineToWalls`, `checkClosure`, `checkDiagonal`, `suspectsMatchingDiagonal`, `sanityWarnings` |
 
 ## 3. Dependency direction
 
@@ -43,12 +45,14 @@ catalog     -> core
 rules       -> core, geometry
 layout      -> core, geometry, rules
 render-svg  -> core, geometry
+capture     -> core, geometry, rules
+import-scan -> core, geometry, rules
 ```
 
 - Nothing under `src/` imports from `test/`.
 - `clipper2-ts` is imported only by `src/geometry/clip.ts`; `@resvg/resvg-js` only by
   `src/render-svg/png.ts`. A wrapped library has one importer so it can be replaced in one place.
-- `core`, `geometry`, `catalog`, `rules` and `layout` are portable: no Node built-ins and no
+- `core`, `geometry`, `catalog`, `rules`, `layout`, `capture` and `import-scan` are portable: no Node built-ins and no
   DOM. They must run unchanged in a browser, a Web Worker and Node.
 - `rules` does not import `catalog`: rules work on the products embedded in the document.
 
@@ -131,7 +135,10 @@ used as sort keys in whole millimetres, so a sub-micrometre difference never dec
 ## 9. How the app will sit on the engine (Milestones 2 to 4)
 
 Decided in outline (owner, 2026-11-11, `decisions/0007-local-electron-desktop-app.md`); details
-in `plans/M2-M4-plan.md`. Nothing here exists yet.
+in `plans/M2-M4-plan.md`. Built so far: `app/main` (the window, locked down; dialogs and file
+access in `project-files.ts`), `app/preload` (the bridge), `app/shared` (types only: the bridge's
+requests and results) and `app/renderer` (`state/`, `storage/`, `i18n/`, the start and project
+screens). The rest below is still planned.
 
 V1 is a laptop-only, fully local **Electron** desktop app (electron-vite + electron-builder).
 
@@ -139,7 +146,9 @@ V1 is a laptop-only, fully local **Electron** desktop app (electron-vite + elect
 app/                          the desktop app                         imports ->  src/*
   main/                       Electron main process: windows, native open/save dialogs,
                               all disk access, printToPDF (M4)
-  preload/                    the narrow, typed API the renderer may call (no Node in the renderer)
+  preload/                    the narrow, typed API the renderer may call (no Node in the renderer):
+                              window.view3d = openProject, saveProject, onCloseRequested, closeWindow
+  shared/                     types only, imported by main, preload and renderer
   renderer/                   the UI (React)
     state/                    the open document + undo history (the only mutable copy)
     editor-2d/                plan editor (room capture, manual layout)
@@ -147,7 +156,8 @@ app/                          the desktop app                         imports ->
     worker/                   runs src/layout off the UI thread
     catalog/  storage/  i18n/ owner's catalog, project files (via preload), Arabic/English
 src/                          the engine (this document)              never imports app/
-  capture/        (M2)        wall-by-wall entry, closure and diagonal checks   -> core, geometry
+  capture/        (M2)        wall-by-wall entry, closure and diagonal checks   -> core, geometry, rules
+                              (rules for its tolerances in src/rules/config.ts)
   import-scan/    (M2)        one adapter per scan app -> one scan model -> shared normalization
                               -> core, geometry, rules
   export-bom/     (M4)        bill of materials and quote                       -> core
@@ -156,6 +166,18 @@ src/                          the engine (this document)              never impo
 ```
 
 - The renderer never touches the disk: file access goes through `app/main` behind the preload API.
+  The renderer never names a path either: `app/main` shows the native dialog and remembers the
+  current project file (only a file that is a valid project becomes current).
+- Enforced by `test/architecture/imports.test.ts` ("architecture: app/"): `app/` holds only
+  `main`, `preload` and `renderer`; the renderer imports no Node built-in and no `electron`, and
+  nothing from `main` or `preload`; only `main` and `preload` import `electron`; only the preload
+  uses `contextBridge` or `ipcRenderer`; `main` never imports the renderer; `src/` never imports `app/`.
+- The window: `contextIsolation`, `sandbox`, no `nodeIntegration`; popups, navigation,
+  permission requests and every `http(s)`/`ws(s)` request are refused; the renderer has a
+  local-only Content Security Policy. `test/e2e/smoke.spec.ts` proves each of these.
+- Build: `electron.vite.config.ts` (main and renderer into `out/`); packaging:
+  `electron-builder.yml` (unsigned NSIS, fuses). Type checking: `tsconfig.node.json` (main and
+  tool configs) and `tsconfig.web.json` (renderer, DOM and JSX), run by `pnpm typecheck`.
 - The app holds one document in memory and replaces it on every edit; views read it.
 - `validateLayout` runs on every edit (36 ms for 40 fixtures today); `autoLayout` runs in a
   worker (`decisions/0006-engine-speed-and-worker.md`).

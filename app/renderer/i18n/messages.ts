@@ -1,0 +1,55 @@
+/**
+ * Every message from the engine reaches the owner through here: worded by its code, in the chosen
+ * language. Problem lengths are whole millimetres in both languages, as the engine words them.
+ */
+import type { TFunction } from 'i18next';
+import type { CaptureProblem, SanityWarning } from '../../../src/capture/index';
+import type { AngleInputCode, LengthInputCode, Room } from '../../../src/core/index';
+import { captureConfig } from '../../../src/rules/index';
+import type { RoomProblem } from '../../../src/rules/index';
+
+const mm = (um: number | undefined): string => `${Math.round((um ?? 0) / 1000)} mm`;
+
+/** "Window", "Door" or "Entrance" for an opening, in the current language. */
+function kindOf(t: TFunction, room: Room, id: string | undefined, lower: boolean): string {
+  const o = room.openings.find((x) => x.id === id);
+  const kind = o === undefined ? 'door' : o.kind === 'window' ? 'window' : o.door?.isEntrance === true ? 'entrance' : 'door';
+  return t(`kinds.${lower ? 'lower' : 'upper'}.${kind}`);
+}
+
+export function problemText(t: TFunction, room: Room, p: RoomProblem): string {
+  const v = p.values ?? {};
+  const wall = p.index === undefined ? 0 : p.index + 1;
+  const kind = kindOf(t, room, p.openingId, false);
+  switch (p.code) {
+    case 'opening-wall-missing':
+      return t('problems.opening-wall-missing', { kind, id: p.openingId, wall: v['wallNumber'], wallCount: v['wallCount'] });
+    case 'opening-off-wall':
+      return v['overUm'] === undefined
+        ? t('problems.opening-off-wall-position', { kind, id: p.openingId, wall })
+        : t('problems.opening-off-wall', { kind, id: p.openingId, width: mm(v['widthUm']), offset: mm(v['offsetUm']), wall, length: mm(v['wallLengthUm']), over: mm(v['overUm']) });
+    case 'openings-overlap':
+      return t('problems.openings-overlap', { kind, id: p.openingId, other: kindOf(t, room, p.otherOpeningId, true), otherId: p.otherOpeningId, shared: mm(v['sharedUm']), wall });
+    case 'opening-above-ceiling':
+      return t('problems.opening-above-ceiling', { kind, id: p.openingId, top: mm(v['topUm']), ceiling: mm(v['ceilingUm']) });
+    case 'column-outside-room':
+      return t('problems.column-outside-room', { id: p.columnId });
+    case 'no-entrance':
+      return t('problems.no-entrance');
+    default: {
+      // Outline problems, with the wall or corner when known.
+      const at = p.index === undefined ? '' : ` ${t(p.code === 'self-intersection' ? 'problems.atWall' : 'problems.atCorner', { n: p.index + 1 })}`;
+      return `${t(`problems.${p.code}`)}${at}`;
+    }
+  }
+}
+
+export const lengthInputText = (t: TFunction, code: LengthInputCode): string => t(`input.${code}`);
+export const angleInputText = (t: TFunction, code: AngleInputCode): string => t(`angleInput.${code}`);
+export const captureProblemText = (t: TFunction, p: CaptureProblem): string => t(`capture.${p.code}`, { n: (p.index ?? 0) + 1 });
+
+export function warningText(t: TFunction, w: SanityWarning): string {
+  const limit =
+    w.code === 'wall-very-short' ? `${captureConfig.shortWallUm / 1000} mm` : w.code === 'wall-very-long' ? `${captureConfig.longWallUm / 1_000_000} m` : '';
+  return t(`warnings.${w.code}`, { n: w.index + 1, limit });
+}

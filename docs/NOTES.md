@@ -85,6 +85,26 @@ Running log and decisions. Checkpointed after every step so work survives a rest
 5. Prices are website prices, unverified.
 6. Score weights: tune with the owner on the gallery (M3 issue 10g).
 7. Which iPhone scan app to use (RoomTrace or another); its export becomes a test fixture.
+8. Capture thresholds, our own first guess until you confirm them (`src/rules/config.ts`):
+   closure tolerance 10 mm; diagonal tolerance 20 mm; wall shorter than 100 mm or longer than
+   30 m warns; a corner sharper than 15 degrees warns; a scan gap of 50 mm or less is closed
+   (and reported), a larger one is reported as a possible doorway; the corner angles must add up
+   to (n - 2) x 180 degrees within 0.5 degrees.
+9. Should the app start in Arabic (and remember the language and the unit between runs)? Today it
+   starts in English and cm each time; remembering needs a small settings file written by the app.
+10. The repository is public, so the installer and screenshot artifacts on CI can be downloaded by any
+    signed-in GitHub user. Acceptable, or build and test the installer without uploading it?
+11. Scan import thresholds, our own first guess: a gap up to 50 mm is closed, larger ones become a wall;
+    a window more than 200 mm from every wall is left out; wall heights within 10 mm of the ceiling agree.
+12. RoomTrace axes: the scan is read as seen from above (x right, y up). Please compare the imported
+    plan of the sample shop with the real shop once: if it is mirrored, the adapter flips it for good.
+
+Answered on 2026-11-11 (Milestone 2 detail plan): order 1, 2, 3, 4, 5, 8, 10, 6, 7, 9, 11; strings
+through t() from issue 1; closure check gives the smallest suspect set; document null until a room
+exists; unknown scan sill stays pending; JSON scan adapter only (DXF waits for a sample); room checks
+for window above ceiling and column outside room; translatable room problems; "Save changes?"
+prompt; `pnpm test:e2e` separate; rectangles-only columns; snapshot-stack undo; default unit cm;
+digits 0-9 (Eastern Arabic accepted as input); Windows packaging job only on app or build changes.
 
 Answered on 2026-11-11: own editor (not Pascal packages); hosting cancelled, V1 is a local Electron
 app; ranking keeps fixtures placed first, except a complete checkout block wins when options differ
@@ -118,3 +138,20 @@ W48 × D20 × H72 in; single-sided units go on walls or back to back; entrance d
   rotation by 17, 33.3, 45 and 123.5 degrees gives the same fixtures, rows and ranking, scores
   within 0.5; the oracle caught a deliberately broken walking rule with 7 failing tests.
 - 2026-11-11 Scope change (owner): laptop-only local Electron app; phone, PWA, sync and hosting moved to Future; scan importer added as the last issue of M2; PDF via Chromium printToPDF. Plan, STACK, ARCHITECTURE, TEAM_RULES and decision 0007 updated (docs only).
+- 2026-11-11 Milestone 2 detail plan approved with rulings (see open questions 8 and the answers above). Plan table reordered; DXF spike dropped.
+- 2026-11-11 M2 issue 1: Electron shell, locked-down window, unsigned NSIS installer job; smoke test 4/4 on the build and on the packaged app; CI green on Ubuntu and Windows.
+  Each protection (popup handler, navigation block, sandbox, CSP) removed alone turns one smoke test red.
+- 2026-11-11 M2 issues 2, 3, 4, 5, 8 (tests written in parallel by three test-writers in worktrees): document store 15 tests;
+  capture 51 tests (L and angled rooms exact, closure suspects, diagonal pick, warnings); length entry 81 tests. Suite 509 green.
+- 2026-11-11 Added to the open questions: the angle-sum tolerance 0.5 degrees (closure check), our own first guess.
+- 2026-11-11 M2 issue 10: open, save, save as, save a copy via native dialogs; unchanged save is byte-identical; close prompt. 10 e2e, also on the packaged app.
+- 2026-11-11 M2 issue 6: type, draw and edit the outline; every label within 1 mm in 5 units. Windows CI found that a 100 mm sketch grid is finer than a pixel on a 1024x768 screen; the grid now grows (reproduced, then fixed).
+- 2026-11-11 M2 issue 7: doors, windows, columns added through forms and refused with validateRoom's message; two new room checks (above ceiling, column outside).
+- 2026-11-11 M2 issue 9: Arabic for every string, RTL around an unmirrored plan, messages translated by code (RoomProblem.values). Screenshots uploaded by CI (artifact screens-<os>).
+- 2026-11-11 M2 issue 11: RoomTrace JSON importer. The owner's sample: 7 corners (two gaps of 811 and 471 mm drawn as walls,
+  possible doorways), window on wall 2 at 614.403 mm with its sill left to the owner, ceiling 2256 mm. Suite: 575 Vitest, 52 e2e.
+- 2026-11-11 Independent review of Milestone 2 (owner's request, read-only reviewer): 16 findings, 14 fixed test-first
+  (diagonal corner 0 crash, default menu losing work, file:// reads, zero/negative entries, closure note, translated file
+  errors, refused edits explained, zero-length wall, Save and close, Edit the walls, scan numbering/overhang/no-height/throw).
+  Not changed: "Save a copy" starts a fresh history (by design); asar integrity fuse deferred (needs its own spike).
+  Suite after the fixes: 602 Vitest, 64 e2e; CI green on Ubuntu, Windows and the installed app.

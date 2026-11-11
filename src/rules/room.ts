@@ -3,7 +3,7 @@
  * nothing is placed in it and no layout in it is ever called valid.
  */
 import type { Opening, Room } from '../core/index';
-import { isCounterClockwise, validateRoomOutline, wallSegments } from '../geometry/index';
+import { differencePolygons, isCounterClockwise, validateRoomOutline, wallSegments } from '../geometry/index';
 import type { OutlineProblemCode, Point } from '../geometry/index';
 
 export type RoomProblemCode =
@@ -11,6 +11,8 @@ export type RoomProblemCode =
   | 'opening-wall-missing'
   | 'opening-off-wall'
   | 'openings-overlap'
+  | 'opening-above-ceiling'
+  | 'column-outside-room'
   | 'no-entrance';
 
 export type RoomProblem = {
@@ -19,8 +21,11 @@ export type RoomProblem = {
   message: string;
   openingId?: string;
   otherOpeningId?: string;
+  columnId?: string;
   /** Zero-based wall or corner index, when the problem is about one. */
   index?: number;
+  /** The numbers in the message (lengths in um), so the app can word it in any language by code. */
+  values?: Record<string, number>;
 };
 
 /** Openings may touch end to end; they overlap when they share more than this length. */
@@ -69,6 +74,7 @@ export function validateRoom(room: Room): RoomProblem[] {
         code: 'opening-wall-missing',
         message: `${kindName(o)} "${o.id}" is on wall ${o.wallIndex + 1}, but the room has only ${walls.length} walls.`,
         openingId: o.id,
+        values: { wallNumber: o.wallIndex + 1, wallCount: walls.length },
       });
       continue;
     }
@@ -82,6 +88,7 @@ export function validateRoom(room: Room): RoomProblem[] {
             : `${kindName(o)} "${o.id}" does not lie on wall ${o.wallIndex + 1}: check its position and width.`,
         openingId: o.id,
         index: o.wallIndex,
+        values: { widthUm: o.widthUm, offsetUm: o.offsetUm, wallLengthUm: wall.lengthUm, ...(over > 0.5 ? { overUm: over } : {}) },
       });
       continue;
     }
@@ -100,8 +107,27 @@ export function validateRoom(room: Room): RoomProblem[] {
           openingId: a.id,
           otherOpeningId: b.id,
           index: a.wallIndex,
+          values: { sharedUm: shared },
         });
       }
+    }
+  }
+  for (const o of onWall) {
+    const topUm = o.sillHeightUm + o.heightUm;
+    if (topUm > room.ceilingHeightUm) {
+      problems.push({
+        code: 'opening-above-ceiling',
+        message: `${kindName(o)} "${o.id}" reaches ${mm(topUm)} above the floor, higher than the ${mm(room.ceilingHeightUm)} ceiling.`,
+        openingId: o.id,
+        index: o.wallIndex,
+        values: { topUm, ceilingUm: room.ceilingHeightUm },
+      });
+    }
+  }
+  for (const column of room.columns) {
+    // Any part of the column outside the room; touching a wall from inside leaves nothing.
+    if (differencePolygons([column.outline], [room.outline]).length > 0) {
+      problems.push({ code: 'column-outside-room', message: `Column "${column.id}" is not completely inside the room.`, columnId: column.id });
     }
   }
   if (entrancesOf(room).length === 0) {
