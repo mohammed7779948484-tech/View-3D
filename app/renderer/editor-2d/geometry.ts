@@ -1,11 +1,16 @@
 /** Small helpers between the plan (integer um, y up) and the screen (svg, y down). */
 import type { Point } from '../../../src/core/index';
 
-/** Drawing and dragging snap to this grid; exact lengths are typed afterwards. */
-export const SKETCH_GRID_UM = 100_000;
+/**
+ * Drawing and dragging snap to a grid; exact lengths are typed afterwards. The grid is 100 mm unless
+ * a screen pixel is too coarse to hit it (a small screen): then the next step that is at least
+ * MIN_GRID_PIXELS wide, so a click always lands on the grid point the owner aimed at.
+ */
+const SKETCH_GRIDS_UM = [100_000, 200_000, 500_000, 1_000_000];
+const MIN_GRID_PIXELS = 3;
 const UM_PER_MM = 1000;
 
-export const snap = (um: number): number => Math.round(um / SKETCH_GRID_UM) * SKETCH_GRID_UM || 0;
+export const snap = (um: number, gridUm: number): number => Math.round(um / gridUm) * gridUm || 0;
 
 export const wallLengthUm = (a: Point, b: Point): number => Math.round(Math.hypot(b.x - a.x, b.y - a.y));
 
@@ -14,7 +19,9 @@ export function pointerToPlan(world: SVGGElement, clientX: number, clientY: numb
   const ctm = world.getScreenCTM();
   if (ctm === null) return null;
   const p = new DOMPoint(clientX, clientY).matrixTransform(ctm.inverse());
-  return { x: snap(p.x * UM_PER_MM), y: snap(p.y * UM_PER_MM) };
+  const umPerPixel = UM_PER_MM / Math.abs(ctm.a);
+  const grid = SKETCH_GRIDS_UM.find((g) => g >= MIN_GRID_PIXELS * umPerPixel) ?? SKETCH_GRIDS_UM[SKETCH_GRIDS_UM.length - 1]!;
+  return { x: snap(p.x * UM_PER_MM, grid), y: snap(p.y * UM_PER_MM, grid) };
 }
 
 /** Moves the end of wall i along the wall so the wall gets the new length. */

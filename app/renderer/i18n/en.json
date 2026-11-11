@@ -63,7 +63,7 @@
   },
   "draw": {
     "title": "Draw the room",
-    "hint": "Click each corner in turn. Corners snap to 10 cm; type the exact lengths afterwards.",
+    "hint": "Click each corner in turn. Corners snap to a grid (10 cm on a large screen); type the exact lengths afterwards.",
     "finish": "Finish the room",
     "undoCorner": "Undo last corner",
     "notARoom": "These corners do not make a room: the walls cross or a corner repeats."
