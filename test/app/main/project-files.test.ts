@@ -44,3 +44,17 @@ describe('writeProjectFile and readProjectFile', () => {
     if (!result.ok) expect(result.message.length).toBeGreaterThan(0);
   });
 });
+
+describe('failure codes', () => {
+  it('a failed read has the code read-failed and still a message', async () => {
+    const result = await readProjectFile(join(dir, 'missing.json'));
+    expect(result).toMatchObject({ ok: false, code: 'read-failed' });
+    if (!result.ok) expect(result.message.length).toBeGreaterThan(0);
+  });
+
+  it('a failed write has the code write-failed and still a message', async () => {
+    const result = await writeProjectFile(join(dir, 'no-such-folder', 'shop.json'), '{}\n');
+    expect(result).toMatchObject({ ok: false, code: 'write-failed' });
+    if (!result.ok) expect(result.message.length).toBeGreaterThan(0);
+  });
+});

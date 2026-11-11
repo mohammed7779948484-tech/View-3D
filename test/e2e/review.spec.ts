@@ -69,3 +69,32 @@ test('the wall table says when the last wall was redrawn to close', async () => 
   await expect(status).toHaveText('The walls close.');
 });
 
+// G6
+const ROOT = resolve(import.meta.dirname, '../..');
+type Tree = { [key: string]: string | Tree };
+function arString(key: string, vars: Record<string, string>): string {
+  const path = join(ROOT, 'app/renderer/i18n/ar.json');
+  if (!existsSync(path)) throw new Error(`${path} is missing`);
+  let node: string | Tree | undefined = JSON.parse(readFileSync(path, 'utf8')) as Tree;
+  for (const part of key.split('.')) node = typeof node === 'object' ? node[part] : undefined;
+  if (typeof node !== 'string') throw new Error(`ar.json has no string for key ${key}`);
+  return node.replace(/\{\{\s*([^}\s]+)\s*\}\}/g, (_m, n: string) => vars[n] ?? `{{${n}}}`);
+}
+
+test('file errors are translated', async () => {
+  const page = await h.launch();
+  const missing = join(h.dir, 'missing.json');
+  await h.app!.evaluate(({ dialog }, p) => {
+    dialog.showOpenDialog = (async () => ({ canceled: false, filePaths: [p] })) as typeof dialog.showOpenDialog;
+  }, missing);
+  await page.getByRole('button', { name: 'Open a project' }).click(FIRST);
+  await expect(page.getByRole('alert')).toContainText('could not be read', FIRST);
+
+  await page.getByRole('combobox', { name: 'Language', exact: true }).selectOption({ label: 'العربية' });
+  await expect(page.getByRole('combobox', { name: 'اللغة', exact: true })).toBeVisible(FIRST);
+  await page.getByRole('button', { name: arString('start.open', {}), exact: true }).click();
+  const expected = arString('files.readFailed', { file: 'missing.json' });
+  await expect(page.getByRole('alert')).toContainText(expected, FIRST);
+  await expect(page.getByRole('alert')).not.toContainText('could not be read');
+});
+
