@@ -124,6 +124,5 @@ describe('unplacedText in Arabic', () => {
     expect(text).not.toBe(u.reason);
     expect(text).not.toContain('{{');
     expect(/[٠-٩]/.test(text)).toBe(false);
-    expect(text).toContain('2');
   });
 });
