@@ -92,12 +92,12 @@ Running log and decisions. Checkpointed after every step so work survives a rest
    to (n - 2) x 180 degrees within 0.5 degrees.
 9. Should the app start in Arabic (and remember the language and the unit between runs)? Today it
    starts in English and cm each time; remembering needs a small settings file written by the app.
+10. The repository is public, so the installer and screenshot artifacts on CI can be downloaded by any
+    signed-in GitHub user. Acceptable, or build and test the installer without uploading it?
 11. Scan import thresholds, our own first guess: a gap up to 50 mm is closed, larger ones become a wall;
     a window more than 200 mm from every wall is left out; wall heights within 10 mm of the ceiling agree.
 12. RoomTrace axes: the scan is read as seen from above (x right, y up). Please compare the imported
     plan of the sample shop with the real shop once: if it is mirrored, the adapter flips it for good.
-10. The repository is public, so the installer and screenshot artifacts on CI can be downloaded by any
-    signed-in GitHub user. Acceptable, or build and test the installer without uploading it?
 
 Answered on 2026-11-11 (Milestone 2 detail plan): order 1, 2, 3, 4, 5, 8, 10, 6, 7, 9, 11; strings
 through t() from issue 1; closure check gives the smallest suspect set; document null until a room
