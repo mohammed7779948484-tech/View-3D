@@ -156,6 +156,7 @@ export const violationCases: readonly ViolationCase[] = [
     first: 's',
     expected: {
       placementIds: ['s'], detail: 'customer-front-column', values: { requiredUm: 915_000 },
+      columnId: 'column-1',
       message: `The aisle in front of ${SHOWCASE} (s) needs 915 mm clear, but column "column-1" is in the way.`,
     },
   },
@@ -189,6 +190,7 @@ export const violationCases: readonly ViolationCase[] = [
     first: 'g',
     expected: {
       placementIds: ['g'], detail: 'customer-back-column', values: { requiredUm: 915_000 },
+      columnId: 'column-1',
       message: `The aisle behind ${GONDOLA} (g) needs 915 mm clear, but column "column-1" is in the way.`,
     },
   },
@@ -222,6 +224,7 @@ export const violationCases: readonly ViolationCase[] = [
     first: 'c',
     expected: {
       placementIds: ['c'], detail: 'staff-back-column', values: { requiredUm: 915_000 },
+      columnId: 'column-1',
       message: `The staff space behind ${COUNTER} (c) needs 915 mm clear, but column "column-1" is in the way.`,
     },
   },
