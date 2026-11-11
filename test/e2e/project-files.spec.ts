@@ -82,8 +82,8 @@ test('the bridge is narrow and the page has no Node', async () => {
       require: typeof (globalThis as { require?: unknown }).require,
     };
   });
-  expect(shape.keys).toEqual(['closeWindow', 'onCloseRequested', 'openProject', 'saveProject']);
-  expect(shape.types).toEqual(['function', 'function', 'function', 'function']);
+  expect(shape.keys).toEqual(['closeWindow', 'onCloseRequested', 'openProject', 'openScan', 'saveProject']);
+  expect(shape.types).toEqual(['function', 'function', 'function', 'function', 'function']);
   expect(shape.require).toBe('undefined');
 });
 
