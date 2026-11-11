@@ -309,3 +309,16 @@ describe('a scan with no height', () => {
     }
   });
 });
+
+describe('a coordinate too far away', () => {
+  it('is an error, not a throw', () => {
+    const s = scan(RECT) as { rooms: { walls: { startPoint: { x: number } }[] }[] };
+    s.rooms[0]!.walls[0]!.startPoint.x = 1e10;
+    let r: ScanImportResult | undefined;
+    expect(() => {
+      r = importRoomTrace(s);
+    }).not.toThrow();
+    expect(r?.ok).toBe(false);
+    if (r !== undefined && !r.ok) expect(r.errors.map((e) => e.code)).toEqual(['bad-wall']);
+  });
+});
