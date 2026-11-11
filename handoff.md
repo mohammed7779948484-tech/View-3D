@@ -18,8 +18,8 @@
 | 4 snapping | proven | 15 Vitest + 2 e2e; CI green |
 | 5 worker | proven | 9 Vitest + 2 e2e; same bytes as Node; CI green |
 | 6 option picker | proven locally, CI pending | 52 Vitest + 3 e2e |
-| 7 3D view | in progress | test-writer handoff next |
-| 8 3D select/move | to do | |
+| 7 3D view | proven locally, CI pending | 4 e2e; boxes = document within 1 mm |
+| 8 3D select/move | in progress | test-writer handoff next |
 | 9 model contract | to do | |
 | 10b ranking | to do | |
 | 10c swap and relocate | to do | |
@@ -29,17 +29,16 @@
 | 10g score weights | to do | will be parked: owner looks at the gallery |
 
 ## 3. Next step
-Issue 7, the 3D view of the open project (reuse `app/renderer/view-3d/`: units.ts, boxes.ts
-`sceneBoxes(doc)`, fixture-boxes.tsx instanced, scene-probe.tsx). A "2D / 3D" switch on the project
-screen; 3D shows the room floor and walls (walls: thin boxes along the outline, ceiling height),
-every placement as an exact box, fixtures with a problem in red (ruling), camera: three.js
-OrbitControls from three/examples (no drei), presets "Top" and "Corner"; frameloop demand.
-No WebGL -> a translated message, 2D keeps working (test: launch WITHOUT --enable-unsafe-swiftshader
-on Linux is the no-WebGL case; launch.ts needs an option to leave it out).
-Tests (test-writer): Playwright reads `window.__view3dScene.describe()` for a hand-built document on
-the angled room: every box equals the document within 1 mm and 1e-4 rad (tower on wall 2 at
-(6 731 672, 3 865 836) um, 116 565 051 udeg: corners by hand); problem fixtures marked in the
-description (`problem: true`); the switch keeps the document unchanged.
+Issue 8, select and move in 3D on the same document. In View3D: clicking a box selects it (R3F
+pointer event `instanceId` -> placement id; shares `selectedId` with 2D, so the Selected fixture panel
+works in 3D too); dragging a selected box moves it on the floor plane (y = 0): plan point = scene
+(x, -z), snapped to the same grid as 2D (`snap` in editor-2d/geometry.ts with the 100 mm grid), the
+move = `together(movePlacement, snapPlacement)` exactly as 2D. Proof (test-writer): the same edit
+sequence done in 2D and done in 3D (Top view, so screen points map to the floor deterministically:
+expose the floor point under a screen point? simpler: drive the 3D drag with the Top view camera and
+compute the screen point from the camera in the test via a `window.__view3dScene.screenOf(x, z)`
+helper) gives byte-identical saved files: place a Counter via the panel, move +1000 mm x, Rotate 90°,
+Duplicate, Delete the copy.
 
 ## 4. Waiting for the owner
 - Run Diagnostics > Test 3D speed on the laptop once, send a photo (30 fps proof).
@@ -52,10 +51,11 @@ node node_modules/electron/install.js   # this container skips Electron's downlo
 pnpm typecheck && pnpm test
 xvfb-run -a pnpm test:e2e
 ```
-Traps: Electron needs `--no-sandbox` as root (the e2e launcher adds it). With no GPU there is no
-WebGL unless Electron starts with `--enable-unsafe-swiftshader` (tests only).
+Traps: Electron needs `--no-sandbox` as root (the e2e launcher adds it). A visible window gets
+software WebGL without a GPU; the no-WebGL case needs `--disable-gpu --disable-software-rasterizer`.
 
 ## 6. Decisions made this milestone
+- 3D: `app/renderer/view-3d/view-3d.tsx`; no-WebGL test = `--disable-gpu --disable-software-rasterizer` (a visible window has software WebGL otherwise).
 - Option picker: `useLayoutOption` in placement-commands; `unplacedText` words did-not-fit by code.
 - Live validation: `violationText` in `app/renderer/i18n/messages.ts`, keys `violations.<rule>.<detail|default>`.
 - 2D editing: commands in `app/renderer/state/placement-commands.ts` (recipes, one undo step each); `quarterTurn` in `src/rules/snap.ts`.

@@ -120,9 +120,12 @@ click; it shows PASS when setup A's median is at most 33.3 ms and its p95 at mos
 frames per second target). Not measured yet: his integrated graphics.
 
 Risks: three adds about 1.2 MB to the renderer bundle (3.3 MB in all); it loads from disk, so the
-start is not affected noticeably. Without a GPU (or with a blocked driver) Chromium gives no WebGL
-at all; the shipped app does not turn on software rendering (owner ruling), so 3D then says it is
-not available and 2D keeps working.
+start is not affected noticeably. Without a GPU, a visible Electron 45 window still gets WebGL from
+Chromium's own software fallback (SwiftShader), measured 2026-11-11; the app adds no switch for it
+(owner ruling) and does not block it either. Only with the GPU and the software rasterizer both
+disabled (`--disable-gpu --disable-software-rasterizer`, which the no-WebGL test uses) is there no
+WebGL at all; 3D then says it is not available and 2D keeps working. Correction: an earlier probe
+used a hidden window, which has no fallback, and wrongly concluded "no WebGL without a GPU".
 
 ## Built ourselves (and why)
 

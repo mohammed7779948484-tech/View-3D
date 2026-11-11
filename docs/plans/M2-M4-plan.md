@@ -186,9 +186,10 @@ sub-item gets its own failing test and its own pair of commits.
 - No drei (three.js's own camera controls); plain CSS with logical properties and the native
   `<dialog>`, no Tailwind or shadcn.
 - 3D shows fixtures with a problem in red; the worded problem list sits beside both views.
-- Software 3D (SwiftShader) is off in the shipped app; only the tests start Electron with
-  `--enable-unsafe-swiftshader`, because a machine without a GPU has no WebGL otherwise. With no
-  WebGL the 3D view says so and 2D keeps working.
+- Software 3D (SwiftShader) is not turned on by the shipped app; the tests start Electron with
+  `--enable-unsafe-swiftshader`. (Measured later the same day: a visible window falls back to
+  Chromium's own software WebGL without any switch; see `../STACK.md`.) With no WebGL the 3D view
+  says so and 2D keeps working.
 - The "Test 3D speed" benchmark lives on a Diagnostics page.
 
 **Corrections to the table above, found while planning (approved 2026-11-11)**
