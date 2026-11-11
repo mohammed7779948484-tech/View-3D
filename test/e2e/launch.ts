@@ -6,18 +6,19 @@ import { resolve } from 'node:path';
 const rootArgs = process.getuid?.() === 0 ? ['--no-sandbox'] : [];
 // Tests only: CI and containers have no GPU, and without this switch Electron has no WebGL at all.
 // It makes Chromium fall back to SwiftShader (software WebGL2). The shipped app never sets it.
-const testArgs = ['--enable-unsafe-swiftshader', ...rootArgs];
+const softwareArgs = ['--enable-unsafe-swiftshader'];
 const REPO_ROOT = resolve(import.meta.dirname, '../..');
 
 /**
  * Starts the app. With VIEW3D_EXE set (installed or packaged executable) it runs that;
  * otherwise it runs the build output through package.json `main` (out/main/index.js).
  */
-export async function launchApp(options: { userDataDir?: string } = {}): Promise<{ app: ElectronApplication; page: Page }> {
+export async function launchApp(options: { userDataDir?: string; softwareGl?: boolean } = {}): Promise<{ app: ElectronApplication; page: Page }> {
   const exe = process.env['VIEW3D_EXE'];
   // --user-data-dir keeps Electron's userData (and so catalog.json) in a folder the test owns.
   const extra = options.userDataDir === undefined ? [] : [`--user-data-dir=${options.userDataDir}`];
-  const args = [...testArgs, ...extra];
+  // softwareGl false leaves the switch out: the no-WebGL case on a machine without a GPU.
+  const args = [...(options.softwareGl === false ? [] : softwareArgs), ...rootArgs, ...extra];
   const app = await electron.launch(exe ? { executablePath: exe, args } : { args: [REPO_ROOT, ...args] });
   const page = await app.firstWindow();
   await page.waitForLoadState('domcontentloaded');

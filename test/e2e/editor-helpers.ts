@@ -32,8 +32,8 @@ export class Harness {
     this.app = undefined;
     rmSync(this.dir, { recursive: true, force: true });
   }
-  async launch(): Promise<Page> {
-    const launched = await launchApp({ userDataDir: this.dir });
+  async launch(options: { softwareGl?: boolean } = {}): Promise<Page> {
+    const launched = await launchApp({ userDataDir: this.dir, ...options });
     this.app = launched.app;
     this.page = launched.page;
     return this.page;
