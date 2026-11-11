@@ -156,7 +156,8 @@ app/                          the desktop app                         imports ->
                               boxes.ts derives the boxes from the document; scene-probe.tsx reads them
                               back from the scene graph for tests (window.__view3dScene)
     diagnostics/              the owner's one-click 3D speed test (M3)
-    worker/                   runs src/layout off the UI thread
+    worker/                   runs src/layout off the UI thread: layout.worker.ts answers with the JSON
+                              text, so the page gets autoLayout's exact bytes; run-layout.ts starts and cancels a run
     catalog/  storage/  i18n/ owner's catalog, project files (via preload), Arabic/English
 src/                          the engine (this document)              never imports app/
   capture/        (M2)        wall-by-wall entry, closure and diagonal checks   -> core, geometry, rules

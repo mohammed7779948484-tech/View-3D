@@ -250,6 +250,12 @@
     "triangles": "Triangles",
     "pass": "Smooth enough: 30 frames per second or better with 60 fixtures.",
     "fail": "Not smooth enough for 60 fixtures yet.",
-    "photo": "Please send a photo of this page."
+    "photo": "Please send a photo of this page.",
+    "layoutTitle": "Automatic layout",
+    "layoutIntro": "Runs the automatic layout on a 7 m x 5 m shop with 9 real products, in the background, and shows how long it took.",
+    "layoutRun": "Test layout speed",
+    "layoutRunning": "Laying out…",
+    "layoutDone": "Done in {{ms}} ms, {{options}} options.",
+    "layoutFailed": "The layout test failed: {{message}}"
   }
 }

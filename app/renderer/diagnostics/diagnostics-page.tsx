@@ -14,6 +14,7 @@ import { FixtureBoxes } from '../view-3d/fixture-boxes';
 import { SceneProbe } from '../view-3d/scene-probe';
 import { planToScene } from '../view-3d/units';
 import { benchmarkDocument } from './benchmark-document';
+import { LayoutSpeedTest } from './layout-speed-test';
 
 type Setup = { id: 'A' | 'B' | 'C' | 'D'; fixtures: number; shadows: boolean; instanced: boolean };
 /** A is the app's default way of drawing; B, C and D show what shadows, no instancing and twice the fixtures cost. */
@@ -251,6 +252,7 @@ export function DiagnosticsPage({ onBack }: { onBack: () => void }) {
           </Canvas>
         </div>
       )}
+      <LayoutSpeedTest />
     </section>
   );
 }

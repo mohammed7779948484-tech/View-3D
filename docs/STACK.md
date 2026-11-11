@@ -101,6 +101,18 @@ integrated graphics), three-mesh-bvh 0.9.18 (only if picking measures slow).
 | C | 60 | off | no | 16.5 ms | 17.4 ms | 61 | 722 |
 | D | 120 | off | yes | 16.7 ms | 17.4 ms | 2 | 1442 |
 
+GitHub CI (`ci.yml`, both runners also on SwiftShader): Ubuntu A 16.6 / 17.4 ms, B 17.0 / 19.9,
+C 16.8 / 17.3, D 16.7 / 17.2; Windows A 15.6 / 16.5 ms, B 15.7 / 16.3, C 15.8 / 16.7, D 15.6 / 16.3
+(median / p95; that runner's display refreshes at 64 Hz).
+
+**Layout engine in a Web Worker** (no library): `app/renderer/worker/layout.worker.ts`, built by
+electron-vite as its own file (`new Worker(new URL(...), { type: 'module' })`), loads from `file://`
+under the app's Content Security Policy with no change to it. Spike `test/spikes/worker.spec.ts`:
+the worker's JSON is byte-identical (SHA-256) to `autoLayout` called directly in Node 22, so
+Electron's V8 and Node's V8 give the same layout. 200 ms in the worker against 273 ms in Node for
+the 9-product test shop (this container). The owner can time it on his laptop: Diagnostics, "Test
+layout speed".
+
 Frame times are measured between animation frames, so they cannot go below the display's refresh
 interval (16.7 ms at 60 Hz): every setup here holds 60 frames per second even in software. These are
 CI numbers, not the owner's laptop. His laptop is measured with Diagnostics, "Test 3D speed" (one
