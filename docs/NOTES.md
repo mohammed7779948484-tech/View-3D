@@ -159,3 +159,5 @@ W48 × D20 × H72 in; single-sided units go on walls or back to back; entrance d
   Suite after the fixes: 602 Vitest, 64 e2e; CI green on Ubuntu, Windows and the installed app.
 - 2026-11-11 Milestone 3 detail plan approved with rulings: order 10a, spikes, 1-6, 7-9, 10b-10g; ranking key placed + complete block (decision 0003); catalog file on the laptop; no drei, no UI kit; red fixtures in 3D; rear access by staff zone; software 3D off in the app; benchmark on a Diagnostics page.
   Found while planning: with no GPU, Electron has no WebGL unless started with --enable-unsafe-swiftshader (probe in this container: none without it, SwiftShader WebGL2 with it).
+- 2026-11-11 M3 10a: engine.ts (1273 lines) split verbatim into 8 phase files, largest state.ts at 299 lines. Proof: golden SHA-256 of the full autoLayout JSON for all 7 scenarios and every SVG snapshot byte-identical after regeneration; suite 619 green.
+  `snapshots/before-m3/` frozen as the "before" for the rest of issue 10.

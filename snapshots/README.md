@@ -7,6 +7,12 @@ with these committed SVG files on every test run. PNG copies are not committed: 
 Fixtures marked **TEST** are synthetic, not real products. Sizes marked **\*** come from the
 website and are not yet confirmed by the owner.
 
+## Milestone 3, engine round 2
+
+`before-m3/` freezes every layout as it stood after the engine split (M3 issue 10a, output
+unchanged). Each later item of issue 10 that changes a layout adds its own before/after table
+here, comparing `before-m3/` with `layouts/`, with the reason for the change.
+
 ## Before and after the first review
 
 "Before" is the first engine (frozen under `before/`). "After" follows the owner's review:
