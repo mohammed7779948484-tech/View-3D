@@ -90,6 +90,10 @@ Running log and decisions. Checkpointed after every step so work survives a rest
    30 m warns; a corner sharper than 15 degrees warns; a scan gap of 50 mm or less is closed
    (and reported), a larger one is reported as a possible doorway; the corner angles must add up
    to (n - 2) x 180 degrees within 0.5 degrees.
+9. Should the app start in Arabic (and remember the language and the unit between runs)? Today it
+   starts in English and cm each time; remembering needs a small settings file written by the app.
+10. The repository is public, so the installer and screenshot artifacts on CI can be downloaded by any
+    signed-in GitHub user. Acceptable, or build and test the installer without uploading it?
 
 Answered on 2026-11-11 (Milestone 2 detail plan): order 1, 2, 3, 4, 5, 8, 10, 6, 7, 9, 11; strings
 through t() from issue 1; closure check gives the smallest suspect set; document null until a room
@@ -136,3 +140,8 @@ W48 × D20 × H72 in; single-sided units go on walls or back to back; entrance d
 - 2026-11-11 M2 issues 2, 3, 4, 5, 8 (tests written in parallel by three test-writers in worktrees): document store 15 tests;
   capture 51 tests (L and angled rooms exact, closure suspects, diagonal pick, warnings); length entry 81 tests. Suite 509 green.
 - 2026-11-11 Added to the open questions: the angle-sum tolerance 0.5 degrees (closure check), our own first guess.
+- 2026-11-11 M2 issue 10: open, save, save as, save a copy via native dialogs; unchanged save is byte-identical; close prompt. 10 e2e, also on the packaged app.
+- 2026-11-11 M2 issue 6: type, draw and edit the outline; every label within 1 mm in 5 units. Windows CI found that a 100 mm sketch grid is finer than a pixel on a 1024x768 screen; the grid now grows (reproduced, then fixed).
+- 2026-11-11 M2 issue 7: doors, windows, columns added through forms and refused with validateRoom's message; two new room checks (above ceiling, column outside).
+- 2026-11-11 M2 issue 9: Arabic for every string, RTL around an unmirrored plan, messages translated by code (RoomProblem.values). Screenshots uploaded by CI (artifact screens-<os>).
+- 2026-11-11 Next: issue 11 (RoomTrace JSON importer) waits for the owner's sample file in test/fixtures/scans/.
