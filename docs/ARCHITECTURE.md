@@ -64,11 +64,11 @@ this section together.
 | You are adding | Put it in | And |
 |---|---|---|
 | A planning number (an aisle width, a depth) | `src/rules/config.ts` with its source in `configSources` | No number inline anywhere else |
-| A validity rule | `src/rules/validate.ts` (a new `RuleId`); walking-type rules in `walkingViolations` | A "violates" and a "passes" test in `test/rules`, an oracle case in `test/oracle`, and the engine's local check in `src/layout/engine.ts` if the engine must respect it while placing |
+| A validity rule | `src/rules/validate.ts` (a new `RuleId`); walking-type rules in `walkingViolations` | A "violates" and a "passes" test in `test/rules`, an oracle case in `test/oracle`, and the engine's local check (`localObstacle` in `src/layout/state.ts`) if the engine must respect it while placing |
 | A check on the room itself | `src/rules/room.ts` (`validateRoom`) | A test per case in `test/rules/room.test.ts` |
 | A new kind of fixture behaviour | A field on `Product` in `src/core/schema.ts` (bump nothing unless old documents break; see section 5), then `accessZones` in `src/rules/zones.ts`, then the engine phase that places it | Seed and test fixtures updated |
 | A real product | `src/catalog/seed.ts`, website values only, `unverified` until the owner confirms | The table in `test/catalog/seed.test.ts` |
-| A layout behaviour | `src/layout/engine.ts`, as a phase or a search dimension | A scenario in `test/layout/scenarios.ts`, a quality test, regenerated snapshots |
+| A layout behaviour | `src/layout`, in the file of its phase (`cash-wrap.ts`, `walls.ts`, `island-grid.ts`, `score.ts`, `report.ts`) or as a search dimension in `search.ts`; shared state and checks in `state.ts`, public types in `types.ts`; no file over 400 lines (`test/architecture/layout-files.test.ts`) | A scenario in `test/layout/scenarios.ts`, a quality test, regenerated snapshots and `test/layout/golden-hashes.json` |
 | A drawing change | `src/render-svg/plan.ts` | `test/render-svg`, regenerated snapshots |
 | A new export (PDF, BOM, quote) | A new folder `src/export-<name>` that reads the document (and `render-svg` for the plan) | Its arrow added in section 3 and in the architecture test |
 | Geometry | `src/geometry`, integer in and out | Property tests with fixed seeds |
