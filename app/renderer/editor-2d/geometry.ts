@@ -24,12 +24,13 @@ export function pointerToPlan(world: SVGGElement, clientX: number, clientY: numb
   return { x: snap(p.x * UM_PER_MM, grid), y: snap(p.y * UM_PER_MM, grid) };
 }
 
-/** Moves the end of wall i along the wall so the wall gets the new length. */
-export function withWallLength(outline: readonly Point[], i: number, lengthUm: number): Point[] {
+/** Moves the end of wall i along the wall so the wall gets the new length; null for a wall of no length (no direction). */
+export function withWallLength(outline: readonly Point[], i: number, lengthUm: number): Point[] | null {
   const start = outline[i]!;
   const endIndex = (i + 1) % outline.length;
   const end = outline[endIndex]!;
   const current = Math.hypot(end.x - start.x, end.y - start.y);
+  if (current === 0) return null;
   const moved = {
     x: Math.round(start.x + ((end.x - start.x) / current) * lengthUm) || 0,
     y: Math.round(start.y + ((end.y - start.y) / current) * lengthUm) || 0,

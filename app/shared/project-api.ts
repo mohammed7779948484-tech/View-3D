@@ -1,7 +1,13 @@
 /** The only things the renderer may ask of the main process (exposed by the preload as `window.view3d`). */
-export type OpenResult = { status: 'cancelled' } | { status: 'opened'; fileName: string; text: string } | { status: 'failed'; message: string };
+export type OpenResult =
+  | { status: 'cancelled' }
+  | { status: 'opened'; fileName: string; text: string }
+  | { status: 'failed'; code: 'read-failed'; fileName: string; message: string };
 export type SaveRequest = { text: string; mode: 'save' | 'save-as' };
-export type SaveResult = { status: 'cancelled' } | { status: 'saved'; fileName: string } | { status: 'failed'; message: string };
+export type SaveResult =
+  | { status: 'cancelled' }
+  | { status: 'saved'; fileName: string }
+  | { status: 'failed'; code: 'write-failed'; fileName: string; message: string };
 export type ProjectBridge = {
   /** Asks for a project file with the native dialog and returns its text. */
   openProject(): Promise<OpenResult>;

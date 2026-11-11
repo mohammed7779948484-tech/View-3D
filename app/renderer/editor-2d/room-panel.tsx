@@ -3,7 +3,7 @@ import type { DesignDocument, DisplayUnit, Point } from '../../../src/core/index
 import { withWallLength, wallLengthUm } from './geometry';
 import { LengthField } from './length-field';
 
-type Props = { room: DesignDocument['room']; unit: DisplayUnit; onOutline: (outline: Point[]) => void; onCeiling: (um: number) => void };
+type Props = { room: DesignDocument['room']; unit: DisplayUnit; onOutline: (outline: Point[] | null, wall: number) => boolean; onCeiling: (um: number) => boolean };
 
 /** The room's numbers: ceiling height and every wall length, editable. */
 export function RoomPanel({ room, unit, onOutline, onCeiling }: Props) {
@@ -20,7 +20,7 @@ export function RoomPanel({ room, unit, onOutline, onCeiling }: Props) {
               label={t('walls.length', { n: i + 1 })}
               valueUm={wallLengthUm(start, room.outline[(i + 1) % n]!)}
               unit={unit}
-              onCommit={(um) => onOutline(withWallLength(room.outline, i, um))}
+              onCommit={(um) => onOutline(withWallLength(room.outline, i, um), i)}
             />
           </li>
         ))}

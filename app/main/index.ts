@@ -4,9 +4,10 @@
  * The renderer never names a file: it asks through the preload bridge, and this process shows the
  * native dialog and remembers the current project file.
  */
-import { app, BrowserWindow, dialog, ipcMain, session } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, Menu, session } from 'electron';
 import type { IpcMainEvent, IpcMainInvokeEvent } from 'electron';
-import { basename, join } from 'node:path';
+import { basename, dirname, isAbsolute, join, relative } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { parseDesignDocument } from '../../src/core/index';
 import type { OpenResult, SaveRequest, SaveResult } from '../shared/project-api';
 import { readProjectFile, writeProjectFile } from './project-files';
@@ -14,7 +15,17 @@ import { readProjectFile, writeProjectFile } from './project-files';
 const RENDERER_HTML = join(import.meta.dirname, '../renderer/index.html');
 const PRELOAD = join(import.meta.dirname, '../preload/index.cjs');
 /** Every remote scheme. The app is fully local (decisions/0007), so any such request is refused. */
-const REMOTE_URLS = ['http://*/*', 'https://*/*', 'ws://*/*', 'wss://*/*'];
+const REMOTE_SCHEMES = ['http:', 'https:', 'ws:', 'wss:'];
+/** The page may load its own files and nothing else from the disk; all other disk access goes through this process. */
+const RENDERER_DIR = dirname(RENDERER_HTML);
+
+function allowedRequest(url: string): boolean {
+  const { protocol } = new URL(url);
+  if (REMOTE_SCHEMES.includes(protocol)) return false;
+  if (protocol !== 'file:') return true;
+  const inside = relative(RENDERER_DIR, fileURLToPath(url));
+  return inside !== '' && !inside.startsWith('..') && !isAbsolute(inside);
+}
 const PROJECT_FILTERS = [{ name: 'View-3D project', extensions: ['json'] }];
 const SCAN_FILTERS = [{ name: 'Room scan (RoomTrace JSON)', extensions: ['json'] }];
 /** Characters Windows does not allow in a file name. */
@@ -47,7 +58,7 @@ async function openProject(window: BrowserWindow): Promise<OpenResult> {
   const path = choice.filePaths[0];
   if (choice.canceled || path === undefined) return { status: 'cancelled' };
   const read = await readProjectFile(path);
-  if (!read.ok) return { status: 'failed', message: read.message };
+  if (!read.ok) return { status: 'failed', code: read.code, fileName: basename(path), message: read.message };
   // Only a real project becomes the current file, so "Save" can never overwrite a file that was refused.
   if (projectName(read.text) !== null) currentPath = path;
   return { status: 'opened', fileName: basename(path), text: read.text };
@@ -58,7 +69,7 @@ async function openScan(window: BrowserWindow): Promise<OpenResult> {
   const path = choice.filePaths[0];
   if (choice.canceled || path === undefined) return { status: 'cancelled' };
   const read = await readProjectFile(path);
-  return read.ok ? { status: 'opened', fileName: basename(path), text: read.text } : { status: 'failed', message: read.message };
+  return read.ok ? { status: 'opened', fileName: basename(path), text: read.text } : { status: 'failed', code: read.code, fileName: basename(path), message: read.message };
 }
 
 async function saveProject(window: BrowserWindow, request: SaveRequest): Promise<SaveResult> {
@@ -70,7 +81,7 @@ async function saveProject(window: BrowserWindow, request: SaveRequest): Promise
     path = choice.filePath;
   }
   const written = await writeProjectFile(path, request.text);
-  if (!written.ok) return { status: 'failed', message: written.message };
+  if (!written.ok) return { status: 'failed', code: written.code, fileName: basename(path), message: written.message };
   currentPath = path;
   return { status: 'saved', fileName: basename(path) };
 }
@@ -127,7 +138,10 @@ app.on('before-quit', () => {
 
 void app.whenReady().then(() => {
   session.defaultSession.setPermissionRequestHandler((_contents, _permission, callback) => callback(false));
-  session.defaultSession.webRequest.onBeforeRequest({ urls: REMOTE_URLS }, (_details, callback) => callback({ cancel: true }));
+  // One listener only (Electron keeps the last): remote requests and files outside the page's folder are refused.
+  session.defaultSession.webRequest.onBeforeRequest({ urls: ['<all_urls>'] }, (details, callback) => callback({ cancel: !allowedRequest(details.url) }));
+  // No menu: the default one would reload the page or quit without asking, and opens developer tools.
+  Menu.setApplicationMenu(null);
   createWindow();
 });
 

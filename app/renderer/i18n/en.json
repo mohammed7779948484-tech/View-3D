@@ -21,13 +21,15 @@
     "undo": "Undo",
     "redo": "Redo",
     "copyName": "{{name}} (copy)",
-    "newName": "New shop"
+    "newName": "New shop",
+    "editWalls": "Edit the walls"
   },
   "close": {
     "title": "Close without saving?",
     "body": "Your changes since the last save will be lost.",
     "discard": "Close without saving",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "save": "Save and close"
   },
   "unit": {
     "label": "Unit"
@@ -39,7 +41,9 @@
   "room": {
     "title": "Room",
     "ceiling": "Ceiling height",
-    "problems": "Room problems"
+    "problems": "Room problems",
+    "editRefused": "That change would turn the room inside out, so it was not made.",
+    "zeroWall": "Wall {{n}} has no length, so it has no direction to lengthen. Use \"Edit the walls\" instead."
   },
   "walls": {
     "title": "Type the walls",
@@ -60,7 +64,9 @@
     "diagonalLength": "Diagonal length",
     "diagonalOk": "The diagonal matches the drawing.",
     "diagonalOff": "The diagonal differs from the drawing by {{difference}}.",
-    "create": "Create the room"
+    "create": "Create the room",
+    "closesWithin": "The walls close: the last wall ended {{gap}} from the start, so it is drawn from the corners, not from its typed length.",
+    "update": "Update the room"
   },
   "draw": {
     "title": "Draw the room",
@@ -160,7 +166,8 @@
     "not-positive": "A length must be more than zero.",
     "too-large": "A length can be at most 100 m.",
     "use-a-point": "Use a point for decimals (1.5), not a comma.",
-    "out-of-range": "An angle must be more than 0 and less than 360 degrees."
+    "out-of-range": "An angle must be more than 0 and less than 360 degrees.",
+    "negative": "This value cannot be negative."
   },
   "angleInput": {
     "empty": "Type an angle in degrees.",
@@ -196,7 +203,8 @@
       "no-doors": "The scan has no doors. Add the entrance and every door in the editor.",
       "doors-not-read": "The scan lists {{doors}} doors, which this version cannot read. Add them in the editor.",
       "ceiling-height-varies": "The scanned wall heights vary from {{min}} to {{max}}. Check the ceiling height.",
-      "axes-assumed": "The scan is read as seen from above. If the plan looks mirrored compared with the shop, tell us."
+      "axes-assumed": "The scan is read as seen from above. If the plan looks mirrored compared with the shop, tell us.",
+      "window-moved": "The window on wall {{wall}} ran past the end of the wall in the scan; it was moved {{moved}} to fit. Check it."
     },
     "errors": {
       "not-json": "This file is not a room scan: it is not valid JSON.",
@@ -207,7 +215,12 @@
       "several-rooms": "The scan has several rooms; import one room at a time.",
       "bad-wall": "A wall or window in the scan has no position or size.",
       "too-few-walls": "The scan has fewer than 3 walls.",
-      "outline-invalid": "The scanned walls do not make a room: they cross each other or repeat a corner."
+      "outline-invalid": "The scanned walls do not make a room: they cross each other or repeat a corner.",
+      "no-height": "The scan has no ceiling or wall height."
     }
+  },
+  "files": {
+    "readFailed": "The file \"{{file}}\" could not be read.",
+    "writeFailed": "The file \"{{file}}\" could not be saved."
   }
 }

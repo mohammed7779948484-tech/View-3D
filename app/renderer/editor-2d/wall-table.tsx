@@ -14,16 +14,23 @@ import { Plan } from './plan';
 const PREVIEW_MARGIN_MM = 1500;
 
 type Row = { length: string; angle: string };
-type Props = { unit: DisplayUnit; onCreate: (outline: Point[], ceilingHeightUm: number) => void; onBack: () => void };
+/** `start` prefills the table (editing an open room); `submitLabel` names the button. */
+type Props = {
+  unit: DisplayUnit;
+  onCreate: (outline: Point[], ceilingHeightUm: number) => void;
+  onBack: () => void;
+  start?: { rows: Row[]; ceiling: string };
+  submitLabel?: string;
+};
 
 const FIRST_ROWS = 4;
 const emptyRow = (): Row => ({ length: '', angle: '' });
 
 /** "Type the walls": each wall's length and end angle, checked as the owner types. */
-export function WallTable({ unit, onCreate, onBack }: Props) {
+export function WallTable({ unit, onCreate, onBack, start, submitLabel }: Props) {
   const { t } = useTranslation();
-  const [rows, setRows] = useState<Row[]>(() => Array.from({ length: FIRST_ROWS }, emptyRow));
-  const [ceiling, setCeiling] = useState('');
+  const [rows, setRows] = useState<Row[]>(() => start?.rows ?? Array.from({ length: FIRST_ROWS }, emptyRow));
+  const [ceiling, setCeiling] = useState(start?.ceiling ?? '');
   const [diagonal, setDiagonal] = useState({ from: '', to: '', length: '' });
 
   const lengths = rows.map((r) => (r.length.trim() === '' ? null : parseLength(r.length, typedUnit(unit))));
@@ -40,7 +47,8 @@ export function WallTable({ unit, onCreate, onBack }: Props) {
   const closure = drawn?.ok === true && walls !== null ? checkClosure(walls) : null;
   const warnings = drawn?.ok === true && walls !== null ? sanityWarnings(walls) : [];
 
-  const corner = (text: string): number | null => (/^\d+$/.test(text.trim()) ? Number(text) - 1 : null);
+  // Corners are numbered from 1 to the number of walls; anything else is not a corner.
+  const corner = (text: string): number | null => (/^\d+$/.test(text.trim()) && Number(text) >= 1 && Number(text) <= rows.length ? Number(text) - 1 : null);
   const diagonalRead = parseLength(diagonal.length, typedUnit(unit));
   const from = corner(diagonal.from);
   const to = corner(diagonal.to);
@@ -62,7 +70,10 @@ export function WallTable({ unit, onCreate, onBack }: Props) {
   }
 
   let status = t('walls.incomplete');
-  if (closure?.closes === true) status = t('walls.closes');
+  if (closure?.closes === true) {
+    // Within tolerance the last wall is drawn from the corners, not from its typed length: say so.
+    status = closure.gapUm === 0 && closure.angleSumErrorUdeg === 0 ? t('walls.closes') : t('walls.closesWithin', { gap: formatDisplayLength(closure.gapUm, unit) });
+  }
   else if (closure !== null) status = t('walls.open', { gap: formatDisplayLength(closure.gapUm, unit) });
   else if (drawn?.ok === false) status = drawn.problems.map((p) => captureProblemText(t, p)).join(' ');
 
@@ -127,7 +138,7 @@ export function WallTable({ unit, onCreate, onBack }: Props) {
       )}
       <div className="actions">
         <button type="button" className="primary" disabled={!canCreate} onClick={() => drawn?.ok && ceilingRead?.ok && onCreate(drawn.outline, ceilingRead.um)}>
-          {t('walls.create')}
+          {submitLabel ?? t('walls.create')}
         </button>
         <button type="button" className="quiet" onClick={onBack}>
           {t('common.back')}

@@ -2,7 +2,7 @@ import { useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import { checkDiagonal } from '../../../src/capture/index';
-import { formatDisplayLength, parseLength } from '../../../src/core/index';
+import { formatDisplayLength, parseDistance, parseLength } from '../../../src/core/index';
 import type { DisplayUnit, Room } from '../../../src/core/index';
 import type { PendingWindow, ScanFinding } from '../../../src/import-scan/index';
 import { validateRoom } from '../../../src/rules/index';
@@ -24,6 +24,8 @@ function findingText(t: TFunction, f: ScanFinding): string {
       return t(`scan.findings.${f.code}`, { size: mm(f.sizeUm), wall: f.wallIndex + 1 });
     case 'window-sill-unknown':
       return t('scan.findings.window-sill-unknown', { wall: f.wallIndex + 1 });
+    case 'window-moved':
+      return t('scan.findings.window-moved', { wall: f.wallIndex + 1, moved: mm(f.movedUm) });
     case 'window-not-on-wall':
       return t('scan.findings.window-not-on-wall', { distance: mm(f.distanceUm) });
     case 'doors-not-read':
@@ -47,7 +49,7 @@ export function ScanReview({ room: scanned, pendingWindows, findings, unit, onUs
   const waiting = pendingWindows.filter((w) => decided[w.id] !== true);
 
   function add(w: PendingWindow): void {
-    const read = parseLength(sills[w.id] ?? '', typedUnit(unit));
+    const read = parseDistance(sills[w.id] ?? '', typedUnit(unit));
     if (!read.ok) return setErrors((e) => ({ ...e, [w.id]: lengthInputText(t, read.code) }));
     const id = nextId(room, 'window');
     const candidate: Room = {

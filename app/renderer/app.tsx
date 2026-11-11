@@ -3,6 +3,8 @@ import type { KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { DesignDocument, DisplayUnit, Point } from '../../src/core/index';
 import { validateRoom } from '../../src/rules/index';
+import { outlineToWalls } from '../../src/capture/index';
+import { formatAngle, formatDisplayLength } from '../../src/core/index';
 import { viewBoxAround } from './editor-2d/geometry';
 import { DrawRoom } from './editor-2d/draw-room';
 import { newDocument } from './editor-2d/new-document';
@@ -23,6 +25,16 @@ import { readDocument, serializeDocument } from './storage/project-file';
 type Problem = { message: string; details: string[] };
 type Screen = 'start' | 'walls' | 'draw' | 'scan';
 
+/** Puts an outline typed from (0, 0) along +x where the room already is: same corner 1, same direction of wall 1. */
+function placeLike(outline: Point[], reference: readonly Point[]): Point[] {
+  const o = reference[0]!;
+  const r = reference[1]!;
+  const angle = Math.atan2(r.y - o.y, r.x - o.x);
+  const cos = Math.cos(angle);
+  const sin = Math.sin(angle);
+  return outline.map((p) => ({ x: Math.round(o.x + p.x * cos - p.y * sin) || 0, y: Math.round(o.y + p.x * sin + p.y * cos) || 0 }));
+}
+
 const UNITS: readonly DisplayUnit[] = ['mm', 'cm', 'm', 'in', 'ft-in'];
 /** Space around the room on the plan, mm. */
 const PLAN_MARGIN_MM = 1500;
@@ -37,6 +49,7 @@ export function App() {
   const [askClose, setAskClose] = useState(false);
   const [screen, setScreen] = useState<Screen>('start');
   const [unit, setUnit] = useState<DisplayUnit>('cm');
+  const [editingWalls, setEditingWalls] = useState(false);
   const [scan, setScan] = useState<Extract<ScanImportResult, { ok: true }> | null>(null);
   // Undoing back to the saved document counts as saved: compare by reference.
   const unsaved = project !== null && project !== saved;
@@ -73,7 +86,7 @@ export function App() {
   async function open(): Promise<void> {
     const result = await bridge().openProject();
     if (result.status === 'cancelled') return;
-    if (result.status === 'failed') return setProblem({ message: result.message, details: [] });
+    if (result.status === 'failed') return setProblem({ message: t('files.readFailed', { file: result.fileName }), details: [] });
     const read = readDocument(result.text);
     if (!read.ok) {
       return setProblem({ message: read.code === 'not-json' ? t('open.notJson', { line: read.line }) : t('open.notAProject'), details: read.details });
@@ -86,7 +99,7 @@ export function App() {
 
   async function save(current: DesignDocument, mode: 'save' | 'save-as'): Promise<boolean> {
     const result = await bridge().saveProject({ text: serializeDocument(current), mode });
-    if (result.status === 'failed') setProblem({ message: result.message, details: [] });
+    if (result.status === 'failed') setProblem({ message: t('files.writeFailed', { file: result.fileName }), details: [] });
     if (result.status !== 'saved') return false;
     setSaved(current);
     setFileName(result.fileName);
@@ -102,7 +115,7 @@ export function App() {
   async function importScan(): Promise<void> {
     const result = await bridge().openScan();
     if (result.status === 'cancelled') return;
-    if (result.status === 'failed') return setProblem({ message: result.message, details: [] });
+    if (result.status === 'failed') return setProblem({ message: t('files.readFailed', { file: result.fileName }), details: [] });
     let json: unknown;
     try {
       json = JSON.parse(result.text.startsWith('\uFEFF') ? result.text.slice(1) : result.text);
@@ -227,11 +240,52 @@ export function App() {
   }
 
   const roomProblems = validateRoom(project.room);
-  const editOutline = (outline: Point[]): void => {
-    documentStore.edit((draft) => {
-      draft.room.outline = outline;
+  /** Every edit of the room says why when the document refuses it, instead of silently snapping back. */
+  const editRoom = (change: (room: DesignDocument['room']) => void): boolean => {
+    const result = documentStore.edit((draft) => change(draft.room));
+    if (!result.ok) setProblem({ message: t('room.editRefused'), details: [] });
+    else setProblem(null);
+    return result.ok;
+  };
+  const editOutline = (outline: Point[] | null, wall = 0): boolean => {
+    if (outline === null) {
+      setProblem({ message: t('room.zeroWall', { n: wall + 1 }), details: [] });
+      return false;
+    }
+    return editRoom((room) => {
+      room.outline = outline;
     });
   };
+
+  if (editingWalls) {
+    const walls = outlineToWalls(project.room.outline);
+    return (
+      <main>
+        {header}
+        <WallTable
+          unit={unit}
+          submitLabel={t('walls.update')}
+          start={{
+            rows: walls.map((w) => ({ length: formatDisplayLength(w.lengthUm, unit), angle: formatAngle(w.cornerAngleUdeg) })),
+            ceiling: formatDisplayLength(project.room.ceilingHeightUm, unit),
+          }}
+          onBack={() => setEditingWalls(false)}
+          onCreate={(outline, ceilingHeightUm) => {
+            const placed = placeLike(outline, project.room.outline);
+            if (
+              editRoom((room) => {
+                room.outline = placed;
+                room.ceilingHeightUm = ceilingHeightUm;
+              })
+            ) {
+              setEditingWalls(false);
+            }
+          }}
+        />
+        {alert}
+      </main>
+    );
+  }
 
   return (
     <main>
@@ -263,6 +317,9 @@ export function App() {
         <button type="button" disabled={!canRedo} onClick={() => documentStore.redo()}>
           {t('project.redo')}
         </button>
+        <button type="button" onClick={() => setEditingWalls(true)}>
+          {t('project.editWalls')}
+        </button>
       </div>
       {alert}
       <div className="workspace">
@@ -272,8 +329,8 @@ export function App() {
           unit={unit}
           onOutline={editOutline}
           onCeiling={(um) =>
-            documentStore.edit((draft) => {
-              draft.room.ceilingHeightUm = um;
+            editRoom((room) => {
+              room.ceilingHeightUm = um;
             })
           }
         />
@@ -306,6 +363,17 @@ export function App() {
         <div role="dialog" aria-modal="true" aria-labelledby="close-title">
           <h2 id="close-title">{t('close.title')}</h2>
           <p>{t('close.body')}</p>
+          <button
+            type="button"
+            className="primary"
+            onClick={() =>
+              void save(project, 'save').then((saved) => {
+                if (saved) bridge().closeWindow();
+              })
+            }
+          >
+            {t('close.save')}
+          </button>
           <button type="button" onClick={() => bridge().closeWindow()}>
             {t('close.discard')}
           </button>

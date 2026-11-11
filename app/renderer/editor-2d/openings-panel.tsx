@@ -1,6 +1,6 @@
 import { useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { formatDisplayLength, parseLength } from '../../../src/core/index';
+import { formatDisplayLength, parseCoordinate, parseDistance, parseLength } from '../../../src/core/index';
 import type { DisplayUnit, Opening, Room } from '../../../src/core/index';
 import { validateRoom } from '../../../src/rules/index';
 import { lengthInputText, problemText } from '../i18n/messages';
@@ -54,7 +54,9 @@ export function OpeningsPanel({ room, unit, onRoom }: Props) {
         else problems.push(t('openings.wallNumber'));
         continue;
       }
-      const result = parseLength(text, typedUnit(unit));
+      // Offsets and sills may be 0; a column's position may be on either side of corner 1.
+      const parse = field === 'offset' || field === 'sill' ? parseDistance : field === 'x' || field === 'y' ? parseCoordinate : parseLength;
+      const result = parse(text, typedUnit(unit));
       if (result.ok) read[field] = result.um;
       else problems.push(`${t(`openings.${kind}.${field}`)}: ${lengthInputText(t, result.code)}`);
     }
