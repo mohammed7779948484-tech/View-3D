@@ -3,7 +3,7 @@
  * nothing is placed in it and no layout in it is ever called valid.
  */
 import type { Opening, Room } from '../core/index';
-import { isCounterClockwise, validateRoomOutline, wallSegments } from '../geometry/index';
+import { differencePolygons, isCounterClockwise, validateRoomOutline, wallSegments } from '../geometry/index';
 import type { OutlineProblemCode, Point } from '../geometry/index';
 
 export type RoomProblemCode =
@@ -11,6 +11,8 @@ export type RoomProblemCode =
   | 'opening-wall-missing'
   | 'opening-off-wall'
   | 'openings-overlap'
+  | 'opening-above-ceiling'
+  | 'column-outside-room'
   | 'no-entrance';
 
 export type RoomProblem = {
@@ -19,6 +21,7 @@ export type RoomProblem = {
   message: string;
   openingId?: string;
   otherOpeningId?: string;
+  columnId?: string;
   /** Zero-based wall or corner index, when the problem is about one. */
   index?: number;
 };
@@ -102,6 +105,23 @@ export function validateRoom(room: Room): RoomProblem[] {
           index: a.wallIndex,
         });
       }
+    }
+  }
+  for (const o of onWall) {
+    const topUm = o.sillHeightUm + o.heightUm;
+    if (topUm > room.ceilingHeightUm) {
+      problems.push({
+        code: 'opening-above-ceiling',
+        message: `${kindName(o)} "${o.id}" reaches ${mm(topUm)} above the floor, higher than the ${mm(room.ceilingHeightUm)} ceiling.`,
+        openingId: o.id,
+        index: o.wallIndex,
+      });
+    }
+  }
+  for (const column of room.columns) {
+    // Any part of the column outside the room; touching a wall from inside leaves nothing.
+    if (differencePolygons([column.outline], [room.outline]).length > 0) {
+      problems.push({ code: 'column-outside-room', message: `Column "${column.id}" is not completely inside the room.`, columnId: column.id });
     }
   }
   if (entrancesOf(room).length === 0) {
