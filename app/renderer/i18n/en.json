@@ -4,7 +4,9 @@
   },
   "start": {
     "noProject": "No project is open.",
-    "open": "Open a project"
+    "open": "Open a project",
+    "typeWalls": "Type the walls",
+    "draw": "Draw the room"
   },
   "open": {
     "notJson": "This file is not a View-3D project: it is not valid JSON (line {{line}}).",
@@ -17,12 +19,56 @@
     "saveCopy": "Save a copy",
     "undo": "Undo",
     "redo": "Redo",
-    "copyName": "{{name}} (copy)"
+    "copyName": "{{name}} (copy)",
+    "newName": "New shop"
   },
   "close": {
     "title": "Close without saving?",
     "body": "Your changes since the last save will be lost.",
     "discard": "Close without saving",
     "cancel": "Cancel"
+  },
+  "unit": {
+    "label": "Unit"
+  },
+  "plan": {
+    "label": "Plan",
+    "corner": "Corner {{n}}"
+  },
+  "room": {
+    "title": "Room",
+    "ceiling": "Ceiling height",
+    "problems": "Room problems"
+  },
+  "walls": {
+    "title": "Type the walls",
+    "hint": "Go round the room turning left. For each wall, type its length and the inside angle where it ends: 90 for an ordinary corner, 270 for a corner that points into the room.",
+    "length": "Wall {{n}} length",
+    "angle": "Wall {{n}} end angle",
+    "remove": "Remove wall {{n}}",
+    "add": "Add a wall",
+    "incomplete": "Fill in every length and angle to check the room.",
+    "closes": "The walls close.",
+    "open": "The walls do not close: the last wall ends {{gap}} from the start.",
+    "suspects": "One of these values is probably mistyped:",
+    "useLength": "Use {{value}} for wall {{n}}",
+    "useAngle": "Use {{value}} for the end angle of wall {{n}}",
+    "diagonal": "Check with a diagonal (optional)",
+    "diagonalFrom": "Diagonal from corner",
+    "diagonalTo": "Diagonal to corner",
+    "diagonalLength": "Diagonal length",
+    "diagonalOk": "The diagonal matches the drawing.",
+    "diagonalOff": "The diagonal differs from the drawing by {{difference}}.",
+    "create": "Create the room"
+  },
+  "draw": {
+    "title": "Draw the room",
+    "hint": "Click each corner in turn. Corners snap to 10 cm; type the exact lengths afterwards.",
+    "finish": "Finish the room",
+    "undoCorner": "Undo last corner",
+    "notARoom": "These corners do not make a room: the walls cross or a corner repeats."
+  },
+  "common": {
+    "back": "Back"
   }
 }

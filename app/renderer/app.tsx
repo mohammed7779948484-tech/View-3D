@@ -1,12 +1,24 @@
 import { useEffect, useRef, useState } from 'react';
 import type { KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { DesignDocument } from '../../src/core/index';
+import type { DesignDocument, DisplayUnit, Point } from '../../src/core/index';
+import { validateRoom } from '../../src/rules/index';
+import { viewBoxAround } from './editor-2d/geometry';
+import { DrawRoom } from './editor-2d/draw-room';
+import { newDocument } from './editor-2d/new-document';
+import { Plan } from './editor-2d/plan';
+import { RoomPanel } from './editor-2d/room-panel';
+import { WallTable } from './editor-2d/wall-table';
 import { documentStore, useDocumentState } from './state/index';
 import { bridge } from './storage/bridge';
 import { readDocument, serializeDocument } from './storage/project-file';
 
 type Problem = { message: string; details: string[] };
+type Screen = 'start' | 'walls' | 'draw';
+
+const UNITS: readonly DisplayUnit[] = ['mm', 'cm', 'm', 'in', 'ft-in'];
+/** Space around the room on the plan, mm. */
+const PLAN_MARGIN_MM = 1500;
 
 /** The start screen (no document until a room exists) and the open project with its file actions. */
 export function App() {
@@ -16,6 +28,8 @@ export function App() {
   const [saved, setSaved] = useState<DesignDocument | null>(null);
   const [problem, setProblem] = useState<Problem | null>(null);
   const [askClose, setAskClose] = useState(false);
+  const [screen, setScreen] = useState<Screen>('start');
+  const [unit, setUnit] = useState<DisplayUnit>('cm');
   // Undoing back to the saved document counts as saved: compare by reference.
   const unsaved = project !== null && project !== saved;
   const unsavedRef = useRef(unsaved);
@@ -77,6 +91,16 @@ export function App() {
     if (await save(copy, 'save-as')) documentStore.load(copy);
   }
 
+  function create(outline: Point[], ceilingHeightUm: number): void {
+    const created = newDocument(outline, ceilingHeightUm, t('project.newName'));
+    if (created === null) return setProblem({ message: t('draw.notARoom'), details: [] });
+    documentStore.load(created);
+    setSaved(null);
+    setFileName(null);
+    setProblem(null);
+    setScreen('start');
+  }
+
   function rename(value: string): void {
     if (project !== null && value !== project.name) {
       documentStore.edit((draft) => {
@@ -98,23 +122,60 @@ export function App() {
     </div>
   );
 
+  const header = (
+    <header className="app-header">
+      <h1>{t('app.title')}</h1>
+      <label className="unit">
+        {t('unit.label')}
+        <select value={unit} onChange={(event) => setUnit(event.currentTarget.value as DisplayUnit)}>
+          {UNITS.map((u) => (
+            <option key={u} value={u}>
+              {u}
+            </option>
+          ))}
+        </select>
+      </label>
+    </header>
+  );
+
   if (project === null) {
     return (
       <main>
-        <h1>{t('app.title')}</h1>
-        <p>{t('start.noProject')}</p>
-        <button type="button" onClick={() => void open()}>
-          {t('start.open')}
-        </button>
+        {header}
+        {screen === 'walls' && <WallTable unit={unit} onCreate={create} onBack={() => setScreen('start')} />}
+        {screen === 'draw' && <DrawRoom unit={unit} onCreate={create} onBack={() => setScreen('start')} />}
+        {screen === 'start' && (
+          <section className="start">
+            <p>{t('start.noProject')}</p>
+            <div className="actions">
+              <button type="button" className="primary" onClick={() => setScreen('walls')}>
+                {t('start.typeWalls')}
+              </button>
+              <button type="button" onClick={() => setScreen('draw')}>
+                {t('start.draw')}
+              </button>
+              <button type="button" onClick={() => void open()}>
+                {t('start.open')}
+              </button>
+            </div>
+          </section>
+        )}
         {alert}
       </main>
     );
   }
 
+  const roomProblems = validateRoom(project.room);
+  const editOutline = (outline: Point[]): void => {
+    documentStore.edit((draft) => {
+      draft.room.outline = outline;
+    });
+  };
+
   return (
     <main>
-      <h1>{t('app.title')}</h1>
-      <label>
+      {header}
+      <label className="project-name">
         {t('project.name')}
         <input
           key={`${project.id}:${project.name}`}
@@ -143,6 +204,32 @@ export function App() {
         </button>
       </div>
       {alert}
+      <div className="workspace">
+        <RoomPanel
+          room={project.room}
+          unit={unit}
+          onOutline={editOutline}
+          onCeiling={(um) =>
+            documentStore.edit((draft) => {
+              draft.room.ceilingHeightUm = um;
+            })
+          }
+        />
+        <Plan
+          outline={project.room.outline}
+          closed
+          unit={unit}
+          view={viewBoxAround(project.room.outline, PLAN_MARGIN_MM)}
+          onCornerMoved={(index, point) => editOutline(project.room.outline.map((p, i) => (i === index ? point : p)))}
+        />
+      </div>
+      {roomProblems.length > 0 && (
+        <ul className="room-problems" aria-label={t('room.problems')}>
+          {roomProblems.map((p) => (
+            <li key={`${p.code}${p.index ?? ''}${p.openingId ?? ''}`}>{p.message}</li>
+          ))}
+        </ul>
+      )}
       {askClose && (
         <div role="dialog" aria-modal="true" aria-labelledby="close-title">
           <h2 id="close-title">{t('close.title')}</h2>
