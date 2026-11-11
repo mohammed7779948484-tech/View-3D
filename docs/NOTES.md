@@ -92,6 +92,10 @@ Running log and decisions. Checkpointed after every step so work survives a rest
    to (n - 2) x 180 degrees within 0.5 degrees.
 9. Should the app start in Arabic (and remember the language and the unit between runs)? Today it
    starts in English and cm each time; remembering needs a small settings file written by the app.
+11. Scan import thresholds, our own first guess: a gap up to 50 mm is closed, larger ones become a wall;
+    a window more than 200 mm from every wall is left out; wall heights within 10 mm of the ceiling agree.
+12. RoomTrace axes: the scan is read as seen from above (x right, y up). Please compare the imported
+    plan of the sample shop with the real shop once: if it is mirrored, the adapter flips it for good.
 10. The repository is public, so the installer and screenshot artifacts on CI can be downloaded by any
     signed-in GitHub user. Acceptable, or build and test the installer without uploading it?
 
@@ -144,4 +148,5 @@ W48 × D20 × H72 in; single-sided units go on walls or back to back; entrance d
 - 2026-11-11 M2 issue 6: type, draw and edit the outline; every label within 1 mm in 5 units. Windows CI found that a 100 mm sketch grid is finer than a pixel on a 1024x768 screen; the grid now grows (reproduced, then fixed).
 - 2026-11-11 M2 issue 7: doors, windows, columns added through forms and refused with validateRoom's message; two new room checks (above ceiling, column outside).
 - 2026-11-11 M2 issue 9: Arabic for every string, RTL around an unmirrored plan, messages translated by code (RoomProblem.values). Screenshots uploaded by CI (artifact screens-<os>).
-- 2026-11-11 Next: issue 11 (RoomTrace JSON importer) waits for the owner's sample file in test/fixtures/scans/.
+- 2026-11-11 M2 issue 11: RoomTrace JSON importer. The owner's sample: 7 corners (two gaps of 811 and 471 mm drawn as walls,
+  possible doorways), window on wall 2 at 614.403 mm with its sill left to the owner, ceiling 2256 mm. Suite: 575 Vitest, 52 e2e.
