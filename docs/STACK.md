@@ -75,6 +75,43 @@ Risks recorded:
 - Electron fuses: `runAsNode` and `NODE_OPTIONS` are off (checked: the packaged app ignores
   `ELECTRON_RUN_AS_NODE`); the inspector flags stay on so Playwright can drive the installed app.
 
+## Adopted in Milestone 3
+
+Versions and release dates read from the npm registry on 2026-11-11. Dev dependencies, bundled
+into the renderer by electron-vite.
+
+| Capability | Choice | Version (released) | Licence | Evidence | Why this one |
+|---|---|---|---|---|---|
+| 3D | three | 0.187.0 (2026-10-30) | MIT | spike `test/spikes/three.spec.ts`: WebGL2 scene of 60 real catalog products, every box read back from the scene graph within 1 mm and 1e-4 rad of the document | The plan's 3D library; WebGL renderer, no post-processing |
+| 3D in React | @react-three/fiber | 9.8.2 (2026-10-14) | MIT | same spike; React 19.3.1 is inside its peer range (>=19 <19.4) | The scene as JSX on our one document store; it brings zustand internally (not used by our code) |
+| 3D types | @types/three | 0.187.0 (2026-10-30) | MIT | `pnpm typecheck` | Matches three 0.187 |
+
+Not adopted: @react-three/drei 10.7.9 (owner ruling 2026-11-11: about 30 extra packages for helpers
+we do not need; three.js's own controls instead), WebGPURenderer (no gain for placeholder boxes on
+integrated graphics), three-mesh-bvh 0.9.18 (only if picking measures slow).
+
+**3D frame times, CI numbers** (this container, Linux, no GPU, Electron started with
+`--enable-unsafe-swiftshader`, renderer "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device
+(Subzero)))", 600 measured frames per setup after 30 warm-up frames, camera on a fixed circle):
+
+| Setup | Fixtures | Shadows | Instanced | Median | p95 | Draw calls | Triangles |
+|---|---|---|---|---|---|---|---|
+| A (the app's default) | 60 | off | yes | 16.7 ms | 17.4 ms | 2 | 722 |
+| B | 60 | on | yes | 16.5 ms | 18.6 ms | 3 | 1442 |
+| C | 60 | off | no | 16.5 ms | 17.4 ms | 61 | 722 |
+| D | 120 | off | yes | 16.7 ms | 17.4 ms | 2 | 1442 |
+
+Frame times are measured between animation frames, so they cannot go below the display's refresh
+interval (16.7 ms at 60 Hz): every setup here holds 60 frames per second even in software. These are
+CI numbers, not the owner's laptop. His laptop is measured with Diagnostics, "Test 3D speed" (one
+click; it shows PASS when setup A's median is at most 33.3 ms and its p95 at most 50 ms, the 30
+frames per second target). Not measured yet: his integrated graphics.
+
+Risks: three adds about 1.2 MB to the renderer bundle (3.3 MB in all); it loads from disk, so the
+start is not affected noticeably. Without a GPU (or with a blocked driver) Chromium gives no WebGL
+at all; the shipped app does not turn on software rendering (owner ruling), so 3D then says it is
+not available and 2D keeps working.
+
 ## Built ourselves (and why)
 
 | Capability | Why build |
@@ -117,7 +154,6 @@ agent only; nothing is imported by `src/` or `test/`. Project docs win over them
 | Capability | Proposal | Alternatives |
 |---|---|---|
 | 2D editor | Plain SVG + React | react-konva 19.3 (fallback), pixi.js 8 (258 kB gz), fabric 7, tldraw 5 (not free in production) |
-| 3D | three 0.187.0 + @react-three/fiber 9.8.2, WebGL renderer, no drei (owner 2026-11-11: three.js's own camera controls) | WebGPURenderer: no benefit for placeholder boxes on integrated graphics; drei 10.7.9: about 30 extra packages for helpers we do not need |
 | PDF | Electron/Chromium `printToPDF` from our own HTML + SVG sheet (Chromium shapes Arabic and handles RTL) | Fallback only: pdfkit 0.20 + bidi-js + embedded Arabic font, or jspdf 4.2 + svg2pdf.js |
 | Scan import (DXF fallback) | Deferred (owner 2026-11-11): no DXF reader until a real DXF sample from a chosen scan app exists | dxf-parser 1.1.2 (last published 2022-06) |
 | UI kit | Not adopted for M3 (owner 2026-11-11): plain CSS with logical properties and the native `<dialog>` | shadcn + Radix + Tailwind 4, Mantine 9, MUI 9 |

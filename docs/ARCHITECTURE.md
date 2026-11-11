@@ -152,7 +152,10 @@ app/                          the desktop app                         imports ->
   renderer/                   the UI (React)
     state/                    the open document + undo history (the only mutable copy)
     editor-2d/                plan editor (room capture, manual layout)
-    view-3d/                  3D view of the same document
+    view-3d/                  3D view of the same document: units.ts is the only µm -> metre conversion;
+                              boxes.ts derives the boxes from the document; scene-probe.tsx reads them
+                              back from the scene graph for tests (window.__view3dScene)
+    diagnostics/              the owner's one-click 3D speed test (M3)
     worker/                   runs src/layout off the UI thread
     catalog/  storage/  i18n/ owner's catalog, project files (via preload), Arabic/English
 src/                          the engine (this document)              never imports app/

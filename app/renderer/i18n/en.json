@@ -7,7 +7,8 @@
     "open": "Open a project",
     "typeWalls": "Type the walls",
     "draw": "Draw the room",
-    "importScan": "Import a room scan"
+    "importScan": "Import a room scan",
+    "diagnostics": "Diagnostics"
   },
   "open": {
     "notJson": "This file is not a View-3D project: it is not valid JSON (line {{line}}).",
@@ -222,5 +223,33 @@
   "files": {
     "readFailed": "The file \"{{file}}\" could not be read.",
     "writeFailed": "The file \"{{file}}\" could not be saved."
+  },
+  "diagnostics": {
+    "title": "Diagnostics",
+    "intro": "Measures how smoothly this computer draws the 3D view: the same shop with real products, drawn four ways. It takes about a minute. Please do not use the computer while it runs.",
+    "run": "Test 3D speed",
+    "back": "Back",
+    "running": "Testing setup {{setup}} ({{n}} of 4)…",
+    "noWebgl": "3D is not available on this computer (no WebGL 2). The 2D plan still works.",
+    "gpu": "Graphics",
+    "webgl2": "WebGL 2",
+    "screen": "Screen",
+    "pixelRatio": "pixel ratio",
+    "yes": "yes",
+    "no": "no",
+    "on": "on",
+    "off": "off",
+    "setup": "Setup",
+    "fixtures": "Fixtures",
+    "shadows": "Shadows",
+    "instanced": "One draw for all boxes",
+    "median": "Typical frame",
+    "p95": "Slowest 5 %",
+    "fps": "Frames per second",
+    "drawCalls": "Draw calls",
+    "triangles": "Triangles",
+    "pass": "Smooth enough: 30 frames per second or better with 60 fixtures.",
+    "fail": "Not smooth enough for 60 fixtures yet.",
+    "photo": "Please send a photo of this page."
   }
 }

@@ -68,3 +68,9 @@ input[aria-invalid='true'] { border-color: var(--problem); }
 .items li { display: flex; justify-content: space-between; gap: 0.5rem; align-items: baseline; }
 .item-form { border: 1px solid var(--grid); border-radius: 4px; }
 .check { display: flex; gap: 0.5rem; align-items: center; margin-block: 0.5rem; }
+.diagnostics { max-inline-size: 64rem; }
+.facts { display: grid; grid-template-columns: max-content 1fr; gap: 0.25rem 1rem; }
+.facts dd { margin: 0; }
+.results { border-collapse: collapse; margin-block: 1rem; }
+.results th, .results td { border-block-end: 1px solid var(--grid); padding-block: 0.3rem; padding-inline: 0.6rem; text-align: start; }
+.stage { block-size: 50vh; border: 1px solid var(--grid); border-radius: 4px; background: white; }
