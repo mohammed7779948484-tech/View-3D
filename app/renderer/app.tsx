@@ -20,6 +20,8 @@ import { FixturesPanel } from './editor-2d/fixtures-panel';
 import type { Picked } from './editor-2d/fixtures-panel';
 import { FixtureInspector } from './editor-2d/fixture-inspector';
 import { AutoLayoutPanel } from './editor-2d/auto-layout-panel';
+import { OptionPicker } from './editor-2d/option-picker';
+import type { LayoutResult } from '../../src/layout/index';
 import {
   deletePlacement,
   duplicatePlacement,
@@ -30,6 +32,7 @@ import {
   setPlacementPose,
   snapPlacement,
   together,
+  useLayoutOption,
 } from './state/placement-commands';
 import { rectCorners } from '../../src/geometry/index';
 import { footprint } from '../../src/rules/index';
@@ -74,8 +77,8 @@ export function App() {
   const catalogProducts = useCatalogProducts();
   const [picked, setPicked] = useState<Picked | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  /** The last automatic layout's result as JSON text, for the option picker (issue 6). */
-  const [, setLayoutResult] = useState<string | null>(null);
+  /** The last automatic layout's options, to pick from. */
+  const [layoutResult, setLayoutResult] = useState<LayoutResult | null>(null);
   // Live validation: every rule, on every change of the document (about 25 ms for 40 fixtures).
   // A broken room is listed by the room checks, not here.
   const violations = useMemo(() => (project === null ? [] : validateLayout(project).filter((v) => v.rule !== 'invalid-room')), [project]);
@@ -392,7 +395,8 @@ export function App() {
           }
         />
         <FixturesPanel products={catalogProducts} picked={picked} onPick={setPicked} />
-        <AutoLayoutPanel products={catalogProducts} document={project} onResult={setLayoutResult} />
+        <AutoLayoutPanel products={catalogProducts} document={project} onResult={(text) => setLayoutResult(JSON.parse(text) as LayoutResult)} />
+        {layoutResult !== null && <OptionPicker result={layoutResult} onUse={(option) => editFixtures(useLayoutOption(option))} />}
         {selected !== undefined && (
           <FixtureInspector
             placement={selected}

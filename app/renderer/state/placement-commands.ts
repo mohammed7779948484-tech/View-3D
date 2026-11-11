@@ -101,3 +101,16 @@ export const together =
   (draft) => {
     for (const recipe of recipes) recipe(draft);
   };
+
+/**
+ * Takes an automatic layout option: its placements replace the document's, and its products that
+ * the document does not have yet are embedded. Room, id and name stay. One undo step.
+ */
+export const useLayoutOption =
+  (option: { document: DesignDocument }): Recipe =>
+  (draft) => {
+    draft.placements = structuredClone(option.document.placements);
+    for (const product of option.document.products) {
+      if (!draft.products.some((p) => p.id === product.id)) draft.products.push(structuredClone(product));
+    }
+  };

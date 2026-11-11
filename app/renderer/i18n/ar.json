@@ -412,5 +412,53 @@
     "progress": "تقدم التوزيع",
     "cancelled": "أُلغي. لم يتغير شيء.",
     "failed": "فشل التوزيع التلقائي: {{message}}"
+  },
+  "unplaced": {
+    "reasons": {
+      "unknown-size": "مقاساته غير معروفة بعد",
+      "no-wall-long-enough": "لا يوجد جدار فيه مساحة خالية طويلة بما يكفي",
+      "outside-room": "لن يقف داخل الغرفة بالكامل",
+      "column": "عمود يعترض الطريق",
+      "blocked-door": "سيسد بابًا أو المساحة الخالية داخل المدخل",
+      "not-on-wall": "يجب أن يقف على جدار والمكان يمر عبر باب",
+      "overlap": "توجد قطعة أخرى هناك",
+      "window-blocked": "أعلى من عتبة النافذة التي سيقف أمامها",
+      "own-access": "لا تبقى مساحة ممر كافية أمامه (على الأقل {{secondary}} مم)",
+      "blocks-access": "سيسد ممر قطعة موضوعة من قبل",
+      "faces-door": "سيمر ممره عبر مدخل باب",
+      "unreachable": "سيعزل جزءًا من المتجر عن المدخل",
+      "aisle-too-narrow": "سيترك ممرًا أضيق من {{secondary}} مم",
+      "main-aisle": "سيضيّق الممر الرئيسي إلى الكاونتر إلى أقل من {{main}} مم",
+      "needs-partner": "من جهة واحدة ولا يوجد جدار خالٍ ولا قطعة أخرى ليستند ظهره إليها",
+      "orphan": "سيقف وحده بعيدًا عن الصفوف ولا يوجد صف فيه مكان له"
+    },
+    "unknownSize": "مقاساته غير معروفة بعد، لذلك لا يمكن وضعه. أكّد المقاس أولًا.",
+    "nothingToTry": "لم يبقَ جدار أو أرضية خالية لتجربته.",
+    "triedOne": "جُرّب {{n}} موضع.",
+    "triedMany": "جُرّبت {{n}} مواضع.",
+    "itFailed": "فشل لأن {{reason}}.",
+    "theyFailed": "فشلت لأن {{reason}}.",
+    "mostFailed": "فشل أغلبها لأن {{first}}؛ ثم لأن {{rest}}.",
+    "then": "؛ ثم لأن ",
+    "part": "{{reason}} ({{n}})"
+  },
+  "options": {
+    "title": "خيارات التوزيع",
+    "option": "الخيار {{rank}}",
+    "score": "{{score}} / 100",
+    "use": "استخدم الخيار {{rank}}",
+    "didNotFit": "لم يتسع",
+    "unplacedItem": "{{name}} × {{quantity}}",
+    "roomProblems": "في الغرفة مشكلات، لذلك لم يُعمل توزيع. راجع مشكلات الغرفة.",
+    "none": "تعذّر عمل أي خيار.",
+    "terms": {
+      "Fixtures placed": "القطع الموضوعة",
+      "Counter near the entrance": "الكاونتر قرب المدخل",
+      "Counter faces the entrance": "الكاونتر يواجه المدخل",
+      "Showcases with the counter": "الفاترينات مع الكاونتر",
+      "Islands in rows": "الجزر في صفوف",
+      "Even use of the floor": "استخدام متوازن للأرضية",
+      "Open view from the entrance": "رؤية مفتوحة من المدخل"
+    }
   }
 }

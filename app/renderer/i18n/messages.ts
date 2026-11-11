@@ -5,8 +5,9 @@
 import type { TFunction } from 'i18next';
 import type { CaptureProblem, SanityWarning } from '../../../src/capture/index';
 import type { AngleInputCode, DesignDocument, LengthInputCode, Room } from '../../../src/core/index';
-import { captureConfig } from '../../../src/rules/index';
+import { captureConfig, defaultConfig } from '../../../src/rules/index';
 import type { RoomProblem, Violation } from '../../../src/rules/index';
+import type { ReasonCode, Unplaced } from '../../../src/layout/index';
 
 const mm = (um: number | undefined): string => `${Math.round((um ?? 0) / 1000)} mm`;
 
@@ -81,4 +82,24 @@ export function violationText(t: TFunction, doc: DesignDocument, v: Violation): 
     sill: value('sillUm'),
     required: value('requiredUm'),
   });
+}
+
+/**
+ * Why a product did not fit, in the chosen language, from the counts per reason. In English it is
+ * exactly the engine's own sentence (`describeObstacles`): the three most frequent causes first.
+ */
+export function unplacedText(t: TFunction, u: Unplaced): string {
+  const counts = Object.entries(u.obstacles) as [ReasonCode, number][];
+  if (u.positionsTried === 0 && counts.length === 1 && counts[0]![0] === 'unknown-size') return t('unplaced.unknownSize');
+  const ranked = counts
+    .filter(([, n]) => n > 0)
+    .sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0))
+    .slice(0, 3);
+  if (ranked.length === 0) return t('unplaced.nothingToTry');
+  const sizes = { secondary: Math.round(defaultConfig.secondaryAisleUm / 1000), main: Math.round(defaultConfig.mainAisleUm / 1000) };
+  const parts = ranked.map(([code, n]) => t('unplaced.part', { reason: t(`unplaced.reasons.${code}`, sizes), n }));
+  const tried = u.positionsTried;
+  const head = t(tried === 1 ? 'unplaced.triedOne' : 'unplaced.triedMany', { n: tried });
+  if (tried === 1 || parts.length === 1) return `${head} ${t(tried === 1 ? 'unplaced.itFailed' : 'unplaced.theyFailed', { reason: parts[0] })}`;
+  return `${head} ${t('unplaced.mostFailed', { first: parts[0], rest: parts.slice(1).join(t('unplaced.then')) })}`;
 }

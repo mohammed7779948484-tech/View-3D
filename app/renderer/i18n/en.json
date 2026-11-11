@@ -412,5 +412,53 @@
     "progress": "Layout progress",
     "cancelled": "Cancelled. Nothing was changed.",
     "failed": "The automatic layout failed: {{message}}"
+  },
+  "unplaced": {
+    "reasons": {
+      "unknown-size": "its dimensions are not known yet",
+      "no-wall-long-enough": "no wall has a free stretch long enough for it",
+      "outside-room": "it would not stand fully inside the room",
+      "column": "a column is in the way",
+      "blocked-door": "it would block a door or the clear zone inside the entrance",
+      "not-on-wall": "it must stand against a wall and the place is across a door",
+      "overlap": "another fixture is already there",
+      "window-blocked": "it is higher than the window sill it would stand in front of",
+      "own-access": "there is not enough aisle space left in front of it (at least {{secondary}} mm)",
+      "blocks-access": "it would block the aisle of a fixture that is already placed",
+      "faces-door": "its aisle would run through the approach of a door",
+      "unreachable": "it would cut part of the shop off from the entrance",
+      "aisle-too-narrow": "it would leave an aisle narrower than {{secondary}} mm",
+      "main-aisle": "it would narrow the main aisle to the counter below {{main}} mm",
+      "needs-partner": "it is single-sided and there is neither free wall nor a partner to stand back to back with",
+      "orphan": "it would stand alone, away from the rows, and no row has room for it"
+    },
+    "unknownSize": "Its dimensions are not known yet, so it cannot be placed. Confirm the size first.",
+    "nothingToTry": "There was no wall or free floor left to try it on.",
+    "triedOne": "Tried {{n}} position.",
+    "triedMany": "Tried {{n}} positions.",
+    "itFailed": "It failed because {{reason}}.",
+    "theyFailed": "They failed because {{reason}}.",
+    "mostFailed": "Most failed because {{first}}; then because {{rest}}.",
+    "then": "; then because ",
+    "part": "{{reason}} ({{n}})"
+  },
+  "options": {
+    "title": "Layout options",
+    "option": "Option {{rank}}",
+    "score": "{{score}} / 100",
+    "use": "Use option {{rank}}",
+    "didNotFit": "Did not fit",
+    "unplacedItem": "{{name}} x {{quantity}}",
+    "roomProblems": "The room has problems, so no layout was made. See the room problems.",
+    "none": "No option could be made.",
+    "terms": {
+      "Fixtures placed": "Fixtures placed",
+      "Counter near the entrance": "Counter near the entrance",
+      "Counter faces the entrance": "Counter faces the entrance",
+      "Showcases with the counter": "Showcases with the counter",
+      "Islands in rows": "Islands in rows",
+      "Even use of the floor": "Even use of the floor",
+      "Open view from the entrance": "Open view from the entrance"
+    }
   }
 }
