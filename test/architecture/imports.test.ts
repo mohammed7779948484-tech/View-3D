@@ -20,6 +20,7 @@ const ALLOWED: Record<string, string[]> = {
   'render-svg': ['core', 'geometry'],
   capture: ['core', 'geometry', 'rules'],
   'import-scan': ['core', 'geometry', 'rules'],
+  'model-contract': ['core'],
 };
 
 /** npm packages that only one file may import, so they can be swapped in one place. */
@@ -29,7 +30,7 @@ const SINGLE_IMPORTER: Record<string, string> = {
 };
 
 /** Modules that must run in a browser, a worker and Node alike: no Node or DOM APIs. */
-const PORTABLE = ['core', 'geometry', 'catalog', 'rules', 'layout', 'capture', 'import-scan'];
+const PORTABLE = ['core', 'geometry', 'catalog', 'rules', 'layout', 'capture', 'import-scan', 'model-contract'];
 
 function files(dir: string): string[] {
   return readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
