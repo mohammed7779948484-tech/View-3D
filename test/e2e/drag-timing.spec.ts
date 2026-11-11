@@ -9,7 +9,7 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { protectedDoorway } from '../fixtures/rooms';
-import { Harness, clickWorld, worldToScreen } from './editor-helpers';
+import { Harness, clickWorld, dragWorld, worldToScreen } from './editor-helpers';
 
 const h = new Harness();
 test.beforeEach(() => h.begin());
@@ -67,5 +67,37 @@ for (const withMove of [true, false]) {
     expect(saved.room.outline).toEqual(
       protectedDoorway.outline.map((p, i) => (i === 1 ? { x: 7_000_000, y: -500_000 } : p)),
     );
+  });
+}
+
+/**
+ * Regression for the second Windows installed-app failure of "dragging moves by the snapped delta
+ * and is one undo step": in a laptop-sized window, clicking "Place Counter" (low in the left panel
+ * column) scrolled the page down, and after placing, the top of the plan was above the visible
+ * area, so the drag's world point (2000, 2000) mm was at screen y < 0 and the mouse pressed on
+ * nothing. The plan must stay in view while the panels beside it scroll. The sizes are the
+ * Windows runner's usable area. Expected value is the dragged-to point by hand (mm x 1000).
+ */
+for (const [w, hgt] of [
+  [1024, 728],
+  [1008, 690],
+] as const) {
+  test(`the plan stays in view and the drag works in a ${w} x ${hgt} window`, async () => {
+    const page = await h.launch();
+    await h.app!.evaluate(({ BrowserWindow }, s) => BrowserWindow.getAllWindows()[0]!.setSize(s[0], s[1]), [w, hgt] as [number, number]);
+    await h.openRoom(protectedDoorway);
+    await placeCounter(page);
+
+    const p = await worldToScreen(page, 2000, 2000);
+    const innerHeight = (await page.evaluate('innerHeight')) as number;
+    expect(p.y).toBeGreaterThanOrEqual(0);
+    expect(p.y).toBeLessThanOrEqual(innerHeight);
+    const hit = await page.evaluate(
+      `document.elementFromPoint(${p.x}, ${p.y})?.closest('[data-placement]')?.getAttribute('data-placement') ?? null`,
+    );
+    expect(hit).toBe('p1');
+
+    await dragWorld(page, { x: 2000, y: 2000 }, { x: 3000, y: 2000 }, 8);
+    expect(centerOf(await h.saveAs())).toEqual({ x: 3_000_000, y: 2_000_000 });
   });
 }
