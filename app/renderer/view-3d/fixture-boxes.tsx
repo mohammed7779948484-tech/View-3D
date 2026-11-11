@@ -12,8 +12,13 @@ const COLORS: Record<SceneBox['category'], string> = {
   accessory: '#b5a27a',
 };
 const UP = new Vector3(0, 1, 0);
+/** A fixture with a layout problem is drawn in this colour (owner ruling: red in 3D). */
+const PROBLEM_COLOR = '#d84a3a';
 
-export function FixtureBoxes({ boxes, instanced, shadows }: { boxes: readonly SceneBox[]; instanced: boolean; shadows: boolean }) {
+type Props = { boxes: readonly SceneBox[]; instanced: boolean; shadows: boolean; problemIds?: ReadonlySet<string> };
+
+export function FixtureBoxes({ boxes, instanced, shadows, problemIds }: Props) {
+  const colorOf = (b: SceneBox): string => (problemIds?.has(b.id) === true ? PROBLEM_COLOR : COLORS[b.category]);
   const geometry = useMemo(() => new BoxGeometry(1, 1, 1), []);
   const material = useMemo(() => new MeshLambertMaterial(), []);
   const mesh = useRef<InstancedMesh>(null);
@@ -26,20 +31,20 @@ export function FixtureBoxes({ boxes, instanced, shadows }: { boxes: readonly Sc
     boxes.forEach((b, i) => {
       turn.setFromAxisAngle(UP, b.yawRad);
       m.setMatrixAt(i, matrix.compose(new Vector3(...b.center), turn, new Vector3(...b.size)));
-      m.setColorAt(i, new Color(COLORS[b.category]));
+      m.setColorAt(i, new Color(colorOf(b)));
     });
     m.instanceMatrix.needsUpdate = true;
     if (m.instanceColor !== null) m.instanceColor.needsUpdate = true;
     // Bounds from the instances, not from the unit box, so the boxes are never culled by mistake.
     m.computeBoundingSphere();
-  }, [boxes]);
+  }, [boxes, problemIds]);
 
   if (instanced) {
     return (
       <instancedMesh
         ref={mesh}
         args={[geometry, material, boxes.length]}
-        userData={{ boxIds: boxes.map((b) => b.id) }}
+        userData={{ boxIds: boxes.map((b) => b.id), problemIds: boxes.filter((b) => problemIds?.has(b.id) === true).map((b) => b.id) }}
         castShadow={shadows}
         receiveShadow={shadows}
       />
@@ -54,11 +59,11 @@ export function FixtureBoxes({ boxes, instanced, shadows }: { boxes: readonly Sc
           position={b.center}
           rotation-y={b.yawRad}
           scale={b.size}
-          userData={{ boxId: b.id }}
+          userData={{ boxId: b.id, problem: problemIds?.has(b.id) === true }}
           castShadow={shadows}
           receiveShadow={shadows}
         >
-          <meshLambertMaterial color={COLORS[b.category]} />
+          <meshLambertMaterial color={colorOf(b)} />
         </mesh>
       ))}
     </>

@@ -7,7 +7,7 @@ import { useThree } from '@react-three/fiber';
 import { Box3, InstancedMesh, Matrix4, Mesh, Quaternion, Vector3 } from 'three';
 import type { Object3D } from 'three';
 
-export type DescribedBox = { id: string; center: [number, number, number]; size: [number, number, number]; yawRad: number };
+export type DescribedBox = { id: string; center: [number, number, number]; size: [number, number, number]; yawRad: number; problem: boolean };
 
 declare global {
   interface Window {
@@ -15,7 +15,7 @@ declare global {
   }
 }
 
-function describeMatrix(id: string, world: Matrix4, geometrySize: Vector3): DescribedBox {
+function describeMatrix(id: string, world: Matrix4, geometrySize: Vector3, problem: boolean): DescribedBox {
   const position = new Vector3();
   const turn = new Quaternion();
   const scale = new Vector3();
@@ -26,6 +26,7 @@ function describeMatrix(id: string, world: Matrix4, geometrySize: Vector3): Desc
     size: [geometrySize.x * scale.x, geometrySize.y * scale.y, geometrySize.z * scale.z],
     // The boxes only ever turn about +y, so the quaternion is (0, sin(yaw/2), 0, cos(yaw/2)).
     yawRad: 2 * Math.atan2(turn.y, turn.w),
+    problem,
   };
 }
 
@@ -38,13 +39,14 @@ export function describeScene(scene: Object3D): { boxes: DescribedBox[] } {
     const size = (o.geometry.boundingBox ?? new Box3()).getSize(new Vector3());
     if (o instanceof InstancedMesh && Array.isArray(o.userData['boxIds'])) {
       const ids = o.userData['boxIds'] as string[];
+      const problems = new Set((o.userData['problemIds'] as string[] | undefined) ?? []);
       const local = new Matrix4();
       ids.forEach((id, i) => {
         o.getMatrixAt(i, local);
-        boxes.push(describeMatrix(id, local.clone().premultiply(o.matrixWorld), size));
+        boxes.push(describeMatrix(id, local.clone().premultiply(o.matrixWorld), size, problems.has(id)));
       });
     } else if (typeof o.userData['boxId'] === 'string') {
-      boxes.push(describeMatrix(o.userData['boxId'] as string, o.matrixWorld, size));
+      boxes.push(describeMatrix(o.userData['boxId'] as string, o.matrixWorld, size, o.userData['problem'] === true));
     }
   });
   return { boxes };

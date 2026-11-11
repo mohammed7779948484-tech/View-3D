@@ -13,6 +13,7 @@ import { sceneBoxes } from '../view-3d/boxes';
 import { FixtureBoxes } from '../view-3d/fixture-boxes';
 import { SceneProbe } from '../view-3d/scene-probe';
 import { planToScene } from '../view-3d/units';
+import { graphicsName } from '../view-3d/webgl';
 import { benchmarkDocument } from './benchmark-document';
 import { LayoutSpeedTest } from './layout-speed-test';
 
@@ -36,17 +37,6 @@ const SHADOW_MAP_SIZE = 2048;
 
 type Result = Setup & { frames: number; medianMs: number; p95Ms: number; drawCalls: number; triangles: number };
 type Status = 'idle' | 'running' | 'done' | 'no-webgl';
-
-/** The WebGL 2 renderer's name, or null when this computer has no WebGL 2. */
-function graphicsName(): string | null {
-  const canvas = document.createElement('canvas');
-  const gl = canvas.getContext('webgl2');
-  if (gl === null) return null;
-  const info = gl.getExtension('WEBGL_debug_renderer_info');
-  const name = String(gl.getParameter(info === null ? gl.RENDERER : info.UNMASKED_RENDERER_WEBGL));
-  gl.getExtension('WEBGL_lose_context')?.loseContext();
-  return name;
-}
 
 type Frame = { centre: { x: number; z: number }; span: number };
 

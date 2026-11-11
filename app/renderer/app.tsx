@@ -21,6 +21,7 @@ import type { Picked } from './editor-2d/fixtures-panel';
 import { FixtureInspector } from './editor-2d/fixture-inspector';
 import { AutoLayoutPanel } from './editor-2d/auto-layout-panel';
 import { OptionPicker } from './editor-2d/option-picker';
+import { View3D } from './view-3d/view-3d';
 import type { LayoutResult } from '../../src/layout/index';
 import {
   deletePlacement,
@@ -77,11 +78,13 @@ export function App() {
   const catalogProducts = useCatalogProducts();
   const [picked, setPicked] = useState<Picked | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [view, setView] = useState<'2d' | '3d'>('2d');
   /** The last automatic layout's options, to pick from. */
   const [layoutResult, setLayoutResult] = useState<LayoutResult | null>(null);
   // Live validation: every rule, on every change of the document (about 25 ms for 40 fixtures).
   // A broken room is listed by the room checks, not here.
   const violations = useMemo(() => (project === null ? [] : validateLayout(project).filter((v) => v.rule !== 'invalid-room')), [project]);
+  const problemIds = useMemo(() => new Set(violations.flatMap((v) => v.placementIds)), [violations]);
   // Undoing back to the saved document counts as saved: compare by reference.
   const unsaved = project !== null && project !== saved;
   const unsavedRef = useRef(unsaved);
@@ -414,6 +417,18 @@ export function App() {
           />
         )}
         </div>
+        <div className="plan-column">
+        <div className="actions" role="group" aria-label={t('view3d.switch')}>
+          <button type="button" aria-pressed={view === '2d'} onClick={() => setView('2d')}>
+            {t('view3d.plan2d')}
+          </button>
+          <button type="button" aria-pressed={view === '3d'} onClick={() => setView('3d')}>
+            {t('view3d.view3d')}
+          </button>
+        </div>
+        {view === '3d' ? (
+          <View3D document={project} problemIds={problemIds} />
+        ) : (
         <Plan
           openings={project.room.openings}
           columns={project.room.columns}
@@ -436,6 +451,8 @@ export function App() {
                 },
               })}
         />
+        )}
+        </div>
       </div>
       <section className="layout-problems">
         <h2 id="layout-problems-title">{t('layoutProblems.title')}</h2>

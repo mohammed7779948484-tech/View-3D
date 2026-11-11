@@ -460,5 +460,13 @@
       "Even use of the floor": "Even use of the floor",
       "Open view from the entrance": "Open view from the entrance"
     }
+  },
+  "view3d": {
+    "switch": "View",
+    "plan2d": "2D plan",
+    "view3d": "3D view",
+    "top": "Top view",
+    "corner": "Corner view",
+    "noWebgl": "3D is not available on this computer (no WebGL 2). The 2D plan still works."
   }
 }

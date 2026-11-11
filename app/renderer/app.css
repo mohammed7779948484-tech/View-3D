@@ -86,7 +86,8 @@ input[aria-invalid='true'] { border-color: var(--problem); }
 .plan-fixture.selected { fill: #fbe9a8; stroke-width: 2.5px; }
 .plan-fixture-front { stroke: var(--ink); stroke-width: 4px; vector-effect: non-scaling-stroke; pointer-events: none; }
 /* The plan stays in view while the panels beside it scroll (a laptop window is shorter than the panels). */
-.workspace > .plan { position: sticky; inset-block-start: 0.5rem; max-block-size: calc(100vh - 1rem); }
+.workspace > .plan-column { position: sticky; inset-block-start: 0.5rem; }
+.plan-column .plan { max-block-size: calc(100vh - 5rem); }
 .plan-fixture.problem { fill: #f6c9c1; stroke: var(--problem); }
 .plan-fixture.problem.selected { fill: #f3b0a4; }
 .layout-problems ul { color: var(--problem); padding-inline-start: 1.25rem; }
@@ -95,3 +96,5 @@ progress { inline-size: 100%; }
 .option { border-block-start: 1px solid var(--grid); padding-block: 0.5rem; }
 .option h3 { font-size: 1rem; margin-block: 0.25rem; }
 .option h4 { font-size: 0.95rem; margin-block: 0.5rem 0.25rem; color: var(--problem); }
+.view-3d .stage { block-size: 70vh; }
+button[aria-pressed='true'] { background: var(--ink); color: white; }
