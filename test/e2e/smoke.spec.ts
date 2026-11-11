@@ -103,3 +103,23 @@ test('it works offline: only local files load', async () => {
   );
   expect(outcome).toBe('blocked');
 });
+
+test('the page cannot read files outside its own folder', async () => {
+  const launched = await launchApp();
+  app = launched.app;
+  const page = launched.page;
+  await page.waitForLoadState('load');
+  const attempt = (relative: string | null): Promise<string> =>
+    page.evaluate((target) => {
+      const g = globalThis as unknown as { fetch(u: string): Promise<unknown>; location: { href: string } };
+      const url = target === null ? g.location.href : new URL(target, g.location.href).href;
+      return g.fetch(url).then(
+        () => 'read',
+        () => 'blocked',
+      );
+    }, relative);
+  // out/main/index.js sits next to out/renderer/: a file the page has no business reading.
+  expect(await attempt('../main/index.js')).toBe('blocked');
+  // Its own page still loads.
+  expect(await attempt(null)).toBe('read');
+});
