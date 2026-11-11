@@ -98,3 +98,17 @@ test('file errors are translated', async () => {
   await expect(page.getByRole('alert')).not.toContainText('could not be read');
 });
 
+// G11
+const TRIANGLE = [um(0, 0), um(4000, 0), um(0, 3000)];
+
+test('a refused outline edit explains itself and the field goes back', async () => {
+  const page = await h.launch();
+  await h.openRoom({ outline: TRIANGLE, ceilingHeightUm: 3_000_000, columns: [], openings: [] });
+  await expect(page.locator('[aria-label="Corner 3"]')).toBeVisible(FIRST);
+  // Corner 3 at (5000, -1000) makes the walk (0,0) (4000,0) (5000,-1000) clockwise, which the document refuses.
+  await dragWorld(page, { x: 0, y: 3000 }, { x: 5000, y: -1000 }, 8);
+  await expect(page.getByRole('alert')).toContainText('inside out', FIRST);
+  const saved = await h.saveAs();
+  expect(saved.room.outline).toEqual(TRIANGLE);
+});
+
