@@ -296,3 +296,16 @@ describe('a window that overhangs its wall', () => {
     expect(r.findings.find((f) => f.code === 'window-not-on-wall')).toMatchObject({ windowId: 'w-wide' });
   });
 });
+
+describe('a scan with no height', () => {
+  it('walls without a height and no room height give the error no-height', () => {
+    const s = scan(RECT, { height: null }) as { rooms: { walls: Record<string, unknown>[] }[] };
+    for (const w of s.rooms[0]!.walls) delete w['height'];
+    const r = importRoomTrace(s);
+    expect(r.ok).toBe(false);
+    if (!r.ok) {
+      expect(r.errors.map((e) => e.code)).toEqual(['no-height']);
+      expect(r.errors[0]!.message.length).toBeGreaterThan(0);
+    }
+  });
+});
