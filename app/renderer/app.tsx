@@ -15,6 +15,21 @@ import { WallTable } from './editor-2d/wall-table';
 import { ScanReview } from './editor-2d/scan-review';
 import { DiagnosticsPage } from './diagnostics/diagnostics-page';
 import { CatalogScreen } from './catalog/catalog-screen';
+import { useCatalogProducts } from './catalog/use-catalog';
+import { FixturesPanel } from './editor-2d/fixtures-panel';
+import type { Picked } from './editor-2d/fixtures-panel';
+import { FixtureInspector } from './editor-2d/fixture-inspector';
+import {
+  deletePlacement,
+  duplicatePlacement,
+  movePlacement,
+  nextPlacementId,
+  placeProduct,
+  rotatePlacement,
+  setPlacementPose,
+} from './state/placement-commands';
+import { rectCorners } from '../../src/geometry/index';
+import { footprint } from '../../src/rules/index';
 import { importRoomTrace } from '../../src/import-scan/index';
 import type { ScanImportResult } from '../../src/import-scan/index';
 import type { Room } from '../../src/core/index';
@@ -53,6 +68,9 @@ export function App() {
   const [unit, setUnit] = useState<DisplayUnit>('cm');
   const [editingWalls, setEditingWalls] = useState(false);
   const [scan, setScan] = useState<Extract<ScanImportResult, { ok: true }> | null>(null);
+  const catalogProducts = useCatalogProducts();
+  const [picked, setPicked] = useState<Picked | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   // Undoing back to the saved document counts as saved: compare by reference.
   const unsaved = project !== null && project !== saved;
   const unsavedRef = useRef(unsaved);
@@ -250,6 +268,17 @@ export function App() {
   }
 
   const roomProblems = validateRoom(project.room);
+  /** A fixture edit; a refused one says so instead of silently doing nothing. */
+  const editFixtures = (recipe: (draft: DesignDocument) => void): boolean => {
+    const result = documentStore.edit(recipe);
+    setProblem(result.ok ? null : { message: t('fixtures.refused'), details: [] });
+    return result.ok;
+  };
+  const fixtures = project.placements.flatMap((p) => {
+    const variant = project.products.find((q) => q.id === p.productId)?.variants.find((v) => v.id === p.variantId);
+    return variant === undefined || variant.widthUm === null || variant.depthUm === null ? [] : [{ id: p.id, corners: rectCorners(footprint(p, variant)) }];
+  });
+  const selected = project.placements.find((p) => p.id === selectedId);
   /** Every edit of the room says why when the document refuses it, instead of silently snapping back. */
   const editRoom = (change: (room: DesignDocument['room']) => void): boolean => {
     const result = documentStore.edit((draft) => change(draft.room));
@@ -353,6 +382,23 @@ export function App() {
             })
           }
         />
+        <FixturesPanel products={catalogProducts} picked={picked} onPick={setPicked} />
+        {selected !== undefined && (
+          <FixtureInspector
+            placement={selected}
+            product={project.products.find((q) => q.id === selected.productId)}
+            unit={unit}
+            onPose={(pose) => editFixtures(setPlacementPose(selected.id, pose))}
+            onRotate={() => editFixtures(rotatePlacement(selected.id))}
+            onDuplicate={() => {
+              const id = nextPlacementId(project);
+              if (editFixtures(duplicatePlacement(selected.id))) setSelectedId(id);
+            }}
+            onDelete={() => {
+              if (editFixtures(deletePlacement(selected.id))) setSelectedId(null);
+            }}
+          />
+        )}
         </div>
         <Plan
           openings={project.room.openings}
@@ -362,6 +408,19 @@ export function App() {
           unit={unit}
           view={viewBoxAround(project.room.outline, PLAN_MARGIN_MM)}
           onCornerMoved={(index, point) => editOutline(project.room.outline.map((p, i) => (i === index ? point : p)))}
+          fixtures={fixtures}
+          selectedId={selectedId}
+          {...(picked === null
+            ? { onSelect: setSelectedId, onFixtureMoved: (id: string, dx: number, dy: number) => editFixtures(movePlacement(id, dx, dy)) }
+            : {
+                onPlanClick: (point: Point) => {
+                  const id = nextPlacementId(project);
+                  if (editFixtures(placeProduct(picked.product, picked.variantId, point, 0))) {
+                    setSelectedId(id);
+                    setPicked(null);
+                  }
+                },
+              })}
         />
       </div>
       <ul className="room-problems" aria-label={t('room.problems')}>

@@ -1,0 +1,74 @@
+/**
+ * Every change to a fixture, as one immer recipe for `documentStore.edit`: one undo step each.
+ * The 2D plan and the 3D view call these same commands, so the same action gives the same document.
+ */
+import type { DesignDocument, Placement, Point, Product } from '../../../src/core/index';
+import { quarterTurn } from '../../../src/rules/index';
+
+type Recipe = (draft: DesignDocument) => void;
+
+/** The smallest unused id `p1`, `p2`, ... */
+export function nextPlacementId(document: DesignDocument): string {
+  const used = new Set(document.placements.map((p) => p.id));
+  for (let n = 1; ; n++) if (!used.has(`p${n}`)) return `p${n}`;
+}
+
+const find = (draft: DesignDocument, id: string): Placement | undefined => draft.placements.find((p) => p.id === id);
+/** Whole micrometres, never -0. */
+const whole = (v: number): number => Math.round(v) || 0;
+
+/** Places a catalog product; the document embeds its own copy the first time. The schema refuses an unknown size. */
+export const placeProduct =
+  (product: Product, variantId: string, center: Point, rotationUdeg: number): Recipe =>
+  (draft) => {
+    if (!draft.products.some((p) => p.id === product.id)) draft.products.push(structuredClone(product));
+    draft.placements.push({ id: nextPlacementId(draft), productId: product.id, variantId, center: { ...center }, rotationUdeg });
+  };
+
+export const movePlacement =
+  (id: string, dxUm: number, dyUm: number): Recipe =>
+  (draft) => {
+    const p = find(draft, id);
+    if (p !== undefined) p.center = { x: p.center.x + dxUm, y: p.center.y + dyUm };
+  };
+
+export const setPlacementPose =
+  (id: string, pose: { center?: Point; rotationUdeg?: number }): Recipe =>
+  (draft) => {
+    const p = find(draft, id);
+    if (p === undefined) return;
+    if (pose.center !== undefined) p.center = { ...pose.center };
+    if (pose.rotationUdeg !== undefined) p.rotationUdeg = pose.rotationUdeg;
+  };
+
+/** A quarter turn, lined up with the nearest wall (`quarterTurn`). */
+export const rotatePlacement =
+  (id: string): Recipe =>
+  (draft) => {
+    const p = find(draft, id);
+    if (p !== undefined) p.rotationUdeg = quarterTurn(draft.room, p.center, p.rotationUdeg);
+  };
+
+/** A copy standing beside the original, along its local +x (its width further on). */
+export const duplicatePlacement =
+  (id: string): Recipe =>
+  (draft) => {
+    const p = find(draft, id);
+    const width = draft.products.find((q) => q.id === p?.productId)?.variants.find((v) => v.id === p?.variantId)?.widthUm;
+    if (p === undefined || width === undefined || width === null) return;
+    const angle = (p.rotationUdeg / 1_000_000) * (Math.PI / 180);
+    draft.placements.push({
+      id: nextPlacementId(draft),
+      productId: p.productId,
+      variantId: p.variantId,
+      center: { x: whole(p.center.x + width * Math.cos(angle)), y: whole(p.center.y + width * Math.sin(angle)) },
+      rotationUdeg: p.rotationUdeg,
+    });
+  };
+
+/** Removes the fixture; its product stays embedded (it costs nothing and keeps the file self-contained). */
+export const deletePlacement =
+  (id: string): Recipe =>
+  (draft) => {
+    draft.placements = draft.placements.filter((p) => p.id !== id);
+  };

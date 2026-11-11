@@ -323,5 +323,21 @@
       "cannot-confirm-unknown": "A product with an unknown size cannot be confirmed; type its size first.",
       "test-only": "Test products cannot enter the catalog."
     }
+  },
+  "fixtures": {
+    "title": "Fixtures",
+    "place": "Place {{name}}",
+    "placeVariant": "Place {{name}}, {{size}}",
+    "noCatalog": "The catalog could not be read; open Catalog from the start screen.",
+    "clickToPlace": "Click on the plan where {{name}} should stand.",
+    "cancel": "Cancel",
+    "selected": "Selected fixture",
+    "x": "X",
+    "y": "Y",
+    "rotation": "Rotation",
+    "rotate": "Rotate 90°",
+    "duplicate": "Duplicate",
+    "delete": "Delete",
+    "refused": "That change was refused: it would make the project invalid."
   }
 }

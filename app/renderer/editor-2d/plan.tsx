@@ -16,6 +16,12 @@ type Props = {
   onCornerMoved?: (index: number, point: Point) => void;
   openings?: readonly Opening[];
   columns?: readonly Column[];
+  /** Fixture footprints: corners [back-left, back-right, front-right, front-left], um. */
+  fixtures?: readonly { id: string; corners: readonly Point[] }[];
+  selectedId?: string | null;
+  onSelect?: (id: string) => void;
+  /** A fixture was dragged and released, moved by this snapped delta. */
+  onFixtureMoved?: (id: string, dxUm: number, dyUm: number) => void;
 };
 
 const mm = (um: number): number => um / 1000;
@@ -24,10 +30,11 @@ const mm = (um: number): number => um / 1000;
  * The plan as svg. World coordinates are millimetres with y up inside `<g data-world>`; labels sit
  * outside it so their text is not mirrored. Every label is formatted from the document.
  */
-export function Plan({ outline, closed, unit, view, onPlanClick, onCornerMoved, openings = [], columns = [] }: Props) {
+export function Plan({ outline, closed, unit, view, onPlanClick, onCornerMoved, openings = [], columns = [], fixtures = [], selectedId = null, onSelect, onFixtureMoved }: Props) {
   const { t } = useTranslation();
   const world = useRef<SVGGElement>(null);
   const [drag, setDrag] = useState<{ index: number; point: Point } | null>(null);
+  const [move, setMove] = useState<{ id: string; from: Point; to: Point } | null>(null);
   const shown = drag === null ? outline : outline.map((p, i) => (i === drag.index ? drag.point : p));
   const size = Math.max(view.width, view.height);
   const handle = size / 90;
@@ -66,6 +73,44 @@ export function Plan({ outline, closed, unit, view, onPlanClick, onCornerMoved, 
           const from = along(o.offsetUm);
           const to = along(o.offsetUm + o.widthUm);
           return <line key={o.id} className={`plan-${o.kind}`} data-opening={o.id} x1={from.x} y1={from.y} x2={to.x} y2={to.y} />;
+        })}
+        {fixtures.map((f) => {
+          const offset = move?.id === f.id ? `translate(${mm(move.to.x - move.from.x)} ${mm(move.to.y - move.from.y)})` : undefined;
+          const [, , frontRight, frontLeft] = f.corners;
+          return (
+            <g key={f.id} transform={offset}>
+              <polygon
+                className={`plan-fixture${f.id === selectedId ? ' selected' : ''}`}
+                data-placement={f.id}
+                points={f.corners.map((p) => `${mm(p.x)},${mm(p.y)}`).join(' ')}
+                onClick={(event) => {
+                  if (onSelect === undefined) return;
+                  event.stopPropagation();
+                  onSelect(f.id);
+                }}
+                onPointerDown={(event) => {
+                  const p = onFixtureMoved === undefined ? null : at(event);
+                  if (p === null) return;
+                  event.currentTarget.setPointerCapture(event.pointerId);
+                  setMove({ id: f.id, from: p, to: p });
+                }}
+                onPointerMove={(event) => {
+                  const p = move?.id === f.id ? at(event) : null;
+                  if (p !== null && (p.x !== move?.to.x || p.y !== move.to.y)) setMove({ id: f.id, from: move!.from, to: p });
+                }}
+                onPointerUp={() => {
+                  if (move?.id !== f.id) return;
+                  setMove(null);
+                  const dx = move.to.x - move.from.x;
+                  const dy = move.to.y - move.from.y;
+                  if (dx !== 0 || dy !== 0) onFixtureMoved?.(f.id, dx, dy);
+                }}
+              />
+              {frontRight !== undefined && frontLeft !== undefined && (
+                <line className="plan-fixture-front" x1={mm(frontRight.x)} y1={mm(frontRight.y)} x2={mm(frontLeft.x)} y2={mm(frontLeft.y)} />
+              )}
+            </g>
+          );
         })}
         {shown.map((p, i) => (
           <circle

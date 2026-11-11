@@ -82,3 +82,6 @@ input[aria-invalid='true'] { border-color: var(--problem); }
 .badge.verified { color: var(--ok); }
 .unknown { color: var(--problem); font-weight: 600; }
 .size-row { display: grid; grid-template-columns: repeat(3, 1fr) auto; gap: 0.5rem; align-items: end; border: none; padding: 0; margin: 0; }
+.plan-fixture { fill: #dfe7ee; stroke: var(--ink); stroke-width: 1.5px; vector-effect: non-scaling-stroke; cursor: move; }
+.plan-fixture.selected { fill: #fbe9a8; stroke-width: 2.5px; }
+.plan-fixture-front { stroke: var(--ink); stroke-width: 4px; vector-effect: non-scaling-stroke; pointer-events: none; }

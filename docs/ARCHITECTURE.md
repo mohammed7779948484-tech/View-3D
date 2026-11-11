@@ -28,7 +28,7 @@ from the folder's index, not from files inside another folder.
 | `src/core` | Units and the design-document schema | `toUm`, `fromUm`, `formatLength`, `DesignDocumentSchema`, `parseDesignDocument`, `migrate`, types `DesignDocument`, `Room`, `Opening`, `Product`, `Variant`, `Placement` |
 | `src/geometry` | Exact 2D geometry on integer micrometres | `cross`, `orientation`, `area2`, `pointInPolygon`, `validateRoomOutline`, `wallSegments`, `rectCorners`, `rectsOverlap`, `rectInsidePolygon`, `rectIntersectsPolygon`, `minClearance`, `openingSegment`, `doorSwingZone`, `insetPolygon`, `offsetPolygon`, `unionPolygons`, `differencePolygons`, `intersectPolygons` |
 | `src/catalog` | The real product list, the owner's catalog file and its edits | `seedProducts`, `findProduct`, `isPlaceable`, `seedCatalog`, `parseCatalog`, `serializeCatalog`, `ownerProduct`, `addProduct`, `updateProduct`, `removeProduct`, `confirmProduct` |
-| `src/rules` | Planning numbers and every validity rule | `defaultConfig`, `configSources`, `validateRoom`, `normalizeOutline`, `keepClearZones`, `accessZones`, `validateLayout`, `walkingViolations`, `snapToWall` |
+| `src/rules` | Planning numbers, every validity rule, and turning or snapping a fixture by hand | `defaultConfig`, `configSources`, `validateRoom`, `normalizeOutline`, `keepClearZones`, `accessZones`, `validateLayout`, `walkingViolations`, `snapToWall`, `quarterTurn` |
 | `src/layout` | Automatic layout | `autoLayout`, `describeObstacles`, types `LayoutRequest`, `LayoutOption`, `LayoutResult` |
 | `src/render-svg` | The 2D plan as SVG; PNG export | `renderPlanSvg` (portable), `svgToPng` in `png.ts` (Node only) |
 | `src/import-scan` | Room scans: one adapter per scan app (RoomTrace JSON v2), shared normalization | `importRoomTrace`, `readRoomTrace`, `normalizeScan` |
@@ -151,7 +151,8 @@ app/                          the desktop app                         imports ->
                               closeWindow, loadCatalog, saveCatalog (catalog.json in userData, M3)
   shared/                     types only, imported by main, preload and renderer
   renderer/                   the UI (React)
-    state/                    the open document + undo history (the only mutable copy)
+    state/                    the open document + undo history (the only mutable copy); placement-commands.ts:
+                              every fixture edit as one recipe, called by both the 2D plan and the 3D view
     editor-2d/                plan editor (room capture, manual layout)
     view-3d/                  3D view of the same document: units.ts is the only µm -> metre conversion;
                               boxes.ts derives the boxes from the document; scene-probe.tsx reads them
