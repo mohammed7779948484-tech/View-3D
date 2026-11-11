@@ -165,3 +165,5 @@ W48 × D20 × H72 in; single-sided units go on walls or back to back; entrance d
   Owner: please run Diagnostics > Test 3D speed once on the laptop and send a photo; that is the only proof of the 30 fps target on integrated graphics.
 - 2026-11-11 M3 worker spike: autoLayout runs in a Web Worker loaded from file:// under the existing CSP; its JSON is byte-identical (SHA-256) to a direct call in Node 22, so Electron's V8 and Node agree. 200 ms in the worker for the 9-product test shop. Diagnostics, "Test layout speed" lets the owner time it.
   CI 3D numbers from both runners recorded in STACK.md (Windows CI also uses SwiftShader).
+- 2026-11-11 M3 issue 1: catalog file `<userData>/catalog.json`, seeded from `seedProducts` on first start; add, edit (several sizes per product), remove (asks first), confirm. 29 + 6 Vitest, 8 e2e; the bridge now has 7 functions (test list updated in its own commit).
+  The owner can now answer open questions 1 to 3 and 5 in the app: type the missing sizes, confirm or correct website sizes and prices.

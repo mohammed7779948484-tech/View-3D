@@ -11,9 +11,9 @@
 |---|---|---|
 | 10a engine split | proven | golden hashes + snapshots unchanged; CI green Ubuntu + Windows |
 | Spike: 3D (three + R3F, WebGL) | proven | CI green Ubuntu + Windows; laptop number waits for the owner's run |
-| Spike: worker from file:// | proven locally, CI pending | worker bytes = Node bytes |
-| 1 catalog | in progress | test-writer handoff next |
-| 2 place/move/rotate 2D | to do | |
+| Spike: worker from file:// | proven | worker bytes = Node bytes; CI green |
+| 1 catalog | proven locally, CI pending | 35 Vitest + 8 e2e |
+| 2 place/move/rotate 2D | in progress | test-writer handoff next |
 | 3 live validation | to do | |
 | 4 snapping | to do | |
 | 5 worker | to do | |
@@ -29,16 +29,20 @@
 | 10g score weights | to do | will be parked: owner looks at the gallery |
 
 ## 3. Next step
-Issue 1, catalog (ruling: one file `userData/catalog.json`, filled from `seedProducts` on first start,
-no network; website products `unverified` until Confirm; owner-typed products `verified`).
-Test-writer, Vitest `test/catalog/catalog-file.test.ts` for a new `src/catalog/catalog-file.ts`:
-file schema `{ schemaVersion: 1, products: Product[] }`; pure edits returning `{ ok, catalog }` or
-`{ ok: false, code }`: add (48 x 24 x 38 in -> 1 219 200 / 609 600 / 965 200 um; empty height ->
-verification 'unknown', isPlaceable false), duplicate id refused, update, remove, confirm
-(unverified -> verified; unknown cannot be confirmed); serialize/parse round trip byte-identical;
-a corrupt file -> readable error code. Then Playwright for the panel (add, edit, remove, confirm;
-unknown listed greyed out) and for the main-process file (never overwritten when corrupt). Files:
-`app/main/catalog-file.ts`, preload `loadCatalog`/`saveCatalog`, `app/shared`, `app/renderer/catalog/`.
+Issue 2, place / move / rotate / duplicate / delete in 2D on the project screen. Pure parts first:
+- `src/rules/snap.ts`: `quarterTurn(room, center, rotationUdeg)` = next rotation counter-clockwise in
+  90-degree steps from the nearest wall's angle (distance from the centre to each wall segment; ties
+  -> lowest wall index). Hand values (angledWall fixture, wall 2 = 116 565 051 udeg): from 0 at
+  (7000, 3800) mm -> 26 565 051 -> 116 565 051 -> 206 565 051 -> 296 565 051 -> 26 565 051;
+  rectangular wall: 0 -> 90 000 000.
+- `app/renderer/editor-2d/placement-commands.ts`: place (embeds the product from the catalog once),
+  move by a snapped delta, rotate (quarterTurn), duplicate (beside along local +x: tower 600 at
+  (2000, 300) mm, 0 deg -> (2600, 300); 90 deg -> (2000, 900)), delete; new id = smallest unused p<n>.
+  Each is an immer recipe used by 2D now and 3D in issue 8.
+- Playwright: place a tower from the catalog list, drag +1000 mm on the 100 mm grid ->
+  (3 000 000, 300 000) um, rotate, duplicate, delete; typed x / y / rotation fields exact; save and
+  compare with the document by hand. The catalog must be loaded on the project screen (lift it out of
+  CatalogScreen into a small store).
 
 ## 4. Waiting for the owner
 - Run Diagnostics > Test 3D speed on the laptop once, send a photo (30 fps proof).
@@ -55,6 +59,7 @@ Traps: Electron needs `--no-sandbox` as root (the e2e launcher adds it). With no
 WebGL unless Electron starts with `--enable-unsafe-swiftshader` (tests only).
 
 ## 6. Decisions made this milestone
+- Catalog: `src/catalog/catalog-file.ts` (pure) + `app/main/catalog-file.ts`; tests isolate it with `launchApp({ userDataDir })` (`--user-data-dir`).
 - Worker: `app/renderer/worker/layout.worker.ts` answers with JSON text; same bytes as Node (`docs/STACK.md`).
 - 3D: three 0.187.0 + R3F 9.8.2, instanced Lambert boxes, units.ts only conversion; tests read `window.__view3dScene.describe()` (`docs/STACK.md`).
 - 10a: layout engine in phase files; `test/layout/golden-hashes.json` guards output (`pnpm snapshots:update` rewrites it).
