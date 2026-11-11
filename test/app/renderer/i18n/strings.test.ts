@@ -102,4 +102,22 @@ describe('every key the renderer uses exists in en.json', () => {
     ];
     for (const key of wanted) expect(typeof en.get(key), `en.json has no ${key}`).toBe('string');
   });
+
+  it('has a violations key for every rule, and for every variant of a rule that has them (M3-3)', () => {
+    const rules = [
+      'invalid-room', 'unknown-product', 'overlap', 'outside-room', 'column', 'blocked-door',
+      'window-blocked', 'wall-unit-not-on-wall', 'access-blocked', 'aisle-too-narrow', 'unreachable', 'main-aisle',
+    ];
+    const access = ['customer', 'staff'].flatMap((who) =>
+      ['front', 'back'].flatMap((side) => ['wall', 'column', 'fixture'].map((what) => `${who}-${side}-${what}`)),
+    );
+    const wanted = [
+      ...rules.map((r) => `violations.${r}.default`),
+      ...['door-swing', 'door-approach', 'entrance-clear', 'decompression'].map((d) => `violations.blocked-door.${d}`),
+      ...access.map((d) => `violations.access-blocked.${d}`),
+      ...['customer', 'staff'].map((d) => `violations.unreachable.${d}`),
+    ];
+    expect(access).toHaveLength(12);
+    for (const key of wanted) expect(typeof en.get(key), `en.json has no ${key}`).toBe('string');
+  });
 });

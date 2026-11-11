@@ -4,7 +4,7 @@ import type { ElectronApplication, Page } from '@playwright/test';
 import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import type { Point, Room } from '../../src/core/index';
+import type { DesignDocument, Point, Room } from '../../src/core/index';
 import { launchApp } from './launch';
 
 export type SavedDoc = {
@@ -42,7 +42,16 @@ export class Harness {
   /** Writes a project file holding `room` and opens it through the stubbed open dialog. */
   async openRoom(room: Room): Promise<void> {
     const doc = { schemaVersion: 1, id: 'room-test', name: 'Room test', room, products: [], placements: [] };
-    const path = join(this.dir, 'room-test.json');
+    await this.openFile(doc, 'room-test.json');
+  }
+
+  /** Writes a whole design document (room, products, placements) as a project file and opens it the same way. */
+  async openDocument(doc: DesignDocument): Promise<void> {
+    await this.openFile(doc, 'document-test.json');
+  }
+
+  private async openFile(doc: unknown, fileName: string): Promise<void> {
+    const path = join(this.dir, fileName);
     writeFileSync(path, JSON.stringify(doc, null, 2) + '\n');
     await this.app!.evaluate(({ dialog }, p) => {
       dialog.showOpenDialog = (async () => ({ canceled: false, filePaths: [p] })) as typeof dialog.showOpenDialog;
