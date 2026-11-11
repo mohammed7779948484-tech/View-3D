@@ -75,13 +75,20 @@ export function normalizeScan(scan: ScanModel): ScanImportResult {
       corners.push(ends[i]!);
     }
   }
-  let mapWall = (k: number): number => k;
+  const m = corners.length;
+  let turn = (k: number): number => k;
+  let turnCorner = (c: number): number => c;
   if (area2(corners) < 0n) {
     // Walked clockwise: walk the other way, keeping corner 1 first. Wall k becomes wall m - 1 - k.
-    const m = corners.length;
     corners = [corners[0]!, ...corners.slice(1).reverse()];
-    mapWall = (k) => m - 1 - k;
+    turn = (k) => m - 1 - k;
+    turnCorner = (c) => (m - c) % m;
   }
+  // Corner 1 is the lowest-left corner, so the numbering never depends on how the file stores walls.
+  const first = corners.reduce((best, p, i) => (p.x < corners[best]!.x || (p.x === corners[best]!.x && p.y < corners[best]!.y) ? i : best), 0);
+  corners = [...corners.slice(first), ...corners.slice(0, first)];
+  const mapWall = (k: number): number => (((turn(k) - first) % m) + m) % m;
+  const mapCorner = (c: number): number => (((turnCorner(c) - first) % m) + m) % m;
 
   // Corner 1 at the origin, wall 1 along +x: a rigid move, no length changes.
   const origin = corners[0]!;
@@ -101,7 +108,9 @@ export function normalizeScan(scan: ScanModel): ScanImportResult {
 
   const findings: ScanFinding[] = [];
   const gapFindings = gaps.map((g) => {
-    const wallIndex = mapWall(g.filled ? gapWallOf.get(g.after)! : wallOf[g.after]!);
+    // A filled gap is its own wall. A closed gap is a corner: it is reported on the wall that ends
+    // there in the finished outline, whichever way the scan stored its walls.
+    const wallIndex = g.filled ? mapWall(gapWallOf.get(g.after)!) : (mapCorner(wallOf[(g.after + 1) % n]!) - 1 + m) % m;
     return g.filled
       ? { code: 'gap-filled' as const, wallIndex, sizeUm: g.sizeUm, message: `The scan has a ${mm(g.sizeUm)} gap at wall ${wallIndex + 1}; it is drawn as a straight wall. It may be a doorway: add the door in the editor.` }
       : { code: 'gap-closed' as const, wallIndex, sizeUm: g.sizeUm, message: `A ${mm(g.sizeUm)} gap at the end of wall ${wallIndex + 1} was closed.` };
@@ -126,8 +135,20 @@ export function normalizeScan(scan: ScanModel): ScanImportResult {
     }
     const a = outline[wallIndex]!;
     const b = outline[(wallIndex + 1) % outline.length]!;
-    const along = Number(dot(a, b, c)) / distance(a, b);
-    pendingWindows.push({ id: w.id, wallIndex, offsetUm: roundHalfAway(along - w.widthUm / 2), widthUm: w.widthUm, heightUm: w.heightUm });
+    const wallLength = distance(a, b);
+    if (w.widthUm > wallLength) {
+      findings.push({ code: 'window-not-on-wall', windowId: w.id, distanceUm: Math.round(best), message: `A window in the scan is wider than the wall it is on (wall ${wallIndex + 1}), so it was left out.` });
+      continue;
+    }
+    const along = Number(dot(a, b, c)) / wallLength;
+    const scanned = roundHalfAway(along - w.widthUm / 2);
+    // A window that starts before its wall or runs past its end is moved onto it, and the owner is told.
+    const offsetUm = Math.min(Math.max(scanned, 0), Math.floor(wallLength - w.widthUm));
+    if (offsetUm !== scanned) {
+      const movedUm = Math.abs(offsetUm - scanned);
+      findings.push({ code: 'window-moved', windowId: w.id, wallIndex, movedUm, message: `The window on wall ${wallIndex + 1} ran past the end of the wall in the scan; it was moved ${mm(movedUm)} to fit. Check it.` });
+    }
+    pendingWindows.push({ id: w.id, wallIndex, offsetUm, widthUm: w.widthUm, heightUm: w.heightUm });
     findings.push({ code: 'window-sill-unknown', windowId: w.id, wallIndex, message: `The scan does not know the sill height of the window on wall ${wallIndex + 1}. Type it, or leave the window out.` });
   }
 
@@ -142,7 +163,7 @@ export function normalizeScan(scan: ScanModel): ScanImportResult {
   const max = heights.length > 0 ? Math.max(...heights) : null;
   const ceilingHeightUm = scan.roomHeightUm ?? max;
   if (ceilingHeightUm === null) {
-    return { ok: false, errors: [{ code: 'bad-wall', message: 'The scan has no ceiling or wall height.' }] };
+    return { ok: false, errors: [{ code: 'no-height', message: 'The scan has no ceiling or wall height.' }] };
   }
   if (min !== null && max !== null && (max - ceilingHeightUm > scanConfig.heightToleranceUm || ceilingHeightUm - min > scanConfig.heightToleranceUm)) {
     findings.push({ code: 'ceiling-height-varies', minUm: min, maxUm: max, message: `The scanned wall heights vary from ${mm(min)} to ${mm(max)}; the ceiling is set to ${mm(ceilingHeightUm)}. Check it.` });

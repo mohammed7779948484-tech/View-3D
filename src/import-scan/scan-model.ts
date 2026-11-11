@@ -10,6 +10,7 @@ export type ScanFinding =
   | { code: 'gap-filled'; wallIndex: number; sizeUm: number; message: string }
   | { code: 'window-sill-unknown'; windowId: string; wallIndex: number; message: string }
   | { code: 'window-not-on-wall'; windowId: string; distanceUm: number; message: string }
+  | { code: 'window-moved'; windowId: string; wallIndex: number; movedUm: number; message: string }
   | { code: 'no-doors'; message: string }
   | { code: 'doors-not-read'; count: number; message: string }
   | { code: 'ceiling-height-varies'; minUm: number; maxUm: number; message: string }
@@ -19,7 +20,7 @@ export type ScanFinding =
 export type PendingWindow = { id: string; wallIndex: number; offsetUm: number; widthUm: number; heightUm: number };
 
 export type ScanError = {
-  code: 'not-roomtrace' | 'unsupported-version' | 'unsupported-units' | 'no-rooms' | 'several-rooms' | 'bad-wall' | 'too-few-walls' | 'outline-invalid';
+  code: 'not-roomtrace' | 'unsupported-version' | 'unsupported-units' | 'no-rooms' | 'several-rooms' | 'bad-wall' | 'no-height' | 'too-few-walls' | 'outline-invalid';
   message: string;
 };
 

@@ -7,7 +7,7 @@
 import { toUm, UM_PER_UNIT } from './units';
 import type { Entered, LengthUnit } from './units';
 
-export type LengthInputCode = 'empty' | 'not-a-number' | 'unknown-unit' | 'not-positive' | 'too-large' | 'use-a-point';
+export type LengthInputCode = 'empty' | 'not-a-number' | 'unknown-unit' | 'not-positive' | 'negative' | 'too-large' | 'use-a-point';
 export type LengthInputResult = { ok: true; um: number; entered: Entered } | { ok: false; code: LengthInputCode; message: string };
 export type AngleInputCode = 'empty' | 'not-a-number' | 'out-of-range' | 'use-a-point';
 export type AngleInputResult = { ok: true; udeg: number } | { ok: false; code: AngleInputCode; message: string };
@@ -26,6 +26,7 @@ const LENGTH_TEXT: Record<LengthInputCode, string> = {
   'not-a-number': 'This is not a length. Type a number such as 1200, 120 cm or 5\' 3 1/2".',
   'unknown-unit': 'Unknown unit. Use mm, cm, m, in (") or ft (\').',
   'not-positive': 'A length must be more than zero.',
+  negative: 'This value cannot be negative.',
   'too-large': 'A length can be at most 100 m.',
   'use-a-point': 'Use a point for decimals (1.5), not a comma.',
 };
@@ -65,6 +66,20 @@ const lengthError = (code: LengthInputCode): LengthInputResult => ({ ok: false, 
 
 /** Reads a typed length; no unit means `defaultUnit`. Feet and inches together are kept in inches. */
 export function parseLength(text: string, defaultUnit: LengthUnit): LengthInputResult {
+  return readLength(text, defaultUnit, 'positive');
+}
+
+/** Like parseLength, but zero is allowed: an offset from a wall's start, a sill height. */
+export function parseDistance(text: string, defaultUnit: LengthUnit): LengthInputResult {
+  return readLength(text, defaultUnit, 'zero-or-more');
+}
+
+/** Like parseLength, but any sign: a position on the plan. */
+export function parseCoordinate(text: string, defaultUnit: LengthUnit): LengthInputResult {
+  return readLength(text, defaultUnit, 'any');
+}
+
+function readLength(text: string, defaultUnit: LengthUnit, sign: 'positive' | 'zero-or-more' | 'any'): LengthInputResult {
   let t = normalize(text);
   if (t === '') return lengthError('empty');
   if (t.includes(',')) return lengthError('use-a-point');
@@ -82,11 +97,15 @@ export function parseLength(text: string, defaultUnit: LengthUnit): LengthInputR
     return lengthError(WORD_UNIT.test(t) ? 'unknown-unit' : 'not-a-number');
   }
   if (!Number.isFinite(entered.value)) return lengthError('not-a-number');
-  if (negative || entered.value <= 0) return lengthError('not-positive');
-  if (entered.value * UM_PER_UNIT[entered.unit] > MAX_LENGTH_UM + 0.5) return lengthError('too-large');
+  if (negative && entered.value !== 0) {
+    if (sign === 'positive') return lengthError('not-positive');
+    if (sign === 'zero-or-more') return lengthError('negative');
+    entered = { value: -entered.value, unit: entered.unit };
+  }
+  if (Math.abs(entered.value) * UM_PER_UNIT[entered.unit] > MAX_LENGTH_UM + 0.5) return lengthError('too-large');
   const um = toUm(entered.value, entered.unit);
-  if (um <= 0) return lengthError('not-positive');
-  if (um > MAX_LENGTH_UM) return lengthError('too-large');
+  if (sign === 'positive' && um <= 0) return lengthError('not-positive');
+  if (Math.abs(um) > MAX_LENGTH_UM) return lengthError('too-large');
   return { ok: true, um, entered };
 }
 
