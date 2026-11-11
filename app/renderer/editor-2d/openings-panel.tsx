@@ -16,7 +16,7 @@ const FIELDS: Record<Kind, readonly string[]> = {
 };
 
 /** The smallest free number for `door-N`, `window-N` or `column-N`. */
-function nextId(room: Room, kind: Kind): string {
+export function nextId(room: Room, kind: Kind): string {
   const ids = kind === 'column' ? room.columns.map((c) => c.id) : room.openings.map((o) => o.id);
   const used = new Set(ids.map((id) => new RegExp(`^${kind}-(\\d+)$`).exec(id)?.[1]).filter((n) => n !== undefined).map(Number));
   let n = 1;

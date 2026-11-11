@@ -31,6 +31,7 @@ from the folder's index, not from files inside another folder.
 | `src/rules` | Planning numbers and every validity rule | `defaultConfig`, `configSources`, `validateRoom`, `normalizeOutline`, `keepClearZones`, `accessZones`, `validateLayout`, `walkingViolations`, `snapToWall` |
 | `src/layout` | Automatic layout | `autoLayout`, `describeObstacles`, types `LayoutRequest`, `LayoutOption`, `LayoutResult` |
 | `src/render-svg` | The 2D plan as SVG; PNG export | `renderPlanSvg` (portable), `svgToPng` in `png.ts` (Node only) |
+| `src/import-scan` | Room scans: one adapter per scan app (RoomTrace JSON v2), shared normalization | `importRoomTrace`, `readRoomTrace`, `normalizeScan` |
 | `src/capture` | A room typed wall by wall and its checks | `wallsToOutline`, `outlineToWalls`, `checkClosure`, `checkDiagonal`, `suspectsMatchingDiagonal`, `sanityWarnings` |
 
 ## 3. Dependency direction
@@ -45,12 +46,13 @@ rules       -> core, geometry
 layout      -> core, geometry, rules
 render-svg  -> core, geometry
 capture     -> core, geometry, rules
+import-scan -> core, geometry, rules
 ```
 
 - Nothing under `src/` imports from `test/`.
 - `clipper2-ts` is imported only by `src/geometry/clip.ts`; `@resvg/resvg-js` only by
   `src/render-svg/png.ts`. A wrapped library has one importer so it can be replaced in one place.
-- `core`, `geometry`, `catalog`, `rules`, `layout` and `capture` are portable: no Node built-ins and no
+- `core`, `geometry`, `catalog`, `rules`, `layout`, `capture` and `import-scan` are portable: no Node built-ins and no
   DOM. They must run unchanged in a browser, a Web Worker and Node.
 - `rules` does not import `catalog`: rules work on the products embedded in the document.
 

@@ -16,6 +16,7 @@ const PRELOAD = join(import.meta.dirname, '../preload/index.cjs');
 /** Every remote scheme. The app is fully local (decisions/0007), so any such request is refused. */
 const REMOTE_URLS = ['http://*/*', 'https://*/*', 'ws://*/*', 'wss://*/*'];
 const PROJECT_FILTERS = [{ name: 'View-3D project', extensions: ['json'] }];
+const SCAN_FILTERS = [{ name: 'Room scan (RoomTrace JSON)', extensions: ['json'] }];
 /** Characters Windows does not allow in a file name. */
 const NOT_IN_FILE_NAMES = /[\\/:*?"<>|]/g;
 /** A project file is a few hundred kilobytes; anything far bigger is not one of ours. */
@@ -50,6 +51,14 @@ async function openProject(window: BrowserWindow): Promise<OpenResult> {
   // Only a real project becomes the current file, so "Save" can never overwrite a file that was refused.
   if (projectName(read.text) !== null) currentPath = path;
   return { status: 'opened', fileName: basename(path), text: read.text };
+}
+
+async function openScan(window: BrowserWindow): Promise<OpenResult> {
+  const choice = await dialog.showOpenDialog(window, { properties: ['openFile'], filters: SCAN_FILTERS });
+  const path = choice.filePaths[0];
+  if (choice.canceled || path === undefined) return { status: 'cancelled' };
+  const read = await readProjectFile(path);
+  return read.ok ? { status: 'opened', fileName: basename(path), text: read.text } : { status: 'failed', message: read.message };
 }
 
 async function saveProject(window: BrowserWindow, request: SaveRequest): Promise<SaveResult> {
@@ -94,6 +103,11 @@ ipcMain.handle('project:open', (event) => {
   const window = BrowserWindow.fromWebContents(event.sender);
   if (!fromOurPage(event) || window === null) throw new Error('project:open: refused');
   return openProject(window);
+});
+ipcMain.handle('scan:open', (event) => {
+  const window = BrowserWindow.fromWebContents(event.sender);
+  if (!fromOurPage(event) || window === null) throw new Error('scan:open: refused');
+  return openScan(window);
 });
 ipcMain.handle('project:save', (event, request: unknown) => {
   const window = BrowserWindow.fromWebContents(event.sender);

@@ -10,6 +10,10 @@ import { Plan } from './editor-2d/plan';
 import { OpeningsPanel } from './editor-2d/openings-panel';
 import { RoomPanel } from './editor-2d/room-panel';
 import { WallTable } from './editor-2d/wall-table';
+import { ScanReview } from './editor-2d/scan-review';
+import { importRoomTrace } from '../../src/import-scan/index';
+import type { ScanImportResult } from '../../src/import-scan/index';
+import type { Room } from '../../src/core/index';
 import { documentStore, useDocumentState } from './state/index';
 import { LANGUAGES } from './i18n';
 import { problemText } from './i18n/messages';
@@ -17,7 +21,7 @@ import { bridge } from './storage/bridge';
 import { readDocument, serializeDocument } from './storage/project-file';
 
 type Problem = { message: string; details: string[] };
-type Screen = 'start' | 'walls' | 'draw';
+type Screen = 'start' | 'walls' | 'draw' | 'scan';
 
 const UNITS: readonly DisplayUnit[] = ['mm', 'cm', 'm', 'in', 'ft-in'];
 /** Space around the room on the plan, mm. */
@@ -33,6 +37,7 @@ export function App() {
   const [askClose, setAskClose] = useState(false);
   const [screen, setScreen] = useState<Screen>('start');
   const [unit, setUnit] = useState<DisplayUnit>('cm');
+  const [scan, setScan] = useState<Extract<ScanImportResult, { ok: true }> | null>(null);
   // Undoing back to the saved document counts as saved: compare by reference.
   const unsaved = project !== null && project !== saved;
   const unsavedRef = useRef(unsaved);
@@ -92,6 +97,33 @@ export function App() {
   async function saveCopy(current: DesignDocument): Promise<void> {
     const copy: DesignDocument = { ...current, id: crypto.randomUUID(), name: t('project.copyName', { name: current.name }) };
     if (await save(copy, 'save-as')) documentStore.load(copy);
+  }
+
+  async function importScan(): Promise<void> {
+    const result = await bridge().openScan();
+    if (result.status === 'cancelled') return;
+    if (result.status === 'failed') return setProblem({ message: result.message, details: [] });
+    let json: unknown;
+    try {
+      json = JSON.parse(result.text.startsWith('\uFEFF') ? result.text.slice(1) : result.text);
+    } catch {
+      return setProblem({ message: t('scan.errors.not-json'), details: [] });
+    }
+    const imported = importRoomTrace(json);
+    if (!imported.ok) return setProblem({ message: imported.errors.map((e) => t(`scan.errors.${e.code}`)).join(' '), details: [] });
+    setProblem(null);
+    setScan(imported);
+    setScreen('scan');
+  }
+
+  function useScannedRoom(room: Room): void {
+    const created = newDocument(room.outline, room.ceilingHeightUm, t('project.newName'));
+    if (created === null) return setProblem({ message: t('draw.notARoom'), details: [] });
+    documentStore.load({ ...created, room });
+    setSaved(null);
+    setFileName(null);
+    setScan(null);
+    setScreen('start');
   }
 
   function create(outline: Point[], ceilingHeightUm: number): void {
@@ -157,6 +189,19 @@ export function App() {
         {header}
         {screen === 'walls' && <WallTable unit={unit} onCreate={create} onBack={() => setScreen('start')} />}
         {screen === 'draw' && <DrawRoom unit={unit} onCreate={create} onBack={() => setScreen('start')} />}
+        {screen === 'scan' && scan !== null && (
+          <ScanReview
+            room={scan.room}
+            pendingWindows={scan.pendingWindows}
+            findings={scan.findings}
+            unit={unit}
+            onUse={useScannedRoom}
+            onBack={() => {
+              setScan(null);
+              setScreen('start');
+            }}
+          />
+        )}
         {screen === 'start' && (
           <section className="start">
             <p>{t('start.noProject')}</p>
@@ -166,6 +211,9 @@ export function App() {
               </button>
               <button type="button" onClick={() => setScreen('draw')}>
                 {t('start.draw')}
+              </button>
+              <button type="button" onClick={() => void importScan()}>
+                {t('start.importScan')}
               </button>
               <button type="button" onClick={() => void open()}>
                 {t('start.open')}

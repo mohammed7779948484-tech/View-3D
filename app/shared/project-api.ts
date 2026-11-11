@@ -5,6 +5,8 @@ export type SaveResult = { status: 'cancelled' } | { status: 'saved'; fileName: 
 export type ProjectBridge = {
   /** Asks for a project file with the native dialog and returns its text. */
   openProject(): Promise<OpenResult>;
+  /** Asks for a room-scan file with the native dialog and returns its text; it never becomes the project file. */
+  openScan(): Promise<OpenResult>;
   /** Writes the text to the current file ('save', asks if there is none) or to a new one ('save-as'). */
   saveProject(request: SaveRequest): Promise<SaveResult>;
   /** Called when the owner closes the window; returns a function that stops listening. */

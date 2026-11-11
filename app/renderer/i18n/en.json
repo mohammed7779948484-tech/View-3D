@@ -6,7 +6,8 @@
     "noProject": "No project is open.",
     "open": "Open a project",
     "typeWalls": "Type the walls",
-    "draw": "Draw the room"
+    "draw": "Draw the room",
+    "importScan": "Import a room scan"
   },
   "open": {
     "notJson": "This file is not a View-3D project: it is not valid JSON (line {{line}}).",
@@ -177,5 +178,36 @@
     "wall-very-short": "Wall {{n}} is shorter than {{limit}}. Is the length right?",
     "wall-very-long": "Wall {{n}} is longer than {{limit}}. Is the length right?",
     "corner-very-sharp": "The corner at the end of wall {{n}} is very sharp. Is the angle right?"
+  },
+  "scan": {
+    "title": "Check the scan",
+    "findingsLabel": "What the scan did not know",
+    "window": "Window {{n}}",
+    "windowSize": "A window {{width}} wide and {{height}} high on wall {{wall}}.",
+    "sill": "Window sill height",
+    "addWindow": "Add the window",
+    "leaveOut": "Leave the window out",
+    "use": "Use this room",
+    "findings": {
+      "gap-closed": "A {{size}} gap at the end of wall {{wall}} was closed.",
+      "gap-filled": "The scan has a {{size}} gap at wall {{wall}}; it is drawn as a straight wall. It may be a doorway: add the door in the editor.",
+      "window-sill-unknown": "The scan does not know the sill height of the window on wall {{wall}}. Type it, or leave the window out.",
+      "window-not-on-wall": "A window in the scan is {{distance}} from the nearest wall, so it was left out.",
+      "no-doors": "The scan has no doors. Add the entrance and every door in the editor.",
+      "doors-not-read": "The scan lists {{doors}} doors, which this version cannot read. Add them in the editor.",
+      "ceiling-height-varies": "The scanned wall heights vary from {{min}} to {{max}}. Check the ceiling height.",
+      "axes-assumed": "The scan is read as seen from above. If the plan looks mirrored compared with the shop, tell us."
+    },
+    "errors": {
+      "not-json": "This file is not a room scan: it is not valid JSON.",
+      "not-roomtrace": "This file is not a RoomTrace scan.",
+      "unsupported-version": "This RoomTrace file uses a format version that cannot be read (only version 2).",
+      "unsupported-units": "Only RoomTrace files measured in metres can be read.",
+      "no-rooms": "The scan has no room in it.",
+      "several-rooms": "The scan has several rooms; import one room at a time.",
+      "bad-wall": "A wall or window in the scan has no position or size.",
+      "too-few-walls": "The scan has fewer than 3 walls.",
+      "outline-invalid": "The scanned walls do not make a room: they cross each other or repeat a corner."
+    }
   }
 }

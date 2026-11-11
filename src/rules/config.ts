@@ -96,3 +96,25 @@ export const captureConfigSources: Record<keyof CaptureConfig, string> = {
   longWallUm: `${FIRST_GUESS} 30 m.`,
   sharpCornerUdeg: `${FIRST_GUESS} 15 degrees.`,
 };
+
+/** Turning a room scan into a room (src/import-scan). */
+export type ScanConfig = {
+  /** A gap between two scanned walls up to this size is closed; a larger one becomes its own wall. */
+  gapCloseUm: number;
+  /** A scanned window whose centre is farther than this from every wall is left out. */
+  windowMaxDistanceUm: number;
+  /** Wall heights within this of the ceiling height count as the same. */
+  heightToleranceUm: number;
+};
+
+export const scanConfig: ScanConfig = {
+  gapCloseUm: toUm(50, 'mm'),
+  windowMaxDistanceUm: toUm(200, 'mm'),
+  heightToleranceUm: toUm(10, 'mm'),
+};
+
+export const scanConfigSources: Record<keyof ScanConfig, string> = {
+  gapCloseUm: `${FIRST_GUESS} 50 mm.`,
+  windowMaxDistanceUm: `${FIRST_GUESS} 200 mm.`,
+  heightToleranceUm: `${FIRST_GUESS} 10 mm.`,
+};
