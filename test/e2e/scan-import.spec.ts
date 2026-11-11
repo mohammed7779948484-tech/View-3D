@@ -141,13 +141,13 @@ test('a file that is not a readable RoomTrace scan is explained and the start sc
   await expect(page.getByRole('heading', { name: 'Check the scan' })).toBeHidden();
 });
 
-test('the bridge gains exactly one function, openScan', async () => {
+test('the bridge has openScan and nothing unexpected', async () => {
   const page = await h.launch();
   const keys = await page.evaluate(() => {
     const bridge = (globalThis as unknown as { view3d?: Record<string, unknown> }).view3d;
     return bridge === undefined ? null : Object.keys(bridge).sort();
   });
-  expect(keys).toEqual(['closeWindow', 'onCloseRequested', 'openProject', 'openScan', 'saveProject']);
+  expect(keys).toEqual(['closeWindow', 'loadCatalog', 'onCloseRequested', 'openProject', 'openScan', 'saveCatalog', 'saveProject']);
 });
 
 test('in Arabic the review heading and the findings are in Arabic', async () => {
