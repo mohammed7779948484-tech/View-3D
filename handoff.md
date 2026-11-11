@@ -4,7 +4,7 @@
 - Milestone 3 (plan: `docs/plans/M2-M4-plan.md` section 2, with the owner's rulings of 2026-11-11).
 - Branch `claude/milestone-2-delivery-wgd3q6` (restarted from `main` after PR #2 merged). Draft PR: see the PR table.
 - Draft PR: https://github.com/mohammed7779948484-tech/View-3D/pull/3
-- Last commit: the 10a checkpoint (see `git log -1`).
+- Last commit: the 10f checkpoint (see `git log -1`).
 
 ## 2. Status
 | Item | Status | Note |
@@ -17,28 +17,28 @@
 | 3 live validation | proven | 70 Vitest + 3 e2e; 16.2 ms for 40 fixtures; CI green |
 | 4 snapping | proven | 15 Vitest + 2 e2e; CI green |
 | 5 worker | proven | 9 Vitest + 2 e2e; same bytes as Node; CI green |
-| 6 option picker | proven locally, CI pending | 52 Vitest + 3 e2e |
-| 7 3D view | proven locally, CI pending | 4 e2e; boxes = document within 1 mm |
-| 8 3D select/move | proven locally, CI pending | 4 e2e; 2D edit = 3D edit, byte-identical |
-| 9 model contract | proven locally, CI pending | 15 Vitest; three's loader agrees |
-| 10b ranking | proven locally, CI pending | 24 Vitest; one option pair swapped (gallery) |
-| 10c swap and relocate | in progress | design next |
+| 6 option picker | proven | 52 Vitest + 3 e2e; CI green |
+| 7 3D view | proven | 4 e2e; boxes = document within 1 mm; CI green |
+| 8 3D select/move | proven | 4 e2e; 2D edit = 3D edit, byte-identical; CI green |
+| 9 model contract | proven | 15 Vitest; three's loader agrees; CI green |
+| 10b ranking | proven | 24 Vitest; one option pair swapped (gallery); CI green |
+| 10c swap and relocate | parked | no shop leaves room for more (measured); owner question 13 |
 | 10d free-standing counter | to do | |
 | 10e L-block without right angle | to do | |
-| 10f service side | to do | will be parked: owner names rear-access products |
+| 10f service side | built, parked | field, staff zone, engine, form proven (23 Vitest + 3 e2e); no real product set: owner question 14 |
 | 10g score weights | to do | will be parked: owner looks at the gallery |
 
 ## 3. Next step
-10c, swap-and-relocate improvement pass (plan: fixed step budget, no clock; accept only when the
-layout stays valid and the placed count or score rises; at least one scenario places more, none
-fewer; benchmark stays under 3 s). First measure which scenarios leave something unplaced
-(`small-overfull`, `walls-full`, `benchmark`?) and design the smallest pass that helps one of them;
-the proof needs a hand-built valid document that places more (test-writer), checked by
-validateLayout and the oracle. Then 10d, 10e; 10f and 10g prepared and parked.
+10g, score weights (prepare only, the owner decides): build a before/after gallery with the current
+`SCORE_WEIGHTS` and a proposed set, write the proposal and its reasons in `docs/NOTES.md`, do not
+change the weights in the engine. Then 10d (free-standing or angled counter near the entrance) and
+10e (L-block without a right-angled corner), each with test-writer tests first.
+Possible later: put rear-served products on walls with the staff gap behind (today they go to the
+island grid when they miss the checkout block; no test asks for more).
 
 ## 4. Waiting for the owner
 - Run Diagnostics > Test 3D speed on the laptop once, send a photo (30 fps proof).
-- Open questions in `docs/NOTES.md`.
+- Open questions in `docs/NOTES.md` (13: 10c; 14: which products are served from the back).
 
 ## 5. How to resume
 ```bash
@@ -51,6 +51,7 @@ Traps: Electron needs `--no-sandbox` as root (the e2e launcher adds it). A visib
 software WebGL without a GPU; the no-WebGL case needs `--disable-gpu --disable-software-rasterizer`.
 
 ## 6. Decisions made this milestone
+- 10f: `serviceSide` optional on Product; a rear product gets a staff zone in `accessZones`; the engine follows through its rule checks.
 - 3D editing: `BoxEditing` in view-3d.tsx uses the 2D commands; tests drive it via `__view3dScene.screenOf` in Top view.
 - 3D: `app/renderer/view-3d/view-3d.tsx`; no-WebGL test = `--disable-gpu --disable-software-rasterizer` (a visible window has software WebGL otherwise).
 - Option picker: `useLayoutOption` in placement-commands; `unplacedText` words did-not-fit by code.

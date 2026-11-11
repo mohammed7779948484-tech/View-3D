@@ -101,6 +101,23 @@ Running log and decisions. Checkpointed after every step so work survives a rest
 12. RoomTrace axes: the scan is read as seen from above (x right, y up). Please compare the imported
     plan of the sample shop with the real shop once: if it is mirrored, the adapter flips it for good.
 
+13. M3 10c (swap-and-relocate pass) is parked. Measured: every test shop already places everything it
+    can; in the over-full 4 x 5 m shop no extra tower or wall shelf fits along any wall of any option
+    (brute force, every 50 mm, all rules). A relocation pass would only show a gain on a shop built to
+    trap the engine. Recommended: wait until one of your real shops shows the engine leaving out
+    something a person could fit; that shop becomes the test. Or say "build it now" and a constructed
+    case is used.
+
+14. M3 10f: which of your products are served from the back (staff stand behind them, e.g. rear
+    sliding doors)? The app now supports it: such a product needs 915 mm of staff space behind it and
+    is never put with its back to a wall. No real product has it set; you set it yourself in the
+    catalog ("Served from: The back"), or tell me and I set it. The website text does not say which
+    ones open from the back. Candidates (every showcase in the catalog):
+    - 6FT EXTRA VIEW SHOWCASE (`nhf-6ft-extra-view-showcase`, anywhere on the floor)
+    - 4 FT FULL VIEW LED lights Showcase (`nhf-6ft-full-view-led-lights-showcase`, anywhere on the floor)
+    - Showcase 6 feet (`nhf-s`, anywhere on the floor; size still unknown)
+    - Stand showcases (`nhf-s-1`, against a wall: if served from the back it cannot stand on a wall)
+
 Answered on 2026-11-11 (Milestone 2 detail plan): order 1, 2, 3, 4, 5, 8, 10, 6, 7, 9, 11; strings
 through t() from issue 1; closure check gives the smallest suspect set; document null until a room
 exists; unknown scan sill stays pending; JSON scan adapter only (DXF waits for a sample); room checks
@@ -183,3 +200,5 @@ W48 × D20 × H72 in; single-sided units go on walls or back to back; entrance d
 - 2026-11-11 M3 issue 9: model contract (docs/MODEL_CONTRACT.md) and validateModel (src/model-contract, own GLB reader, no dependency). 15 Vitest incl. 2 checks with three's GLTFLoader as the independent measure; suite 842 Vitest. No real model built.
 - 2026-11-11 M3 10b: ranking key placed + complete checkout block (decision 0003). 24 Vitest incl. 4 order properties. Layout change: only l-shape-with-column options 2 and 3 swap (both 17 placed; the complete block now first); option 1 unchanged everywhere. Golden + gallery regenerated in their own commit with before/after. The M2-era ranking test was updated to the new rule in its own commit (e23df86).
 - 2026-11-11 M3, Windows installed-app job red once (catalog never loaded): two first-start catalog loads raced on the same temporary file (my issue 2 added the second caller). Catalog file operations now queue in call order; 4 concurrency tests red every run before, green after.
+- 2026-11-11 M3 10c parked (question 13): no scenario leaves room for more (brute force on small-overfull: 0 extra wall spots in every option); a relocation pass would be speculative.
+- 2026-11-11 M3 issue 10f: optional `serviceSide` on products; a rear-served product needs a 915 mm staff zone behind it (never its back to a wall), the engine and the oracle agree, the catalog form has "Served from". No real product set (question 14). One test-writer spec fix: the engine test first also forbade a side flush to a wall. Suite 895 Vitest, 107 e2e.
