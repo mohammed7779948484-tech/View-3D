@@ -4,6 +4,8 @@ import {
   formatAngle,
   formatDisplayLength,
   parseAngle,
+  parseCoordinate,
+  parseDistance,
   parseLength,
   type DisplayUnit,
   type LengthUnit,
@@ -197,5 +199,61 @@ describe('formatAngle', () => {
     [90_500_000, '90.5°'],
   ])('%i udeg is %j', (udeg, text) => {
     expect(formatAngle(udeg)).toBe(text);
+  });
+});
+
+describe('parseDistance (a distance that may be zero)', () => {
+  it('accepts 0 as zero micrometres, in the unit given', () => {
+    expect(parseDistance('0', 'cm')).toEqual({ ok: true, um: 0, entered: { value: 0, unit: 'cm' } });
+  });
+  it('still reads an ordinary distance like parseLength', () => {
+    expect(parseDistance('1.2 m', 'cm')).toEqual({ ok: true, um: 1_200_000, entered: { value: 1.2, unit: 'm' } });
+  });
+  it('refuses a negative distance with the code negative', () => {
+    const r = parseDistance('-5', 'cm');
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.code).toBe('negative');
+  });
+  it.each([
+    ['', 'empty'],
+    ['abc', 'not-a-number'],
+    ['1,5', 'use-a-point'],
+    ['101 m', 'too-large'],
+  ] as const)('refuses %j with the same code as parseLength (%s)', (text, code) => {
+    const r = parseDistance(text, 'cm');
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.code).toBe(code);
+  });
+});
+
+describe('parseCoordinate (any sign)', () => {
+  it('reads a negative coordinate: -300 cm is -3 000 000 um', () => {
+    expect(parseCoordinate('-300', 'cm')).toEqual({ ok: true, um: -3_000_000, entered: { value: -300, unit: 'cm' } });
+  });
+  it('reads 0 as 0', () => {
+    const r = parseCoordinate('0', 'cm');
+    expect(r.ok).toBe(true);
+    if (r.ok) expect(r.um).toBe(0);
+  });
+  it('reads a positive coordinate: 1.5 m is 1 500 000 um', () => {
+    const r = parseCoordinate('1.5 m', 'cm');
+    expect(r.ok).toBe(true);
+    if (r.ok) expect(r.um).toBe(1_500_000);
+  });
+  it.each([
+    ['1,5', 'use-a-point'],
+    ['', 'empty'],
+    ['100.001 m', 'too-large'],
+    ['-100.001 m', 'too-large'],
+  ] as const)('refuses %j with %s', (text, code) => {
+    const r = parseCoordinate(text, 'cm');
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.code).toBe(code);
+  });
+  it('accepts exactly 100 m and -100 m', () => {
+    const hi = parseCoordinate('100 m', 'cm');
+    const lo = parseCoordinate('-100 m', 'cm');
+    expect(hi.ok && hi.um).toBe(100_000_000);
+    expect(lo.ok && lo.um).toBe(-100_000_000);
   });
 });

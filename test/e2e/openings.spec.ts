@@ -2,7 +2,7 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { lShapeWithColumn } from '../fixtures/rooms';
-import { Harness } from './editor-helpers';
+import { Harness, um } from './editor-helpers';
 
 const h = new Harness();
 test.beforeEach(() => h.begin());
@@ -171,4 +171,37 @@ test('lowering the ceiling under the door is not refused; the problem is listed'
   await ceiling.fill('200');
   await ceiling.press('Enter');
   await expect(problems(page)).toContainText('reaches 2100 mm above the floor', FIRST);
+});
+
+test('a door can start at distance 0 on its wall', async () => {
+  const page = await h.launch();
+  await h.openRoom(bareL);
+  await addDoor(page, { wall: '1', at: '0', width: '100', height: '210' });
+  await expect(page.getByRole('button', { name: 'Remove door 1' })).toBeVisible(FIRST);
+});
+
+test('a window can have sill height 0', async () => {
+  const page = await h.launch();
+  await h.openRoom(bareL);
+  await addWindow(page, { wall: '6', at: '100', width: '100', height: '120', sill: '0' });
+  await expect(page.getByRole('button', { name: 'Remove window 1' })).toBeVisible(FIRST);
+});
+
+test('a column can sit at negative coordinates', async () => {
+  const page = await h.launch();
+  await h.openRoom({
+    outline: [um(-2000, 0), um(3000, 0), um(3000, 4000), um(-2000, 4000)],
+    ceilingHeightUm: 3_000_000,
+    columns: [],
+    openings: [],
+  });
+  await addColumn(page, { width: '40', depth: '40', x: '-150', y: '100' });
+  await expect(page.getByRole('button', { name: 'Remove column 1' })).toBeVisible(FIRST);
+  const saved = await h.saveAs();
+  expect((saved.room.columns as { outline: unknown }[])[0]!.outline).toEqual([
+    { x: -1_500_000, y: 1_000_000 },
+    { x: -1_100_000, y: 1_000_000 },
+    { x: -1_100_000, y: 1_400_000 },
+    { x: -1_500_000, y: 1_400_000 },
+  ]);
 });
