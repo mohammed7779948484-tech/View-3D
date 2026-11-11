@@ -60,7 +60,7 @@ installer. Spikes: `test/spikes/libraries.test.ts` (Vitest) and `test/spikes/ele
 | Packaging | Electron Forge | Owner decision: electron-builder (one config for NSIS and fuses) |
 | Desktop shell | Tauri v2 | Needs Rust; decision 0007 |
 | Translation | lingui 5, react-intl 7 | i18next has `dir()` for RTL and loads plain JSON; either would also work |
-| State / undo | zustand 5.1 | A vanilla store with `subscribe` plus React's `useSyncExternalStore` is about 60 lines; immer 11.2.10 (MIT, 2026-11-10, spike in `libraries.test.ts`) gives structural sharing and frozen snapshots for undo |
+| State / undo | zustand 5.1 (not adopted) | A vanilla store with `subscribe` plus React's `useSyncExternalStore` is about 60 lines; immer 11.2.10 (MIT, 2026-11-10, spike in `libraries.test.ts`) gives structural sharing and frozen snapshots for undo |
 | UI kit | Tailwind 4 + shadcn/ui + Radix | Milestone 2 has only forms, buttons and selects: one stylesheet with CSS logical properties mirrors for Arabic without a dependency. Revisit when M3 needs dialogs, menus or popovers |
 | End-to-end tests | WebdriverIO + wdio-electron-service | Playwright is already the planned tool and has a project skill |
 
@@ -117,10 +117,9 @@ agent only; nothing is imported by `src/` or `test/`. Project docs win over them
 | Capability | Proposal | Alternatives |
 |---|---|---|
 | 2D editor | Plain SVG + React | react-konva 19.3 (fallback), pixi.js 8 (258 kB gz), fabric 7, tldraw 5 (not free in production) |
-| 3D | three r187 + @react-three/fiber 9.8, WebGL renderer | WebGPURenderer: no benefit for placeholder boxes on integrated graphics |
-| State / undo | zustand 5.1 + immer 11, undo as a stack of whole-document snapshots (owner 2026-11-11) | zundo 2.3.0 (stale since 2024-11), jotai 3, redux toolkit |
+| 3D | three 0.187.0 + @react-three/fiber 9.8.2, WebGL renderer, no drei (owner 2026-11-11: three.js's own camera controls) | WebGPURenderer: no benefit for placeholder boxes on integrated graphics; drei 10.7.9: about 30 extra packages for helpers we do not need |
 | PDF | Electron/Chromium `printToPDF` from our own HTML + SVG sheet (Chromium shapes Arabic and handles RTL) | Fallback only: pdfkit 0.20 + bidi-js + embedded Arabic font, or jspdf 4.2 + svg2pdf.js |
 | Scan import (DXF fallback) | Deferred (owner 2026-11-11): no DXF reader until a real DXF sample from a chosen scan app exists | dxf-parser 1.1.2 (last published 2022-06) |
-| UI kit | shadcn + Radix + Tailwind 4 logical properties (react-i18next adopted above) | lingui, react-intl, Mantine 9, MUI 9 |
+| UI kit | Not adopted for M3 (owner 2026-11-11): plain CSS with logical properties and the native `<dialog>` | shadcn + Radix + Tailwind 4, Mantine 9, MUI 9 |
 
 Removed from V1 on 2026-11-11 (owner decision, see `decisions/0007-local-electron-desktop-app.md`): vite-plugin-pwa / serwist, IndexedDB outbox, File System Access API, a QR library, any hosting.

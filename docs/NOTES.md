@@ -73,8 +73,10 @@ Running log and decisions. Checkpointed after every step so work survives a rest
 - No random search: every option is the result of fixed rules, so it can be explained.
 - The planned "local improvement pass" is the row centring only. Swapping or re-ordering fixtures
   to squeeze more in is not implemented; the over-full report says what did not fit instead.
-- Score weights (50 placed, 15 counter near entrance, 10 counter facing, 10 showcases near
-  counter, 10 gondolas in rows, 5 open entrance) are our own first guess, to be tuned with the owner.
+- Score weights, as in `SCORE_WEIGHTS` in the engine since the first review (45 placed, 12 counter
+  near entrance, 8 counter facing, 10 showcases near counter, 10 gondolas in rows, 10 even use of
+  the floor, 5 open entrance; the 50/15/10/10/10/5 written here before was out of date), are our
+  own first guess, to be tuned with the owner (M3 issue 10g).
 
 ## Open questions for the owner
 1. Wood gondola ("Gondola wood 4 feet"): what is the OUTER width? The site gives only the inside
@@ -155,3 +157,5 @@ W48 × D20 × H72 in; single-sided units go on walls or back to back; entrance d
   errors, refused edits explained, zero-length wall, Save and close, Edit the walls, scan numbering/overhang/no-height/throw).
   Not changed: "Save a copy" starts a fresh history (by design); asar integrity fuse deferred (needs its own spike).
   Suite after the fixes: 602 Vitest, 64 e2e; CI green on Ubuntu, Windows and the installed app.
+- 2026-11-11 Milestone 3 detail plan approved with rulings: order 10a, spikes, 1-6, 7-9, 10b-10g; ranking key placed + complete block (decision 0003); catalog file on the laptop; no drei, no UI kit; red fixtures in 3D; rear access by staff zone; software 3D off in the app; benchmark on a Diagnostics page.
+  Found while planning: with no GPU, Electron has no WebGL unless started with --enable-unsafe-swiftshader (probe in this container: none without it, SwiftShader WebGL2 with it).
