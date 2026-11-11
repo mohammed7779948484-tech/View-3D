@@ -43,6 +43,42 @@ describe('loadCatalogFile', () => {
   });
 });
 
+describe('concurrent calls on one folder', () => {
+  const seedText = (): string => serializeCatalog(seedCatalog());
+  const seedMinusLast = (): string => {
+    const smaller = seedCatalog();
+    smaller.products.pop();
+    return serializeCatalog(smaller);
+  };
+
+  it.each([2, 5])('%i concurrent first-start loads all load the seed and leave only catalog.json', async (count) => {
+    const results = await Promise.all(Array.from({ length: count }, () => loadCatalogFile(dir)));
+    const expected = seedText();
+    for (const result of results) expect(result).toEqual({ status: 'loaded', text: expected });
+    expect(readFileSync(file(), 'utf8')).toBe(expected);
+    expect(readdirSync(dir)).toEqual(['catalog.json']);
+  });
+
+  it('two saves started together both succeed; the later call wins and no temp file stays', async () => {
+    const a = seedText();
+    const b = seedMinusLast();
+    expect(a).not.toBe(b);
+    const [first, second] = await Promise.all([saveCatalogFile(dir, a), saveCatalogFile(dir, b)]);
+    expect(first).toEqual({ status: 'saved' });
+    expect(second).toEqual({ status: 'saved' });
+    expect(readFileSync(file(), 'utf8')).toBe(b);
+    expect(readdirSync(dir)).toEqual(['catalog.json']);
+  });
+
+  it('a load and a save started together on an empty folder neither fail', async () => {
+    const b = seedMinusLast();
+    const [loaded, saved] = await Promise.all([loadCatalogFile(dir), saveCatalogFile(dir, b)]);
+    expect(loaded.status).toBe('loaded');
+    expect(saved).toEqual({ status: 'saved' });
+    expect(readdirSync(dir)).toEqual(['catalog.json']);
+  });
+});
+
 describe('saveCatalogFile', () => {
   it('writes a valid catalog text exactly and leaves no temp file', async () => {
     const added = seedCatalog();
