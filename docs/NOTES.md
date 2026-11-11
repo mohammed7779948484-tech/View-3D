@@ -150,3 +150,8 @@ W48 × D20 × H72 in; single-sided units go on walls or back to back; entrance d
 - 2026-11-11 M2 issue 9: Arabic for every string, RTL around an unmirrored plan, messages translated by code (RoomProblem.values). Screenshots uploaded by CI (artifact screens-<os>).
 - 2026-11-11 M2 issue 11: RoomTrace JSON importer. The owner's sample: 7 corners (two gaps of 811 and 471 mm drawn as walls,
   possible doorways), window on wall 2 at 614.403 mm with its sill left to the owner, ceiling 2256 mm. Suite: 575 Vitest, 52 e2e.
+- 2026-11-11 Independent review of Milestone 2 (owner's request, read-only reviewer): 16 findings, 14 fixed test-first
+  (diagonal corner 0 crash, default menu losing work, file:// reads, zero/negative entries, closure note, translated file
+  errors, refused edits explained, zero-length wall, Save and close, Edit the walls, scan numbering/overhang/no-height/throw).
+  Not changed: "Save a copy" starts a fresh history (by design); asar integrity fuse deferred (needs its own spike).
+  Suite after the fixes: 602 Vitest, 64 e2e; CI green on Ubuntu, Windows and the installed app.
