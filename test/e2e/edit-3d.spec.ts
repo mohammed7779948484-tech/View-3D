@@ -116,7 +116,7 @@ test('clicking a box in 3D selects it, the panel edits work, and the selection i
   await expect(selectedPanel(page)).toBeVisible(FIRST);
   await expect(page.getByText('(b2)')).toBeVisible(FIRST);
   const x = page.getByRole('textbox', { name: 'X', exact: true });
-  await expect(x).toHaveValue('500'); // the default unit is cm
+  await expect(x).toHaveValue('500 cm'); // the default unit is cm
   await x.fill('600');
   await x.press('Enter');
   expect(await centerOf('b2')).toEqual({ x: 6_000_000, y: 2_500_000 });
