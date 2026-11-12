@@ -1,30 +1,30 @@
 {
   "l-shape-with-column": {
-    "sha256": "c448531123a44e6144c2757f4a96cb9bd76bb75e1d3dc23f99fc82a2d50a9692",
-    "length": 32805
+    "sha256": "4164a0ea9b9b199673ce0459da565cb0ce9bd79c89f9caf1431c6cf0bffbaa72",
+    "length": 32812
   },
   "angled-wall": {
-    "sha256": "5c2e6efc1ed1a8248a15e0b61a0137b3e35049cb41d7fbbdc585468052efa184",
-    "length": 21926
+    "sha256": "45c78953c8f2358bd5a24ead496fa6111ea0cf6e2717bc36ca3adf12f65c8e6a",
+    "length": 21937
   },
   "small-overfull": {
-    "sha256": "7717be7e8b393ea65bab5e785795f147d53f512a1311bacd6d4f956978e9f933",
-    "length": 19645
+    "sha256": "d93fa17b9f5cfa1655c69912551d254294d21e0f488a42d4c7badb033ca7de33",
+    "length": 19654
   },
   "protected-doorway-real-products": {
-    "sha256": "e9489ab5c301121206bdd2608c4c973be6e819eec04873e76b48c3bad50be67f",
-    "length": 34007
+    "sha256": "0d02af1a342083946e8b65e6ce16c2b1daecfb1647241aa47b627141154c4ea4",
+    "length": 34006
   },
   "angled-entrance": {
-    "sha256": "83cd7b3a3336824cdbdb572ae0fd00476a5f4da37389d2366ab6dc47a60e5873",
-    "length": 21879
+    "sha256": "e3947a165af7c3ea925fea3d0592960e6a855a4529be9c56b29c6ad9b9de9438",
+    "length": 21876
   },
   "walls-full": {
-    "sha256": "e223607f74bc799f257994322f2286d2d352e282f1b00393cd47aae197b57879",
-    "length": 24094
+    "sha256": "bbc911bddc069a2ffe26c8bfaab3be4826134905d0ddcfd7baeb7f82195cdd8a",
+    "length": 24104
   },
   "benchmark-15x10": {
-    "sha256": "650a0b8b64df984b1f1330fec5b790c67efb8edb24958ae865fb4e8dc1b8d936",
-    "length": 38783
+    "sha256": "77515a301ac3c05dde411774cf78f9fd247802401dad01c49e8b60b43b2fc006",
+    "length": 38752
   }
 }
