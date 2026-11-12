@@ -29,13 +29,22 @@
 | 10g score weights | done | 30/12/8/10/10/15/15; test 7c12389 (+ e457834); option 1 unchanged everywhere; lower options reorder in angled-entrance and benchmark; golden + gallery regenerated |
 | Review of PR 3 | 8 fixes | tests first (26fae27, 70a5128, 8f844bc); 908 Vitest + 112 e2e; open: pointer-cancel in a 3D drag left untested and unfixed |
 
-## 3. Next step
-Milestone 3 is complete except 10c/10d/10e (parked with measurements, NOTES answers 13/16/17).
-To resume 10d: `git apply docs/parked/m3-10d-open-floor-counter.patch`, run
-`pnpm vitest run test/layout/rotation.test.ts`, and make the island phase stable next to a
-free-standing block (the block itself is already rotation-stable). Then the glass-shop test needs
-`maxOptions` above 4, because the open-floor block ranks 5th there (it blocks the view from the door).
-Otherwise: Milestone 4 once the owner merges PR 3.
+## 3. Next step (owner, 2026-11-12: polish before Milestone 4)
+Owner rulings of 2026-11-12: rulings 4 (no drei) and 5 (plain CSS) are reversed: adopt shadcn/ui +
+Tailwind and drei, rebuild the UI with them. The place is a shop, never a "room", in every UI text
+(en and ar). Licences: personal local use, so an open-source licence is never a reason to refuse a
+tool; paid things still need his yes.
+Order:
+1. UI wording: "room" -> "shop" everywhere the owner reads (en + ar), tests updated first.
+2. 2D editor, found by hand: clicking the first corner does not close the outline; no line follows
+   the mouse while drawing; no grid or scale on the empty drawing area; "Finish" is disabled with no
+   reason (ceiling height missing); short walls' length labels overlap (imported scan, walls 3-5);
+   scan and capture messages say mm whatever the unit.
+3. RoomTrace: JSON v2 import works on the owner's sample. RoomTrace also exports DXF/PDF/USDZ
+   (forum source only); DXF import waits for a sample file from the owner.
+4. Rebuild the UI with shadcn/ui + Tailwind (layout, panels, dialogs) and the 3D with drei (doors
+   and windows cut into the walls, fixture names, better light).
+5. Score notes worded per term in the chosen language and unit (engine gives values).
 
 ## 4. Waiting for the owner
 - Run Diagnostics > Test 3D speed on the laptop once, send a photo (30 fps proof).
