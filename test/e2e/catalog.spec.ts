@@ -146,17 +146,18 @@ test('a product added with the default "Served from" has no serviceSide key', as
   expect('serviceSide' in readCatalog().products[9]!).toBe(false);
 });
 
-test('editing a seed product without touching "Served from" leaves no serviceSide key', async () => {
+test('editing a rear-served seed product without touching "Served from" keeps it served from the rear', async () => {
   const page = await openCatalog();
   const name = seed('nhf-6ft-extra-view-showcase').name;
   await expect.poll(productsOnDisk, FIRST).not.toBeNull();
   await page.getByRole('button', { name: `Edit ${name}`, exact: true }).click();
-  await expect(page.getByLabel('Served from', { exact: true })).toHaveValue('front', FIRST);
+  await expect(page.getByLabel('Served from', { exact: true })).toHaveValue('rear', FIRST);
   await page.getByLabel('Name', { exact: true }).fill(`${name} 2`);
   await page.getByRole('button', { name: 'Save product' }).click();
   await expect.poll(() => productsOnDisk()?.find((p) => p.id === 'nhf-6ft-extra-view-showcase')?.name, FIRST).toBe(`${name} 2`);
   const edited = readCatalog().products.find((p) => p.id === 'nhf-6ft-extra-view-showcase')!;
-  expect('serviceSide' in edited).toBe(false);
+  expect(edited.serviceSide).toBe('rear');
+  expect(edited.serviceSide).toBe(seed('nhf-6ft-extra-view-showcase').serviceSide);
 });
 
 test('a product with the height left empty is unknown and cannot be placed', async () => {
