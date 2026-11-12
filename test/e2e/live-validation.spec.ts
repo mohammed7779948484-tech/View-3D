@@ -5,7 +5,7 @@ import { protectedDoorway } from '../fixtures/rooms';
 import { testGondolaDouble, testProducts, testWallShelf } from '../fixtures/products';
 import { windowBlockedDoc, windowBlockedMessage } from '../fixtures/violation-cases';
 import { makeDoc, place, rectRoom } from '../rules/helpers';
-import { Harness, clickWorld, dragWorld } from './editor-helpers';
+import { Harness, clickWorld, dragWorld, unitSelect } from './editor-helpers';
 
 const h = new Harness();
 test.beforeEach(() => h.begin());
@@ -20,6 +20,9 @@ const fixture = (page: Page, id: string) => page.locator(`[data-placement="${id}
 test('a tall unit in front of a window: the sentence is on the list and the fixture is marked, in English and Arabic', async () => {
   const page = await h.launch();
   await h.openDocument(windowBlockedDoc);
+  // Problem texts follow the chosen unit (default cm). The engine words lengths in mm, and in mm the app text is
+  // byte-identical to the engine's message, which is what this test pins.
+  await unitSelect(page).selectOption({ label: 'mm' });
 
   const item = problems(page).locator('[data-rule="window-blocked"]');
   await expect(item).toHaveCount(1, FIRST);
