@@ -42,9 +42,9 @@ Order:
    scan and capture messages say mm whatever the unit.
 3. RoomTrace: JSON v2 import works on the owner's sample. RoomTrace also exports DXF/PDF/USDZ
    (forum source only); DXF import waits for a sample file from the owner.
-4. Rebuild the UI with shadcn/ui + Tailwind (layout, panels, dialogs) and the 3D with drei (doors
+4. DONE (936cb9a, 9041ec6) Rebuild the UI with shadcn/ui + Tailwind (layout, panels, dialogs) and the 3D with drei (doors
    and windows cut into the walls, fixture names, better light).
-5. Score notes worded per term in the chosen language and unit (engine gives values).
+5. DONE (2cd93ce) Score notes worded per term in the chosen language and unit (engine gives values).
 
 ## 4. Waiting for the owner
 - Run Diagnostics > Test 3D speed on the laptop once, send a photo (30 fps proof).

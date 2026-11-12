@@ -210,14 +210,14 @@ or the file named.
    plan to edit a fixture or read why it is red.
 5. (fixed: "Show option N on the plan") The four layout options cannot be seen before using one; options 1 and 2 had identical
    scores and notes, so they could not be told apart.
-6. (problems fixed; score notes still mm and English) Problems and score notes give lengths in mm whatever unit is chosen ("needs 915 mm clear"
+6. (fixed) Problems and score notes give lengths in mm whatever unit is chosen ("needs 915 mm clear"
    with the unit set to cm); the score notes stay English in Arabic.
 7. (fixed) In Arabic, a product name mixed with numbers is jumbled ("FT FULL VIEW LED lights Showcase، 72 4")
    and "350 cm" reads "cm 350".
 8. (fixed: angles start at 90) The wall table starts with empty angle fields: a plain rectangle needs "90" typed four times.
 9. (fixed: the problems are listed in the options panel and under the plan) Running the layout in a room without an entrance says only "The room has problems"; the
    problem itself is at the very bottom of the page.
-10. The 3D view shows no doors or windows.
+10. (fixed) The 3D view shows no doors or windows.
 11. (fixed) The first door of a room without an entrance now starts as the entrance.
 
 ## Log
@@ -299,3 +299,4 @@ or the file named.
 - 2026-11-12 UX round 2: option preview on the plan, problem lengths in the chosen unit, Arabic isolation of lengths and product names, wall-table angles start at 90, room problems named and under the plan, first door is the entrance (6 e2e + 2 test updates). 915 Vitest, 125 e2e.
 - 2026-11-12 Owner: adopt shadcn/ui + Tailwind and drei (reverses rulings 4 and 5) and rebuild the UI with them before M4; call it a shop, not a room; licences are no obstacle for personal local use (paid things still need his yes). Plan in handoff.md section 3.
 - 2026-11-12 "Shop" in every text the owner reads (en, ar, engine messages). Drawing by mouse fixed (close on first corner, line follows the mouse, grid and scale, Finish explains, labels never overlap, scan findings in the chosen unit). RoomTrace JSON v2 import checked on the owner's sample. 915 Vitest, 131 e2e.
+- 2026-11-12 UI rebuilt on Tailwind + shadcn/ui (start screen, title bar, toolbar, cards; same roles and names, so the e2e suite proves it); 3D with drei: walls open at doors and windows, fixture names, contact shadows; score notes worded per code in the chosen language and unit. 919 Vitest, 136 e2e.
