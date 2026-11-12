@@ -10,6 +10,7 @@ import {
   parseDesignDocument,
 } from '../../src/core/index';
 import type { DesignDocument, ParseResult } from '../../src/core/index';
+import { testShowcaseRear } from '../fixtures/products';
 
 const MM = 1000;
 
@@ -363,6 +364,35 @@ describe('ProductSchema: serviceSide (which side the staff serve a fixture from)
       expect(result.document).toEqual(raw);
       expect(result.document.schemaVersion).toBe(1);
       for (const product of result.document.products) expect('serviceSide' in product).toBe(false);
+    }
+  });
+});
+
+describe("ProductSchema: serviceSide 'rear' only for freestanding products", () => {
+  const base = validDocument().products[0]!;
+  const as = (placement: string, serviceSide?: string) => ({
+    ...base,
+    placement,
+    ...(serviceSide === undefined ? {} : { serviceSide }),
+  });
+
+  it("refuses 'rear' on a wall product (it must stand back to a wall, a rear staff zone forbids that)", () => {
+    expect(ProductSchema.safeParse(as('wall', 'rear')).success).toBe(false);
+  });
+
+  it("refuses 'rear' on an island and on a counter product (it would be silently ignored)", () => {
+    expect(ProductSchema.safeParse(as('island', 'rear')).success).toBe(false);
+    expect(ProductSchema.safeParse(as('counter', 'rear')).success).toBe(false);
+  });
+
+  it("accepts 'rear' on a freestanding product (testShowcaseRear)", () => {
+    expect(ProductSchema.safeParse(testShowcaseRear).success).toBe(true);
+  });
+
+  it("accepts 'front' or no serviceSide for every placement", () => {
+    for (const placement of ['wall', 'island', 'counter', 'freestanding']) {
+      expect(ProductSchema.safeParse(as(placement, 'front')).success, placement).toBe(true);
+      expect(ProductSchema.safeParse(as(placement)).success, placement).toBe(true);
     }
   });
 });

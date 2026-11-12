@@ -189,6 +189,31 @@ describe('snapToWall: hand cases', () => {
   });
 });
 
+describe('snapToWall: only a wall the unit overlaps along its length (L-shaped room)', () => {
+  // Metres: (0,0) (10,0) (10,5) (5,5) (5,10) (0,10). Wall 2 runs (10,5) -> (5,5), 5 m long, direction (-1, 0).
+  const lRoom: Room = {
+    ...rectRoom(10000, 10000),
+    outline: [at(0, 0), at(10000, 0), at(10000, 5000), at(5000, 5000), at(5000, 10000), at(0, 10000)],
+    openings: [],
+  };
+  const unit = { widthUm: mm(1000), depthUm: mm(600), rotationUdeg: 180_000_000 };
+
+  it('a unit at (2 m, 4.7 m) is 7.5 m along wall 2 past its end (5 m): it must not snap to wall 2', () => {
+    // along = (2000 - 10000) * -1 = 8000 mm; along - 500 = 7500 > 5000, so no overlap.
+    const snap = snapToWall(lRoom, { center: at(2000, 4700), ...unit }, defaultConfig);
+    expect(snap?.wallIndex).not.toBe(2);
+  });
+
+  it('a unit at (7 m, 4.7 m) overlaps wall 2 (along 3000 mm) and still snaps to it', () => {
+    // Back flush on y = 5000: centre y = 5000 - 600 / 2 = 4700; wall angle 180 degrees.
+    expect(snapToWall(lRoom, { center: at(7000, 4700), ...unit }, defaultConfig)).toEqual({
+      center: at(7000, 4700),
+      rotationUdeg: 180_000_000,
+      wallIndex: 2,
+    });
+  });
+});
+
 describe('snapBackToBack: hand cases', () => {
   // Partner 'p': wall shelf 1200 x 400 mm at (3000, 2000), rotation 0; back edge y = 1800, x 2400..3600.
   const partnerDoc = makeDoc(rectRoom(20000, 20000), [testWallShelf, testTower], [place('p', testWallShelf, 3000, 2000, 0)]);
@@ -255,6 +280,44 @@ describe('snapBackToBack: hand cases', () => {
     ]);
     const t = snapBackToBack(rect(testWallShelf, 3000, 1600, 180_000_000), placedFixtures(tie, defaultConfig), defaultConfig);
     expect(t?.partnerId).toBe('m');
+  });
+});
+
+describe('snapBackToBack: review fixes', () => {
+  // Partner p1: a 1000 x 400 mm wall unit at (0, 0), rotation 0; its back plane is y = -200 mm.
+  const unit = wallUnit(1000, 400);
+  const rectAt = (xMm: number, yMm: number, rotationUdeg: number) => ({
+    center: { x: mm(xMm), y: mm(yMm) },
+    widthUm: mm(1000),
+    depthUm: mm(400),
+    rotationUdeg,
+  });
+
+  it('a mover 8 m along the partner line does not snap (no overlap along the back)', () => {
+    // Facing 180 degrees at (8000, -400): its back is at y = -400 + 200 = -200, on the plane, but the
+    // offset along the line (8000) is not below (1000 + 1000) / 2 = 1000.
+    const doc = makeDoc(rectRoom(20000, 20000), [unit], [placement('p1', unit, { x: 0, y: 0 }, 0)]);
+    expect(snapBackToBack(rectAt(8000, -400, 180_000_000), placedFixtures(doc, defaultConfig), defaultConfig)).toBeNull();
+  });
+
+  it('a mover 900 mm along the line still snaps (offset 900 < 1000), centred on the partner', () => {
+    const doc = makeDoc(rectRoom(20000, 20000), [unit], [placement('p1', unit, { x: 0, y: 0 }, 0)]);
+    expect(snapBackToBack(rectAt(900, -400, 180_000_000), placedFixtures(doc, defaultConfig), defaultConfig)).toEqual({
+      center: { x: 0, y: mm(-400) },
+      rotationUdeg: 180_000_000,
+      partnerId: 'p1',
+    });
+  });
+
+  it('skips a partner whose back is already covered by another single-sided unit', () => {
+    // p2 stands back to back behind p1 (centre y = -400, rotation 180); p1's back is covered.
+    const doc = makeDoc(rectRoom(20000, 20000), [unit], [
+      placement('p1', unit, { x: 0, y: 0 }, 0),
+      placement('p2', unit, { x: 0, y: mm(-400) }, 180_000_000),
+    ]);
+    const snap = snapBackToBack(rectAt(300, -400, 180_000_000), placedFixtures(doc, defaultConfig), defaultConfig);
+    expect(snap?.partnerId).not.toBe('p1');
+    expect(snap).toBeNull();
   });
 });
 
