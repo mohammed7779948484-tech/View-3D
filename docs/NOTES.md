@@ -167,7 +167,13 @@ each answer is Claude's, with the evidence, and the owner can overrule any of th
   using all 6 parts of the floor goes ahead of the one using 4; benchmark: an option using all 9
   parts enters at 3). Measured by comparing every option's placements before and after.
 - 16: (a), the open-floor checkout block in place of the third counter wall (no extra time). Built
-  next; it is kept only if the rotated-shop test and the 3 s benchmark stay green, else it stays parked.
+  and measured on 2026-11-12, then parked again: the block itself lands in the same place in a turned
+  shop, but the island rows placed after it do not (l-shape turned 17 degrees: the same strategy
+  scores 86.1 instead of 84.3, other rows), so the rotation test fails in 5 cases. Shifting the
+  block's grid 1 mm off whole millimetres did not help. In the glass-fronted shop the block is
+  nearer (2354 mm against 3163) but ranks 5th: it stands in the view from the door. The code and its
+  tests are kept as `docs/parked/m3-10d-open-floor-counter.patch` (apply with `git apply`). Needed
+  first: island rows that do not depend on 1 um rounding next to a free-standing block.
 - 13: wait until a real shop shows the engine leaving out something a person could fit.
 - 17: after 16; built only if a real shop shows a split checkout block at an angled corner.
 
@@ -260,3 +266,4 @@ W48 × D20 × H72 in; single-sided units go on walls or back to back; entrance d
 - 2026-11-12 Review of PR 3 (one reviewer, every claim checked by a run): 8 real bugs fixed test-first. Snaps reached across the room (back to back 8 m along a line; wall snap in L-shaped rooms), old layout options could be used on another room, the catalog was read once, a used option kept old product copies, the 3D camera reset on every edit, an orbit drag placed a product, and rear service was accepted for non-freestanding kinds. Not fixed: pointer-cancel during a 3D drag (no deterministic test) and trig outside src/geometry (style). 908 Vitest, 112 e2e.
 - 2026-11-12 Questions 13-17 decided by Claude on the owner's request (answers above). 10g done: weights 30/12/8/10/10/15/15, test first (7c12389, architecture test e457834); option 1 unchanged in every shop, golden hashes and gallery regenerated on purpose. 912 Vitest, 112 e2e.
 - 2026-11-12 10f on real products: three counter showcases served from the back (judged from the website photos at the owner's request; flagged). The real-products shop changes: option 1 still places 9 of 12 with the counter 2351 mm from the door, now with staff space behind the showcases; options 2 and 3 changed (gallery regenerated).
+- 2026-11-12 M3 10d (a) built and parked again: rotation test red in 5 cases (island rows after an open-floor block differ in a turned shop); patch kept in docs/parked/.
