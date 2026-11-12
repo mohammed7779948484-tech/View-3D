@@ -75,12 +75,17 @@ export function App() {
   const [unit, setUnit] = useState<DisplayUnit>('cm');
   const [editingWalls, setEditingWalls] = useState(false);
   const [scan, setScan] = useState<Extract<ScanImportResult, { ok: true }> | null>(null);
-  const catalogProducts = useCatalogProducts();
+  // Read again each time the catalog screen closes, so its changes reach the panels without a restart.
+  const [catalogVersion, setCatalogVersion] = useState(0);
+  const catalogProducts = useCatalogProducts(catalogVersion);
   const [picked, setPicked] = useState<Picked | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [view, setView] = useState<'2d' | '3d'>('2d');
-  /** The last automatic layout's options, to pick from. */
-  const [layoutResult, setLayoutResult] = useState<LayoutResult | null>(null);
+  /** The last automatic layout's options and the room they were made for. */
+  const [layout, setLayout] = useState<{ result: LayoutResult; room: Room } | null>(null);
+  // Offered only while the project still has that very room (immer keeps it the same object until
+  // it is edited; another project, or an edited room, is a different one; undo brings it back).
+  const layoutResult = layout !== null && project !== null && layout.room === project.room ? layout.result : null;
   // Live validation: every rule, on every change of the document (about 25 ms for 40 fixtures).
   // A broken room is listed by the room checks, not here.
   const violations = useMemo(() => (project === null ? [] : validateLayout(project).filter((v) => v.rule !== 'invalid-room')), [project]);
@@ -250,7 +255,15 @@ export function App() {
           />
         )}
         {screen === 'diagnostics' && <DiagnosticsPage onBack={() => setScreen('start')} />}
-        {screen === 'catalog' && <CatalogScreen unit={unit} onBack={() => setScreen('start')} />}
+        {screen === 'catalog' && (
+          <CatalogScreen
+            unit={unit}
+            onBack={() => {
+              setCatalogVersion((v) => v + 1);
+              setScreen('start');
+            }}
+          />
+        )}
         {screen === 'start' && (
           <section className="start">
             <p>{t('start.noProject')}</p>
@@ -408,7 +421,7 @@ export function App() {
           }
         />
         <FixturesPanel products={catalogProducts} picked={picked} onPick={setPicked} />
-        <AutoLayoutPanel products={catalogProducts} document={project} onResult={(text) => setLayoutResult(JSON.parse(text) as LayoutResult)} />
+        <AutoLayoutPanel products={catalogProducts} document={project} onResult={(text, room) => setLayout({ result: JSON.parse(text) as LayoutResult, room })} />
         {layoutResult !== null && <OptionPicker result={layoutResult} onUse={(option) => editFixtures(useLayoutOption(option))} />}
         {selected !== undefined && (
           <FixtureInspector

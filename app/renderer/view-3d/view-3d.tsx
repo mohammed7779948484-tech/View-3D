@@ -34,8 +34,8 @@ export type CameraPreset = 'top' | 'corner';
 
 type Frame = { centre: { x: number; z: number }; span: number };
 
-function frameOf(doc: DesignDocument): Frame {
-  const pts = doc.room.outline.map(planToScene);
+function frameOf(outline: readonly Point[]): Frame {
+  const pts = outline.map(planToScene);
   const xs = pts.map((p) => p.x);
   const zs = pts.map((p) => p.z);
   return {
@@ -58,6 +58,8 @@ function Room({ doc, onFloorClick }: { doc: DesignDocument; onFloorClick?: (poin
       <mesh
         rotation-x={-Math.PI / 2}
         onClick={(e) => {
+          // A drag on the floor turns the camera; only a click (moved at most 2 px) places.
+          if (e.delta > 2) return;
           const p = onFloorClick === undefined ? null : floorPoint(e);
           if (p !== null) onFloorClick?.(p);
         }}
@@ -85,7 +87,10 @@ function Room({ doc, onFloorClick }: { doc: DesignDocument; onFloorClick?: (poin
   );
 }
 
-function CameraRig({ frame, preset, controls }: { frame: Frame; preset: CameraPreset; controls: { current: OrbitControls | null } }) {
+/** Which preset to show; `n` changes on every button press, so pressing the active one again re-aims. */
+type Aim = { preset: CameraPreset; n: number };
+
+function CameraRig({ frame, aim, controls }: { frame: Frame; aim: Aim; controls: { current: OrbitControls | null } }) {
   const camera = useThree((s) => s.camera);
   const gl = useThree((s) => s.gl);
   const invalidate = useThree((s) => s.invalidate);
@@ -95,14 +100,16 @@ function CameraRig({ frame, preset, controls }: { frame: Frame; preset: CameraPr
     controls.current = c;
     return () => c.dispose();
   }, [camera, gl, invalidate]);
+  // Re-aimed only when the room's extent or the pressed preset changes, never by a fixture edit.
+  const { x, z } = frame.centre;
+  const { span } = frame;
   useEffect(() => {
-    const { centre, span } = frame;
-    if (preset === 'top') camera.position.set(centre.x, span * 1.3, centre.z + 0.001);
-    else camera.position.set(centre.x + span * 0.8, span * 0.75, centre.z + span * 0.8);
-    controls.current?.target.set(centre.x, 0, centre.z);
+    if (aim.preset === 'top') camera.position.set(x, span * 1.3, z + 0.001);
+    else camera.position.set(x + span * 0.8, span * 0.75, z + span * 0.8);
+    controls.current?.target.set(x, 0, z);
     controls.current?.update();
     invalidate();
-  }, [camera, frame, preset, invalidate]);
+  }, [camera, x, z, span, aim, invalidate]);
   return null;
 }
 
@@ -155,18 +162,20 @@ function BoxEditing({ boxes, onSelect, onMove, controls, children }: { boxes: re
 export function View3D({ document, problemIds, onSelect, onMove, onPlace }: Props) {
   const { t } = useTranslation();
   const [webgl] = useState(() => graphicsName() !== null);
-  const [preset, setPreset] = useState<CameraPreset>('corner');
+  const [aim, setAim] = useState<Aim>({ preset: 'corner', n: 0 });
+  const press = (preset: CameraPreset): void => setAim((a) => ({ preset, n: a.n + 1 }));
   const controls = useRef<OrbitControls | null>(null);
   const boxes = useMemo(() => sceneBoxes(document), [document]);
-  const frame = useMemo(() => frameOf(document), [document]);
+  const outline = document.room.outline;
+  const frame = useMemo(() => frameOf(outline), [outline]);
   if (!webgl) return <p role="alert">{t('view3d.noWebgl')}</p>;
   return (
     <div className="view-3d">
       <div className="actions">
-        <button type="button" onClick={() => setPreset('top')}>
+        <button type="button" onClick={() => press('top')}>
           {t('view3d.top')}
         </button>
-        <button type="button" onClick={() => setPreset('corner')}>
+        <button type="button" onClick={() => press('corner')}>
           {t('view3d.corner')}
         </button>
       </div>
@@ -183,7 +192,7 @@ export function View3D({ document, problemIds, onSelect, onMove, onPlace }: Prop
           ) : (
             <FixtureBoxes boxes={boxes} instanced shadows={false} problemIds={problemIds} />
           )}
-          <CameraRig frame={frame} preset={preset} controls={controls} />
+          <CameraRig frame={frame} aim={aim} controls={controls} />
           <SceneProbe />
         </Canvas>
       </div>

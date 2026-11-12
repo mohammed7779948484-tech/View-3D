@@ -103,14 +103,19 @@ export const together =
   };
 
 /**
- * Takes an automatic layout option: its placements replace the document's, and its products that
- * the document does not have yet are embedded. Room, id and name stay. One undo step.
+ * Takes an automatic layout option: its placements replace the document's, and every product they
+ * use is embedded as the option's copy (the one the engine laid out, which may be newer than the
+ * document's). Other embedded products, the room, id and name stay. One undo step.
  */
 export const useLayoutOption =
   (option: { document: DesignDocument }): Recipe =>
   (draft) => {
     draft.placements = structuredClone(option.document.placements);
+    const used = new Set(option.document.placements.map((p) => p.productId));
     for (const product of option.document.products) {
-      if (!draft.products.some((p) => p.id === product.id)) draft.products.push(structuredClone(product));
+      if (!used.has(product.id)) continue;
+      const at = draft.products.findIndex((p) => p.id === product.id);
+      if (at === -1) draft.products.push(structuredClone(product));
+      else draft.products[at] = structuredClone(product);
     }
   };
