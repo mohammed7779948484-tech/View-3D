@@ -4,7 +4,7 @@
 - Milestone 3 (plan: `docs/plans/M2-M4-plan.md` section 2, with the owner's rulings of 2026-11-11).
 - Branch `claude/milestone-2-delivery-wgd3q6` (restarted from `main` after PR #2 merged). Draft PR: see the PR table.
 - Draft PR: https://github.com/mohammed7779948484-tech/View-3D/pull/3
-- Last commit: the 10e checkpoint (see `git log -1`).
+- Last commit: the 10g checkpoint (see `git log -1`). Questions 13-17 decided 2026-11-12 (NOTES, "Answered on 2026-11-12").
 
 ## 2. Status
 | Item | Status | Note |
@@ -22,17 +22,16 @@
 | 8 3D select/move | proven | 4 e2e; 2D edit = 3D edit, byte-identical; CI green |
 | 9 model contract | proven | 15 Vitest; three's loader agrees; CI green |
 | 10b ranking | proven | 24 Vitest; one option pair swapped (gallery); CI green |
-| 10c swap and relocate | parked | no shop leaves room for more (measured); owner question 13 |
-| 10d free-standing counter | parked | trial measured (gains in 2 shops, +0.6 s benchmark, rounding-sensitive pick); owner question 16 |
-| 10e L-block without right angle | parked | no shop gains in its best options (measured); depends on 10d; owner question 17 |
-| 10f service side | built, parked | proven, CI green (Ubuntu, Windows, installer); no real product set: owner question 14 |
-| 10g score weights | prepared, parked | proposal 30/12/8/10/10/15/15 moves nothing in the test shops; two trade-off pairs in snapshots/README.md; owner question 15 |
+| 10c swap and relocate | parked (decided: wait) | no shop leaves room for more (measured); waits for a real shop that shows it |
+| 10d free-standing counter | next (decided: a) | trial measured (gains in 2 shops, +0.6 s benchmark, rounding-sensitive pick); rebuild in place of the third counter wall |
+| 10e L-block without right angle | parked (decided: after 10d) | no shop gains in its best options (measured) |
+| 10f service side | done | proven, CI green; no real product set: the website does not say which open from the back (answer 14) |
+| 10g score weights | done | 30/12/8/10/10/15/15; test 7c12389 (+ e457834); option 1 unchanged everywhere; lower options reorder in angled-entrance and benchmark; golden + gallery regenerated |
 | Review of PR 3 | 8 fixes | tests first (26fae27, 70a5128, 8f844bc); 908 Vitest + 112 e2e; open: pointer-cancel in a 3D drag left untested and unfixed |
 
 ## 3. Next step
-Every item is proven or parked with an owner question (13 to 17). Next: the owner's answers. If
-he picks new weights (15), change `SCORE_WEIGHTS`, regenerate snapshots and golden hashes as an
-intended change. If the owner answers question 16 with (a): rebuild 10d. The trial: `placeFreeCashWrap` in
+Next: rebuild 10d as answer 16 (a): the open-floor block replaces the third counter wall, so the
+number of searched variants and the time stay the same. Keep it only if rotation + benchmark stay green. The trial: `placeFreeCashWrap` in
 `src/layout/cash-wrap.ts` tries counter + showcases in one line, quarter turns from the entrance
 wall (facing it first, then side on, then back to it), 200 mm grid up to 5 m in front of the
 entrance, nearest first; `search.ts` adds a 'free' counter candidate and `LayoutStrategy.counterFree`.
@@ -43,7 +42,8 @@ The search must then replace its kept arrangement only when the score is better 
 
 ## 4. Waiting for the owner
 - Run Diagnostics > Test 3D speed on the laptop once, send a photo (30 fps proof).
-- Open questions in `docs/NOTES.md` (13: 10c; 14: which products are served from the back; 15: score weights, two pairs to pick; 16: open-floor counter, a/b/c; 17: 10e).
+- Which real products open from the back (he sets it in the catalog form when he checks a unit).
+- Merging PR 3.
 
 ## 5. How to resume
 ```bash

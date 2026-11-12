@@ -166,8 +166,8 @@ sub-item gets its own failing test and its own pair of commits.
 - **10e. L-shaped checkout blocks without a right-angled inside corner:** the block turns in
   open floor or at an angled corner.
 - **10f. Product "service side".** A new product field saying whether the fixture is served
-  from the front or from the rear. Rear-access showcases (for example the Extra View showcase,
-  which has rear sliding doors) need staff space behind them and must **never** stand with their
+  from the front or from the rear. Rear-access showcases (the website does not say which ones
+  are; checked 2026-11-12) need staff space behind them and must **never** stand with their
   back to a wall. This touches the schema (`src/core`, optional `serviceSide: 'front' | 'rear'`),
   the access zones (`src/rules`: a staff zone behind a rear-access product; no separate rule,
   owner ruling 2026-11-11), the oracle and the engine. Which real products are rear-access is

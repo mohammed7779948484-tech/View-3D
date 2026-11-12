@@ -23,17 +23,18 @@ the one with a slightly higher score but an incomplete block. Option 1 is the sa
 |---|---|
 | ![before](before-m3/l-shape-with-column/option-2.svg) | ![after](layouts/l-shape-with-column/option-2.svg) |
 
-### 10g, score weights (proposal; the owner decides)
+### 10g, score weights (decided 2026-11-12)
 
-The score only orders options that place the same number of fixtures with the same checkout block
-(10b ranks those first). Measured on every test shop: the proposed weights below move no fixture and
-change no option's rank; only the printed score changes. The weights matter where two options trade
-one quality against another. There are two such pairs in the test shops. Which one of each pair
-would you show a customer first?
+Weights: placed 30, counter near the entrance 12, counter faces the entrance 8, showcases with the
+counter 10, islands in rows 10, even use of the floor 15, open view from the entrance 15 (before:
+45/12/8/10/10/10/5). The score only orders options that place the same number of fixtures with the
+same checkout block (10b ranks those first). Option 1 is the same in every test shop; lower options
+reorder in two shops not drawn here (angled entrance, benchmark), where an option using the whole
+floor moves up. The two pairs below keep their order (`test/layout/score-weights.test.ts`).
 
 **Pair 1, shop with an angled wall.** Option 1 keeps 4140 mm clear straight ahead of the door but
 leaves one part of the floor empty (7 of 8). Option 2 uses every part (8 of 8) but has only
-2190 mm clear ahead of the door. Today option 1 ranks first.
+2190 mm clear ahead of the door. Option 1 ranks first.
 
 | Option 1 (open view) | Option 2 (even floor) |
 |---|---|
@@ -41,8 +42,8 @@ leaves one part of the floor empty (7 of 8). Option 2 uses every part (8 of 8) b
 
 **Pair 2, shop with a back-room door.** Option 2 has the counter 2351 mm from the entrance and
 fixtures in 6 of 9 parts of the floor, with 2632 mm clear ahead of the door. Option 3 has the
-counter 3859 mm away and fixtures in 5 of 9 parts, but 3516 mm clear ahead of the door. Today
-option 2 ranks first.
+counter 3859 mm away and fixtures in 5 of 9 parts, but 3516 mm clear ahead of the door. Option 2
+ranks first.
 
 | Option 2 (counter near, even floor) | Option 3 (open view) |
 |---|---|

@@ -73,10 +73,9 @@ Running log and decisions. Checkpointed after every step so work survives a rest
 - No random search: every option is the result of fixed rules, so it can be explained.
 - The planned "local improvement pass" is the row centring only. Swapping or re-ordering fixtures
   to squeeze more in is not implemented; the over-full report says what did not fit instead.
-- Score weights, as in `SCORE_WEIGHTS` in the engine since the first review (45 placed, 12 counter
-  near entrance, 8 counter facing, 10 showcases near counter, 10 gondolas in rows, 10 even use of
-  the floor, 5 open entrance; the 50/15/10/10/10/5 written here before was out of date), are our
-  own first guess, to be tuned with the owner (M3 issue 10g).
+- Score weights (`SCORE_WEIGHTS`), decided 2026-11-12 (M3 issue 10g, question 15): 30 placed, 12
+  counter near entrance, 8 counter facing, 10 showcases near counter, 10 gondolas in rows, 15 even
+  use of the floor, 15 open entrance. Before: 45/12/8/10/10/10/5.
 
 ## Open questions for the owner
 1. Wood gondola ("Gondola wood 4 feet"): what is the OUTER width? The site gives only the inside
@@ -152,6 +151,23 @@ Running log and decisions. Checkpointed after every step so work survives a rest
     an incomplete block. Turning the block in open floor needs the open-floor block of question 16
     first. Recommended: decide 16 first; then 10e is built only if one of your shops shows a split
     checkout block next to an angled corner.
+
+Answered on 2026-11-12 (questions 13 to 17). The owner asked Claude to decide after checking;
+each answer is Claude's, with the evidence, and the owner can overrule any of them.
+- 14: no product is set to "served from the back". The website (read 2026-11-12, the 4 showcase
+  pages) says nothing about rear doors or which side opens; the "rear sliding doors" for 6FT EXTRA
+  VIEW in the M3 plan was never from the site. Product data is not invented, so all stay front.
+  The owner sets it in the catalog form (freestanding products only) when he checks a real unit.
+- 15: weights 30/12/8/10/10/15/15. Both trade-off pairs keep today's order (open view at the door
+  before the last empty part of the floor; counter near the entrance before a wider view), which
+  is usual shop practice. Correction to the earlier claim "moves nothing": option 1 is unchanged in
+  every test shop, but lower options reorder in two (angled-entrance options 2 and 3 swap: the one
+  using all 6 parts of the floor goes ahead of the one using 4; benchmark: an option using all 9
+  parts enters at 3). Measured by comparing every option's placements before and after.
+- 16: (a), the open-floor checkout block in place of the third counter wall (no extra time). Built
+  next; it is kept only if the rotated-shop test and the 3 s benchmark stay green, else it stays parked.
+- 13: wait until a real shop shows the engine leaving out something a person could fit.
+- 17: after 16; built only if a real shop shows a split checkout block at an angled corner.
 
 Answered on 2026-11-11 (Milestone 2 detail plan): order 1, 2, 3, 4, 5, 8, 10, 6, 7, 9, 11; strings
 through t() from issue 1; closure check gives the smallest suspect set; document null until a room
@@ -240,3 +256,4 @@ W48 × D20 × H72 in; single-sided units go on walls or back to back; entrance d
 - 2026-11-11 M3 issue 10d: trial of an open-floor checkout block (facing the entrance first, then side on, then back to it; 200 mm grid, 5 m reach). Measured gains in 2 of 5 shops, +0.6 s on the benchmark, rounding-sensitive search picks (rotation test). Parked with question 16; failing tests kept on the local branch parked/m3-10d (container-local; the spec is in this note and the handoff).
 - 2026-11-11 M3 issue 10e: measured, parked (question 17): every shop with an angled corner already has a complete checkout block in its best options; the open-floor turn depends on 10d.
 - 2026-11-12 Review of PR 3 (one reviewer, every claim checked by a run): 8 real bugs fixed test-first. Snaps reached across the room (back to back 8 m along a line; wall snap in L-shaped rooms), old layout options could be used on another room, the catalog was read once, a used option kept old product copies, the 3D camera reset on every edit, an orbit drag placed a product, and rear service was accepted for non-freestanding kinds. Not fixed: pointer-cancel during a 3D drag (no deterministic test) and trig outside src/geometry (style). 908 Vitest, 112 e2e.
+- 2026-11-12 Questions 13-17 decided by Claude on the owner's request (answers above). 10g done: weights 30/12/8/10/10/15/15, test first (7c12389, architecture test e457834); option 1 unchanged in every shop, golden hashes and gallery regenerated on purpose. 912 Vitest, 112 e2e.
