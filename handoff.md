@@ -1,77 +1,125 @@
-# Handoff: Milestone 3
+# Handoff
 
-## 1. Where we are
-- Milestone 3 (plan: `docs/plans/M2-M4-plan.md` section 2, with the owner's rulings of 2026-11-11).
-- Branch `claude/milestone-2-delivery-wgd3q6` (restarted from `main` after PR #2 merged). Draft PR: see the PR table.
-- Draft PR: https://github.com/mohammed7779948484-tech/View-3D/pull/3
-- Last commit: the 10g checkpoint (see `git log -1`). Questions 13-17 decided 2026-11-12 (NOTES, "Answered on 2026-11-12").
+## 1. Goal
 
-## 2. Status
-| Item | Status | Note |
-|---|---|---|
-| 10a engine split | proven | golden hashes + snapshots unchanged; CI green Ubuntu + Windows |
-| Spike: 3D (three + R3F, WebGL) | proven | CI green Ubuntu + Windows; laptop number waits for the owner's run |
-| Spike: worker from file:// | proven | worker bytes = Node bytes; CI green |
-| 1 catalog | proven | 35 Vitest + 8 e2e; CI green |
-| 2 place/move/rotate 2D | proven | 26 Vitest + 12 e2e (incl. 6 drag regression); CI green Ubuntu, Windows, installer |
-| 3 live validation | proven | 70 Vitest + 3 e2e; 16.2 ms for 40 fixtures; CI green |
-| 4 snapping | proven | 15 Vitest + 2 e2e; CI green |
-| 5 worker | proven | 9 Vitest + 2 e2e; same bytes as Node; CI green |
-| 6 option picker | proven | 52 Vitest + 3 e2e; CI green |
-| 7 3D view | proven | 4 e2e; boxes = document within 1 mm; CI green |
-| 8 3D select/move | proven | 4 e2e; 2D edit = 3D edit, byte-identical; CI green |
-| 9 model contract | proven | 15 Vitest; three's loader agrees; CI green |
-| 10b ranking | proven | 24 Vitest; one option pair swapped (gallery); CI green |
-| 10c swap and relocate | parked (decided: wait) | no shop leaves room for more (measured); waits for a real shop that shows it |
-| 10d free-standing counter | parked (a built, rotation red) | patch in docs/parked/m3-10d-open-floor-counter.patch (code + tests); island rows after an open-floor block differ in a turned shop |
-| 10e L-block without right angle | parked (decided: after 10d) | no shop gains in its best options (measured) |
-| 10f service side | done | proven; the three counter showcases served from the back, judged from the website photos (answer 14); the Stand showcase stays front |
-| 10g score weights | done | 30/12/8/10/10/15/15; test 7c12389 (+ e457834); option 1 unchanged everywhere; lower options reorder in angled-entrance and benchmark; golden + gallery regenerated |
-| Review of PR 3 | 8 fixes | tests first (26fae27, 70a5128, 8f844bc); 908 Vitest + 112 e2e; open: pointer-cancel in a 3D drag left untested and unfixed |
+View-3D is a laptop-only, fully local Electron app for New Horizon Fixture (one user, the shop
+owner). He draws or imports a customer's shop, places real fixtures by hand or automatically, and
+shows the result in 2D and 3D. Later he exports plans, quotes and images (`CLAUDE.md`,
+`docs/plans/M2-M4-plan.md`).
 
-## 3. Next step (owner, 2026-11-12: polish before Milestone 4)
-Owner rulings of 2026-11-12: rulings 4 (no drei) and 5 (plain CSS) are reversed: adopt shadcn/ui +
-Tailwind and drei, rebuild the UI with them. The place is a shop, never a "room", in every UI text
-(en and ar). Licences: personal local use, so an open-source licence is never a reason to refuse a
-tool; paid things still need his yes.
-Order:
-1. DONE (3cb6cfc) UI wording: "room" -> "shop" everywhere the owner reads (en + ar), tests updated first.
-2. DONE 2D editor, found by hand: clicking the first corner does not close the outline; no line follows
-   the mouse while drawing; no grid or scale on the empty drawing area; "Finish" is disabled with no
-   reason (ceiling height missing); short walls' length labels overlap (imported scan, walls 3-5);
-   scan and capture messages say mm whatever the unit.
-3. RoomTrace: JSON v2 import works on the owner's sample. RoomTrace also exports DXF/PDF/USDZ
-   (forum source only); DXF import waits for a sample file from the owner.
-4. DONE (936cb9a, 9041ec6) Rebuild the UI with shadcn/ui + Tailwind (layout, panels, dialogs) and the 3D with drei (doors
-   and windows cut into the walls, fixture names, better light).
-5. DONE (2cd93ce) Score notes worded per term in the chosen language and unit (engine gives values).
+The goal right now is to close Milestone 3 and its polish round, then start Milestone 4 (outputs:
+bill of materials, quote, dimensioned PDF sheet, 4K images, project versions, export flows).
+Milestone 4 starts only after the owner merges PR 3 and approves the detailed M4 plan.
 
-## 4. Waiting for the owner
-- Run Diagnostics > Test 3D speed on the laptop once, send a photo (30 fps proof).
-- Which real products open from the back (he sets it in the catalog form when he checks a unit).
-- Merging PR 3.
+## 2. Current state
 
-## 5. How to resume
+- **Branch and PR:**
+  - Branch `claude/milestone-2-delivery-wgd3q6`; head `403c70e` is pushed.
+  - Draft PR: https://github.com/mohammed7779948484-tech/View-3D/pull/3. The session is subscribed to it. Only the owner merges.
+- **Checks:**
+  - 919 Vitest, 136 e2e and typecheck are clean.
+  - CI is green on `403c70e`: Ubuntu, Windows, and the Windows installer build and install.
+- **Milestone 3 done:**
+  - Issues 1 to 9, 10a, 10b, 10f and 10g.
+  - The review of PR 3: 8 bugs fixed.
+  - Two hands-on UX rounds: plan readability, option preview, units, Arabic, drawing by mouse, labels that never overlap.
+  - "Shop" wording everywhere.
+  - UI rebuilt on Tailwind + shadcn/ui.
+  - 3D with drei: walls open at doors and windows, fixture names, contact shadows.
+  - Score notes worded in the chosen language and unit.
+- **Parked, with measurements in `docs/NOTES.md`:**
+  - 10c: wait for a real shop that needs it.
+  - 10d: the open-floor counter. The code and tests are in `docs/parked/m3-10d-open-floor-counter.patch`. The rotation test is red.
+  - 10e: after 10d.
+- **Owner rulings of 2026-11-12:**
+  - Rulings 4 (no drei) and 5 (plain CSS) are reversed.
+  - Every text says "shop", never "room".
+  - Licences are no obstacle for personal local use; paid things still need his yes.
+  - Questions 13 to 17 were decided by Claude at his request: weights 30/12/8/10/10/15/15. The three counter-height showcases are rear-served, judged from the website photos and flagged in the data.
+- **Waiting for the owner:**
+  - A photo of the "Test 3D speed" result on the laptop.
+  - One hour of real use, and his notes.
+  - Merging PR 3.
+  - Confirmed prices and sizes. Most are unverified; Gondola wood and Showcase 6 feet have no size.
+
+## 3. Active file
+
+Last worked on:
+- `app/renderer/view-3d/view-3d.tsx`:
+  - `wallPieces()` builds the walls with their openings left open.
+  - The drei `Html` labels use a fixed `portal`.
+  - `ContactShadows` adds soft shadows.
+- Around it:
+  - `app/renderer/view-3d/scene-probe.tsx`: `describe()` now also returns `walls`.
+  - `app/renderer/view-3d/boxes.ts`: `SceneBox.name`.
+  - `src/layout/score.ts` and `types.ts`: `ScoreTerm.code` and `values`.
+  - `app/renderer/i18n/messages.ts`: `scoreNoteText`, `lengthText`.
+  - `app/renderer/globals.css`: the Tailwind theme and the app's component classes.
+  - `app/renderer/components/ui/*`: the shadcn components.
+
+## 4. Change made
+
+This session, all test-first, each with its proving test:
+
+1. **Review of PR 3** (one reviewer, every claim checked): 8 fixes.
+   - Snapping reach, in both the back-to-back and the L-room cases.
+   - Stale layout options, catalog refresh and product copies.
+   - The 3D camera reset, and orbit-drag placing a product.
+   - Rear service on non-freestanding products.
+2. **Owner questions 13 to 17 decided**:
+   - Weights 30/12/8/10/10/15/15. Golden hashes and gallery were regenerated; option 1 is unchanged everywhere.
+   - Rear-served counter showcases.
+   - 10d (a) built, measured and parked again.
+3. **Hands-on review rounds** (findings in `docs/NOTES.md`):
+   - The plan shows the door swing, the "Entrance" label, wall numbers and fixture names.
+   - The inspector and the problems list sit under the plan.
+   - Options can be previewed on the plan.
+   - Problem lengths are in the chosen unit, and Arabic text is isolated.
+   - Angles start at 90, room problems are named, and the first door is the entrance.
+   - Drawing by mouse: close on the first corner, a preview line with its length, a grid and scale, and the reason "Finish" is disabled. Labels never overlap, and the view fits them from the stored outline only. Scan findings are in the chosen unit.
+4. **"Shop" in every text**: en and ar strings, and the engine messages.
+5. **UI rebuilt with Tailwind 4.3.3 + shadcn/ui** (radix base, new-york, RTL):
+   - New start screen, title bar and toolbar, cards.
+   - Same roles and names, so the e2e suite proves the screens still work.
+   - Dependencies and reasons are in `docs/STACK.md`.
+6. **3D with drei 10.7.9**: openings in the walls, fixture names, contact shadows.
+7. **Score notes**: code and values from the engine, worded in the app.
+
+## 5. Failed Attempts
+
+- **10d, the open-floor checkout block** (twice):
+  - The block itself is rotation-stable, but the island rows placed after it are not. On the L-shape turned 17°, the same strategy scores 86.1 instead of 84.3, so the rotation test fails in 5 cases.
+  - A 1 mm grid offset did not help.
+  - Parked. The patch is in `docs/parked/`.
+- **drei `Html` labels:** the first label mounted was empty. drei's default target changes once the canvas connects its events. Fixed with a fixed `portal` ref.
+- **shadcn CLI:** it wrote `import { cn } from "cn"` and added an npm package `cn`. Fixed: imports now use `@/lib/utils` and the package was removed.
+- **Wall labels:**
+  - Linux metrics: the label covered a door by 0.6 px on Windows. Fixed with wider gaps.
+  - Growing the view while a corner was dragged moved the corner by 40 cm. Fixed: the view follows the stored outline only.
+- **Button text split into pieces:** flex buttons broke "Place <name>" into separate words for accessibility and Arabic checks. Fixed: the sentence is wrapped in one `span`.
+- **Test-writer:** stopped once by the usage limit, resumed with SendMessage. A concurrent build during its e2e run once caused a flaky failure. Never build or launch the app while the test-writer runs e2e.
+
+## 6. Next steps
+
+1. Owner: install from the PR's `package-windows` artifact (`View-3D-installer`) and use it for an hour on a real shop. Send notes and the "Test 3D speed" photo, then merge PR 3.
+2. Fix his notes test-first, in parallel with M4.
+3. Show the owner the detailed Milestone 4 plan, from `docs/plans/M2-M4-plan.md` section 3, and wait for his go.
+   - Start with the spikes: `printToPDF` scale and Arabic, PDF read-back, a 4K off-screen render.
+   - Then issues 1 to 7.
+4. Before the quote (M4 issue 2): the owner confirms prices and sizes in the catalog. Unknown prices stay marked and are never summed silently.
+5. Optional:
+   - Real 3D models of the products, made in Blender outside the app (`docs/MODEL_CONTRACT.md`).
+   - DXF import from RoomTrace, once he sends a sample.
+   - Make the doors in the 3D walls more visible (less transparent walls, a door frame).
+
+**How to resume:**
 ```bash
 pnpm install
 node node_modules/electron/install.js   # this container skips Electron's download script; run once
 pnpm typecheck && pnpm test
 xvfb-run -a pnpm test:e2e
 ```
-Traps: Electron needs `--no-sandbox` as root (the e2e launcher adds it). A visible window gets
-software WebGL without a GPU; the no-WebGL case needs `--disable-gpu --disable-software-rasterizer`.
-
-## 6. Decisions made this milestone
-- 10f: `serviceSide` optional on Product; a rear product gets a staff zone in `accessZones`; the engine follows through its rule checks.
-- 3D editing: `BoxEditing` in view-3d.tsx uses the 2D commands; tests drive it via `__view3dScene.screenOf` in Top view.
-- 3D: `app/renderer/view-3d/view-3d.tsx`; no-WebGL test = `--disable-gpu --disable-software-rasterizer` (a visible window has software WebGL otherwise).
-- Option picker: `useLayoutOption` in placement-commands; `unplacedText` words did-not-fit by code.
-- Live validation: `violationText` in `app/renderer/i18n/messages.ts`, keys `violations.<rule>.<detail|default>`.
-- 2D editing: commands in `app/renderer/state/placement-commands.ts` (recipes, one undo step each); `quarterTurn` in `src/rules/snap.ts`.
-- Catalog: `src/catalog/catalog-file.ts` (pure) + `app/main/catalog-file.ts`; tests isolate it with `launchApp({ userDataDir })` (`--user-data-dir`).
-- Worker: `app/renderer/worker/layout.worker.ts` answers with JSON text; same bytes as Node (`docs/STACK.md`).
-- 3D: three 0.187.0 + R3F 9.8.2, instanced Lambert boxes, units.ts only conversion; tests read `window.__view3dScene.describe()` (`docs/STACK.md`).
-- 10a: layout engine in phase files; `test/layout/golden-hashes.json` guards output (`pnpm snapshots:update` rewrites it).
-- Ranking key `placed + complete block`, tie: complete block, then score (`docs/decisions/0003`).
-- Catalog file on the laptop, seeded from the repo; Confirm marks a product verified (plan, rulings).
-- No drei, no UI kit (`docs/STACK.md`). Red fixtures in 3D. Rear access = staff zone. Software 3D off. Benchmark on Diagnostics.
+Traps:
+- Electron needs `--no-sandbox` as root (the e2e launcher adds it).
+- A visible window gets software WebGL without a GPU. The no-WebGL case needs `--disable-gpu --disable-software-rasterizer`.
+- The test-writer is the only one who writes tests (Sonnet 5.5). Never put secrets in this file.
