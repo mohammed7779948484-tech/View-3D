@@ -495,7 +495,7 @@ export function validateLayout(doc: DesignDocument, config: PlanningConfig = def
         rule: 'outside-room',
         severity: 'error',
         placementIds: [id],
-        message: `${label(f)} is not fully inside the room.`,
+        message: `${label(f)} is not fully inside the shop.`,
       });
     }
 

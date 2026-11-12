@@ -17,7 +17,7 @@ export function reasonText(code: ReasonCode, config: PlanningConfig): string {
     case 'no-wall-long-enough':
       return 'no wall has a free stretch long enough for it';
     case 'outside-room':
-      return 'it would not stand fully inside the room';
+      return 'it would not stand fully inside the shop';
     case 'column':
       return 'a column is in the way';
     case 'blocked-door':

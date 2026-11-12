@@ -35,7 +35,7 @@ const mm = (um: number): string => `${Math.round(um / 1000)} mm`;
 const kindName = (o: Opening): string => (o.kind === 'window' ? 'Window' : o.door?.isEntrance === true ? 'Entrance' : 'Door');
 
 const OUTLINE_TEXT: Record<OutlineProblemCode, string> = {
-  'too-few-vertices': 'The room needs at least 3 corners.',
+  'too-few-vertices': 'The shop needs at least 3 corners.',
   'non-integer-coordinate': 'A corner position is not a whole number of micrometres.',
   'coordinate-out-of-range': 'A corner is more than 100 m from the origin.',
   'zero-length-edge': 'Two corners in a row are the same point. Remove the repeated corner.',
@@ -72,7 +72,7 @@ export function validateRoom(room: Room): RoomProblem[] {
     if (wall === undefined) {
       problems.push({
         code: 'opening-wall-missing',
-        message: `${kindName(o)} "${o.id}" is on wall ${o.wallIndex + 1}, but the room has only ${walls.length} walls.`,
+        message: `${kindName(o)} "${o.id}" is on wall ${o.wallIndex + 1}, but the shop has only ${walls.length} walls.`,
         openingId: o.id,
         values: { wallNumber: o.wallIndex + 1, wallCount: walls.length },
       });
@@ -127,13 +127,13 @@ export function validateRoom(room: Room): RoomProblem[] {
   for (const column of room.columns) {
     // Any part of the column outside the room; touching a wall from inside leaves nothing.
     if (differencePolygons([column.outline], [room.outline]).length > 0) {
-      problems.push({ code: 'column-outside-room', message: `Column "${column.id}" is not completely inside the room.`, columnId: column.id });
+      problems.push({ code: 'column-outside-room', message: `Column "${column.id}" is not completely inside the shop.`, columnId: column.id });
     }
   }
   if (entrancesOf(room).length === 0) {
     problems.push({
       code: 'no-entrance',
-      message: 'The room has no entrance. Mark one door as the entrance; aisles are checked from there.',
+      message: 'The shop has no entrance. Mark one door as the entrance; aisles are checked from there.',
     });
   }
   return problems;

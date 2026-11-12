@@ -6,8 +6,8 @@
     "noProject": "No project is open.",
     "open": "Open a project",
     "typeWalls": "Type the walls",
-    "draw": "Draw the room",
-    "importScan": "Import a room scan",
+    "draw": "Draw the shop",
+    "importScan": "Import a shop scan",
     "diagnostics": "Diagnostics",
     "catalog": "Catalog"
   },
@@ -42,20 +42,20 @@
     "entrance": "Entrance"
   },
   "room": {
-    "title": "Room",
+    "title": "Shop",
     "ceiling": "Ceiling height",
-    "problems": "Room problems",
-    "editRefused": "That change would turn the room inside out, so it was not made.",
+    "problems": "Shop problems",
+    "editRefused": "That change would turn the shop inside out, so it was not made.",
     "zeroWall": "Wall {{n}} has no length, so it has no direction to lengthen. Use \"Edit the walls\" instead."
   },
   "walls": {
     "title": "Type the walls",
-    "hint": "Go round the room turning left. For each wall, type its length and the inside angle where it ends: 90 for an ordinary corner, 270 for a corner that points into the room.",
+    "hint": "Go round the shop turning left. For each wall, type its length and the inside angle where it ends: 90 for an ordinary corner, 270 for a corner that points into the shop.",
     "length": "Wall {{n}} length",
     "angle": "Wall {{n}} end angle",
     "remove": "Remove wall {{n}}",
     "add": "Add a wall",
-    "incomplete": "Fill in every length and angle to check the room.",
+    "incomplete": "Fill in every length and angle to check the shop.",
     "closes": "The walls close.",
     "open": "The walls do not close: the last wall ends {{gap}} from the start.",
     "suspects": "One of these values is probably mistyped:",
@@ -67,16 +67,16 @@
     "diagonalLength": "Diagonal length",
     "diagonalOk": "The diagonal matches the drawing.",
     "diagonalOff": "The diagonal differs from the drawing by {{difference}}.",
-    "create": "Create the room",
+    "create": "Create the shop",
     "closesWithin": "The walls close: the last wall ended {{gap}} from the start, so it is drawn from the corners, not from its typed length.",
-    "update": "Update the room"
+    "update": "Update the shop"
   },
   "draw": {
-    "title": "Draw the room",
+    "title": "Draw the shop",
     "hint": "Click each corner in turn. Corners snap to a grid (10 cm on a large screen); type the exact lengths afterwards.",
-    "finish": "Finish the room",
+    "finish": "Finish the shop",
     "undoCorner": "Undo last corner",
-    "notARoom": "These corners do not make a room: the walls cross or a corner repeats."
+    "notARoom": "These corners do not make a shop: the walls cross or a corner repeats."
   },
   "common": {
     "back": "Back"
@@ -103,8 +103,8 @@
       "height": "Door height",
       "entrance": "Customer entrance",
       "swing": "Door opens",
-      "swingIn": "Into the room",
-      "swingOut": "Out of the room",
+      "swingIn": "Into the shop",
+      "swingOut": "Out of the shop",
       "swingNone": "Sliding or open",
       "hinge": "Hinge at",
       "hingeStart": "Start of the wall",
@@ -146,7 +146,7 @@
     }
   },
   "problems": {
-    "too-few-vertices": "The room needs at least 3 corners.",
+    "too-few-vertices": "The shop needs at least 3 corners.",
     "non-integer-coordinate": "A corner position is not a whole number of micrometres.",
     "coordinate-out-of-range": "A corner is more than 100 m from the origin.",
     "zero-length-edge": "Two corners in a row are the same point. Remove the repeated corner.",
@@ -154,13 +154,13 @@
     "clockwise": "The outline runs clockwise. List the corners counter-clockwise (reverse their order).",
     "atWall": "(at wall {{n}})",
     "atCorner": "(at corner {{n}})",
-    "opening-wall-missing": "{{kind}} \"{{id}}\" is on wall {{wall}}, but the room has only {{wallCount}} walls.",
+    "opening-wall-missing": "{{kind}} \"{{id}}\" is on wall {{wall}}, but the shop has only {{wallCount}} walls.",
     "opening-off-wall": "{{kind}} \"{{id}}\" is {{width}} wide and starts {{offset}} along wall {{wall}}, which is {{length}} long: it runs {{over}} past the end of the wall.",
     "opening-off-wall-position": "{{kind}} \"{{id}}\" does not lie on wall {{wall}}: check its position and width.",
     "openings-overlap": "{{kind}} \"{{id}}\" and {{other}} \"{{otherId}}\" overlap by {{shared}} on wall {{wall}}.",
     "opening-above-ceiling": "{{kind}} \"{{id}}\" reaches {{top}} above the floor, higher than the {{ceiling}} ceiling.",
-    "column-outside-room": "Column \"{{id}}\" is not completely inside the room.",
-    "no-entrance": "The room has no entrance. Mark one door as the entrance; aisles are checked from there."
+    "column-outside-room": "Column \"{{id}}\" is not completely inside the shop.",
+    "no-entrance": "The shop has no entrance. Mark one door as the entrance; aisles are checked from there."
   },
   "input": {
     "empty": "Type a length.",
@@ -179,7 +179,7 @@
     "use-a-point": "Use a point for decimals (90.5), not a comma."
   },
   "capture": {
-    "too-few-walls": "A room needs at least 3 walls.",
+    "too-few-walls": "A shop needs at least 3 walls.",
     "wall-length-not-positive": "Wall {{n}}: the length must be more than zero.",
     "not-an-integer": "Wall {{n}}: the length or the corner angle is not a whole number of micrometres or micro-degrees.",
     "corner-angle-out-of-range": "Corner at the end of wall {{n}}: the angle must be more than 0 and less than 360 degrees."
@@ -197,7 +197,7 @@
     "sill": "Window sill height",
     "addWindow": "Add the window",
     "leaveOut": "Leave the window out",
-    "use": "Use this room",
+    "use": "Use this shop",
     "findings": {
       "gap-closed": "A {{size}} gap at the end of wall {{wall}} was closed.",
       "gap-filled": "The scan has a {{size}} gap at wall {{wall}}; it is drawn as a straight wall. It may be a doorway: add the door in the editor.",
@@ -210,15 +210,15 @@
       "window-moved": "The window on wall {{wall}} ran past the end of the wall in the scan; it was moved {{moved}} to fit. Check it."
     },
     "errors": {
-      "not-json": "This file is not a room scan: it is not valid JSON.",
+      "not-json": "This file is not a shop scan: it is not valid JSON.",
       "not-roomtrace": "This file is not a RoomTrace scan.",
       "unsupported-version": "This RoomTrace file uses a format version that cannot be read (only version 2).",
       "unsupported-units": "Only RoomTrace files measured in metres can be read.",
-      "no-rooms": "The scan has no room in it.",
-      "several-rooms": "The scan has several rooms; import one room at a time.",
+      "no-rooms": "The scan has no shop in it.",
+      "several-rooms": "The scan has several shops; import one shop at a time.",
       "bad-wall": "A wall or window in the scan has no position or size.",
       "too-few-walls": "The scan has fewer than 3 walls.",
-      "outline-invalid": "The scanned walls do not make a room: they cross each other or repeat a corner.",
+      "outline-invalid": "The scanned walls do not make a shop: they cross each other or repeat a corner.",
       "no-height": "The scan has no ceiling or wall height."
     }
   },
@@ -350,7 +350,7 @@
     "theEntrance": "the entrance",
     "door": "door \"{{id}}\"",
     "invalid-room": {
-      "default": "The room has a problem; see the room problems."
+      "default": "The shop has a problem; see the shop problems."
     },
     "unknown-product": {
       "default": "Placement \"{{id}}\" refers to product \"{{product}}\" / \"{{variant}}\", which is not in the document."
@@ -359,7 +359,7 @@
       "default": "{{a}} and {{b}} overlap."
     },
     "outside-room": {
-      "default": "{{a}} is not fully inside the room."
+      "default": "{{a}} is not fully inside the shop."
     },
     "column": {
       "default": "{{a}} stands on column \"{{column}}\"."
@@ -423,7 +423,7 @@
     "reasons": {
       "unknown-size": "its dimensions are not known yet",
       "no-wall-long-enough": "no wall has a free stretch long enough for it",
-      "outside-room": "it would not stand fully inside the room",
+      "outside-room": "it would not stand fully inside the shop",
       "column": "a column is in the way",
       "blocked-door": "it would block a door or the clear zone inside the entrance",
       "not-on-wall": "it must stand against a wall and the place is across a door",
@@ -455,7 +455,7 @@
     "use": "Use option {{rank}}",
     "didNotFit": "Did not fit",
     "unplacedItem": "{{name}} x {{quantity}}",
-    "roomProblems": "The room has problems, so no layout was made:",
+    "roomProblems": "The shop has problems, so no layout was made:",
     "none": "No option could be made.",
     "terms": {
       "Fixtures placed": "Fixtures placed",
