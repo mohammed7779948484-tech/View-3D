@@ -61,25 +61,27 @@ test('A2: the entrance is marked in words, in English and in Arabic', async () =
   await expect(page.locator('[data-entrance="door-1"]')).toHaveText('المدخل', FIRST);
 });
 
-test('A3: wall length labels start with the wall number', async () => {
+test('A3: each wall has its own number label; the length label keeps its text', async () => {
   const page = await open();
-  await expect(page.locator('text.plan-length[data-wall="0"]')).toHaveText('1 · 800 cm', FIRST);
-  const second = page.locator('text.plan-length[data-wall="1"]');
-  await expect(second).toHaveText(/^2 · /, FIRST);
+  await expect(page.locator('[data-wall-number="0"]')).toHaveText('1', FIRST);
+  await expect(page.locator('[data-wall-number="1"]')).toHaveText('2', FIRST);
+  await expect(page.locator('text.plan-length[data-wall="0"]')).toHaveText('800 cm', FIRST);
 });
 
-test('A4: a wall label never covers a door', async () => {
+test('A4: neither the wall length label nor the wall number covers a door', async () => {
   const page = await open();
-  const label = page.locator('text.plan-length[data-wall="0"]');
   const door = page.locator('[data-opening="door-1"]');
-  await expect(label).toBeVisible(FIRST);
   await expect(door).toBeAttached(FIRST);
-  const a = (await label.boundingBox())!;
   const raw = (await door.boundingBox())!;
   // The door is a thin line (zero-height box): give it a 4 px margin so touching counts as covering.
   const b = { x: raw.x - 4, y: raw.y - 4, width: raw.width + 8, height: raw.height + 8 };
-  const overlaps = a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height;
-  expect(overlaps, `label ${JSON.stringify(a)} vs door ${JSON.stringify(b)}`).toBe(false);
+  for (const selector of ['text.plan-length[data-wall="0"]', '[data-wall-number="0"]']) {
+    const label = page.locator(selector);
+    await expect(label).toBeVisible(FIRST);
+    const a = (await label.boundingBox())!;
+    const overlaps = a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height;
+    expect(overlaps, `${selector} ${JSON.stringify(a)} vs door ${JSON.stringify(b)}`).toBe(false);
+  }
 });
 
 test('A5: each fixture shows its product name on the plan', async () => {
