@@ -118,6 +118,9 @@ Running log and decisions. Checkpointed after every step so work survives a rest
     - 4 FT FULL VIEW LED lights Showcase (`nhf-6ft-full-view-led-lights-showcase`, anywhere on the floor)
     - Showcase 6 feet (`nhf-s`, anywhere on the floor; size still unknown)
     - Stand showcases (`nhf-s-1`, against a wall: if served from the back it cannot stand on a wall)
+    Only a product placed "anywhere on the floor" can be served from the back: the catalog form offers
+    the choice only for those, and a project file with it on any other kind is refused. If Stand
+    showcases opens from the back, its placement must change to "anywhere on the floor" too.
 
 15. M3 10g, score weights. Today: placed 45, counter near the entrance 12, counter faces the
     entrance 8, showcases with the counter 10, islands in rows 10, even use of the floor 10, open
@@ -236,3 +239,4 @@ W48 × D20 × H72 in; single-sided units go on walls or back to back; entrance d
 - 2026-11-11 M3 issue 10f: optional `serviceSide` on products; a rear-served product needs a 915 mm staff zone behind it (never its back to a wall), the engine and the oracle agree, the catalog form has "Served from". No real product set (question 14). One test-writer spec fix: the engine test first also forbade a side flush to a wall. Suite 895 Vitest, 107 e2e.
 - 2026-11-11 M3 issue 10d: trial of an open-floor checkout block (facing the entrance first, then side on, then back to it; 200 mm grid, 5 m reach). Measured gains in 2 of 5 shops, +0.6 s on the benchmark, rounding-sensitive search picks (rotation test). Parked with question 16; failing tests kept on the local branch parked/m3-10d (container-local; the spec is in this note and the handoff).
 - 2026-11-11 M3 issue 10e: measured, parked (question 17): every shop with an angled corner already has a complete checkout block in its best options; the open-floor turn depends on 10d.
+- 2026-11-12 Review of PR 3 (one reviewer, every claim checked by a run): 8 real bugs fixed test-first. Snaps reached across the room (back to back 8 m along a line; wall snap in L-shaped rooms), old layout options could be used on another room, the catalog was read once, a used option kept old product copies, the 3D camera reset on every edit, an orbit drag placed a product, and rear service was accepted for non-freestanding kinds. Not fixed: pointer-cancel during a 3D drag (no deterministic test) and trig outside src/geometry (style). 908 Vitest, 112 e2e.

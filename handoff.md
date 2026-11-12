@@ -27,6 +27,7 @@
 | 10e L-block without right angle | parked | no shop gains in its best options (measured); depends on 10d; owner question 17 |
 | 10f service side | built, parked | proven, CI green (Ubuntu, Windows, installer); no real product set: owner question 14 |
 | 10g score weights | prepared, parked | proposal 30/12/8/10/10/15/15 moves nothing in the test shops; two trade-off pairs in snapshots/README.md; owner question 15 |
+| Review of PR 3 | 8 fixes | tests first (26fae27, 70a5128, 8f844bc); 908 Vitest + 112 e2e; open: pointer-cancel in a 3D drag left untested and unfixed |
 
 ## 3. Next step
 Every item is proven or parked with an owner question (13 to 17). Next: the owner's answers. If
