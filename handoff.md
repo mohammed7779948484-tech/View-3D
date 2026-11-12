@@ -35,8 +35,8 @@ Tailwind and drei, rebuild the UI with them. The place is a shop, never a "room"
 (en and ar). Licences: personal local use, so an open-source licence is never a reason to refuse a
 tool; paid things still need his yes.
 Order:
-1. UI wording: "room" -> "shop" everywhere the owner reads (en + ar), tests updated first.
-2. 2D editor, found by hand: clicking the first corner does not close the outline; no line follows
+1. DONE (3cb6cfc) UI wording: "room" -> "shop" everywhere the owner reads (en + ar), tests updated first.
+2. DONE 2D editor, found by hand: clicking the first corner does not close the outline; no line follows
    the mouse while drawing; no grid or scale on the empty drawing area; "Finish" is disabled with no
    reason (ceiling height missing); short walls' length labels overlap (imported scan, walls 3-5);
    scan and capture messages say mm whatever the unit.
