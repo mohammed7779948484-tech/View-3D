@@ -17,7 +17,7 @@ type Props = {
   openings?: readonly Opening[];
   columns?: readonly Column[];
   /** Fixture footprints: corners [back-left, back-right, front-right, front-left], um. */
-  fixtures?: readonly { id: string; corners: readonly Point[]; problem?: boolean }[];
+  fixtures?: readonly { id: string; corners: readonly Point[]; problem?: boolean; label?: string }[];
   selectedId?: string | null;
   onSelect?: (id: string) => void;
   /** A fixture was dragged and released, moved by this snapped delta. */
@@ -25,6 +25,15 @@ type Props = {
 };
 
 const mm = (um: number): number => um / 1000;
+/** Points on the quarter circle a door leaf sweeps (display only). */
+const SWING_STEPS = 12;
+/** Screen angle (degrees) of the line a -> b, turned so text along it never reads upside down. */
+function readableAngle(a: Point, b: Point): number {
+  let deg = (-Math.atan2(b.y - a.y, b.x - a.x) * 180) / Math.PI;
+  if (deg > 90) deg -= 180;
+  if (deg < -90) deg += 180;
+  return deg;
+}
 
 /**
  * The plan as svg. World coordinates are millimetres with y up inside `<g data-world>`; labels sit
@@ -32,6 +41,7 @@ const mm = (um: number): number => um / 1000;
  */
 export function Plan({ outline, closed, unit, view, onPlanClick, onCornerMoved, openings = [], columns = [], fixtures = [], selectedId = null, onSelect, onFixtureMoved }: Props) {
   const { t } = useTranslation();
+  const tEntrance = t('plan.entrance');
   const world = useRef<SVGGElement>(null);
   const [drag, setDrag] = useState<{ index: number; point: Point } | null>(null);
   // As for fixtures below: the corner drag in a ref, so no pointer event reads a stale drag.
@@ -85,7 +95,27 @@ export function Plan({ outline, closed, unit, view, onPlanClick, onCornerMoved, 
           const along = (d: number) => ({ x: mm(a.x + ((b.x - a.x) * d) / length), y: mm(a.y + ((b.y - a.y) * d) / length) });
           const from = along(o.offsetUm);
           const to = along(o.offsetUm + o.widthUm);
-          return <line key={o.id} className={`plan-${o.kind}`} data-opening={o.id} x1={from.x} y1={from.y} x2={to.x} y2={to.y} />;
+          const gap = <line key={o.id} className={`plan-${o.kind}`} data-opening={o.id} x1={from.x} y1={from.y} x2={to.x} y2={to.y} />;
+          const swing = o.door?.swing;
+          if (o.kind !== 'door' || swing === undefined || swing === 'none') return gap;
+          // The leaf turns about its hinge, into the room (left of the wall's direction) or out of it.
+          const ux = (b.x - a.x) / length;
+          const uy = (b.y - a.y) / length;
+          const side = swing === 'in' ? 1 : -1;
+          const n = { x: -uy * side, y: ux * side };
+          const [hinge, free] = o.door?.hinge === 'end' ? [to, from] : [from, to];
+          const r = mm(o.widthUm);
+          const toFree = { x: (free.x - hinge.x) / r, y: (free.y - hinge.y) / r };
+          const arc = Array.from({ length: SWING_STEPS + 1 }, (_, k) => {
+            const angle = (k / SWING_STEPS) * (Math.PI / 2);
+            return `${hinge.x + r * (Math.cos(angle) * toFree.x + Math.sin(angle) * n.x)},${hinge.y + r * (Math.cos(angle) * toFree.y + Math.sin(angle) * n.y)}`;
+          });
+          return (
+            <g key={o.id}>
+              {gap}
+              <polyline className="plan-door-swing" data-door-swing={o.id} points={`${hinge.x + r * n.x},${hinge.y + r * n.y} ${hinge.x},${hinge.y} ${arc.join(' ')}`} />
+            </g>
+          );
         })}
         {fixtures.map((f) => {
           const offset = move?.id === f.id ? `translate(${mm(move.to.x - move.from.x)} ${mm(move.to.y - move.from.y)})` : undefined;
@@ -163,11 +193,64 @@ export function Plan({ outline, closed, unit, view, onPlanClick, onCornerMoved, 
           />
         ))}
       </g>
-      {walls.map(([a, b], i) => (
-        <text key={i} className="plan-length" data-wall={i} x={mm((a.x + b.x) / 2)} y={-mm((a.y + b.y) / 2)} fontSize={label} direction="ltr">
-          {formatDisplayLength(wallLengthUm(a, b), unit)}
-        </text>
-      ))}
+      {walls.map(([a, b], i) => {
+        // Outside the room (right of the wall's direction), clear of the wall and of any door in it.
+        // The length first, then the wall's number (the door form asks for walls by number) further out.
+        const length = mm(Math.hypot(b.x - a.x, b.y - a.y)) || 1;
+        const ox = mm(b.y - a.y) / length;
+        const oy = -mm(b.x - a.x) / length;
+        const cx = mm((a.x + b.x) / 2);
+        const cy = mm((a.y + b.y) / 2);
+        const text = formatDisplayLength(wallLengthUm(a, b), unit);
+        // How far the label reaches along the outward direction: half its width or half its height.
+        const reach = Math.abs(ox) * text.length * 0.32 * label + Math.abs(oy) * 1.25 * label;
+        const near = 0.7 * label + reach;
+        const far = near + reach + 1.1 * label;
+        return (
+          <g key={i}>
+            <text className="plan-length" data-wall={i} x={cx + ox * near} y={-(cy + oy * near)} fontSize={label} direction="ltr">
+              {text}
+            </text>
+            <circle className="plan-wall-badge" cx={cx + ox * far} cy={-(cy + oy * far)} r={label * 0.8} />
+            <text className="plan-wall-number" data-wall-number={i} x={cx + ox * far} y={-(cy + oy * far)} fontSize={label * 0.9} direction="ltr">
+              {i + 1}
+            </text>
+          </g>
+        );
+      })}
+      {closed &&
+        openings.map((o) => {
+          if (o.kind !== 'door' || o.door?.isEntrance !== true) return null;
+          const a = shown[o.wallIndex];
+          const b = shown[(o.wallIndex + 1) % shown.length];
+          if (a === undefined || b === undefined) return null;
+          const length = Math.hypot(b.x - a.x, b.y - a.y) || 1;
+          const middle = (o.offsetUm + o.widthUm / 2) / length;
+          // Inside the room, beyond the leaf's sweep.
+          const inward = (o.widthUm + label * 1000) / length;
+          const x = mm(a.x + (b.x - a.x) * middle - (b.y - a.y) * inward);
+          const y = mm(a.y + (b.y - a.y) * middle + (b.x - a.x) * inward);
+          return (
+            <text key={o.id} className="plan-entrance" data-entrance={o.id} x={x} y={-y} fontSize={label}>
+              {tEntrance}
+            </text>
+          );
+        })}
+      {fixtures.map((f) => {
+        if (f.label === undefined || f.corners.length < 4) return null;
+        const [backLeft, backRight, frontRight] = f.corners as [Point, Point, Point, Point];
+        const width = mm(Math.hypot(backRight.x - backLeft.x, backRight.y - backLeft.y));
+        const depth = mm(Math.hypot(frontRight.x - backRight.x, frontRight.y - backRight.y));
+        const cx = mm((backLeft.x + frontRight.x) / 2) + (move?.id === f.id ? mm(move.to.x - move.from.x) : 0);
+        const cy = mm((backLeft.y + frontRight.y) / 2) + (move?.id === f.id ? mm(move.to.y - move.from.y) : 0);
+        // As large as fits along the fixture's width and inside its depth, never above the wall labels.
+        const size = Math.min(label * 0.8, (width * 0.9) / Math.max(1, f.label.length * 0.6), depth * 0.6);
+        return (
+          <text key={f.id} className="plan-fixture-label" data-fixture-label={f.id} x={cx} y={-cy} fontSize={size} transform={`rotate(${readableAngle(backLeft, backRight)} ${cx} ${-cy})`}>
+            {f.label}
+          </text>
+        );
+      })}
     </svg>
   );
 }

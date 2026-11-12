@@ -302,9 +302,12 @@ export function App() {
     return result.ok;
   };
   const fixtures = project.placements.flatMap((p) => {
-    const variant = project.products.find((q) => q.id === p.productId)?.variants.find((v) => v.id === p.variantId);
+    const product = project.products.find((q) => q.id === p.productId);
+    const variant = product?.variants.find((v) => v.id === p.variantId);
     const problem = violations.some((v) => v.placementIds.includes(p.id));
-    return variant === undefined || variant.widthUm === null || variant.depthUm === null ? [] : [{ id: p.id, corners: rectCorners(footprint(p, variant)), problem }];
+    return product === undefined || variant === undefined || variant.widthUm === null || variant.depthUm === null
+      ? []
+      : [{ id: p.id, corners: rectCorners(footprint(p, variant)), problem, label: product.name }];
   });
   const selected = project.placements.find((p) => p.id === selectedId);
   /** The same commands in 2D and 3D: an edit in either view gives the same document. */
@@ -423,22 +426,6 @@ export function App() {
         <FixturesPanel products={catalogProducts} picked={picked} onPick={setPicked} />
         <AutoLayoutPanel products={catalogProducts} document={project} onResult={(text, room) => setLayout({ result: JSON.parse(text) as LayoutResult, room })} />
         {layoutResult !== null && <OptionPicker result={layoutResult} onUse={(option) => editFixtures(useLayoutOption(option))} />}
-        {selected !== undefined && (
-          <FixtureInspector
-            placement={selected}
-            product={project.products.find((q) => q.id === selected.productId)}
-            unit={unit}
-            onPose={(pose) => editFixtures(setPlacementPose(selected.id, pose))}
-            onRotate={() => editFixtures(rotatePlacement(selected.id))}
-            onDuplicate={() => {
-              const id = nextPlacementId(project);
-              if (editFixtures(duplicatePlacement(selected.id))) setSelectedId(id);
-            }}
-            onDelete={() => {
-              if (editFixtures(deletePlacement(selected.id))) setSelectedId(null);
-            }}
-          />
-        )}
         </div>
         <div className="plan-column">
         <div className="actions" role="group" aria-label={t('view3d.switch')}>
@@ -475,19 +462,35 @@ export function App() {
               })}
         />
         )}
+        {selected !== undefined && (
+          <FixtureInspector
+            placement={selected}
+            product={project.products.find((q) => q.id === selected.productId)}
+            unit={unit}
+            onPose={(pose) => editFixtures(setPlacementPose(selected.id, pose))}
+            onRotate={() => editFixtures(rotatePlacement(selected.id))}
+            onDuplicate={() => {
+              const id = nextPlacementId(project);
+              if (editFixtures(duplicatePlacement(selected.id))) setSelectedId(id);
+            }}
+            onDelete={() => {
+              if (editFixtures(deletePlacement(selected.id))) setSelectedId(null);
+            }}
+          />
+        )}
+        <section className="layout-problems">
+          <h2 id="layout-problems-title">{t('layoutProblems.title')}</h2>
+          <ul aria-labelledby="layout-problems-title">
+            {violations.map((v) => (
+              <li key={`${v.rule}:${v.placementIds.join(',')}:${v.openingId ?? ''}:${v.columnId ?? ''}:${v.detail ?? ''}`} data-rule={v.rule}>
+                {violationText(t, project, v)}
+              </li>
+            ))}
+          </ul>
+          {violations.length === 0 && <p className="status ok">{t('layoutProblems.none')}</p>}
+        </section>
         </div>
       </div>
-      <section className="layout-problems">
-        <h2 id="layout-problems-title">{t('layoutProblems.title')}</h2>
-        <ul aria-labelledby="layout-problems-title">
-          {violations.map((v) => (
-            <li key={`${v.rule}:${v.placementIds.join(',')}:${v.openingId ?? ''}:${v.columnId ?? ''}:${v.detail ?? ''}`} data-rule={v.rule}>
-              {violationText(t, project, v)}
-            </li>
-          ))}
-        </ul>
-        {violations.length === 0 && <p className="status ok">{t('layoutProblems.none')}</p>}
-      </section>
       <ul className="room-problems" aria-label={t('room.problems')}>
         {roomProblems.map((p) => (
           <li key={`${p.code}${p.index ?? ''}${p.openingId ?? ''}${p.columnId ?? ''}`}>{problemText(t, project.room, p)}</li>

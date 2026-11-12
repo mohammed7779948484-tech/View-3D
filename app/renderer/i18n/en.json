@@ -38,7 +38,8 @@
   },
   "plan": {
     "label": "Plan",
-    "corner": "Corner {{n}}"
+    "corner": "Corner {{n}}",
+    "entrance": "Entrance"
   },
   "room": {
     "title": "Room",
