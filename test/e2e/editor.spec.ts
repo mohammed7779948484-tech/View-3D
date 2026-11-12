@@ -42,7 +42,7 @@ test('typing the L room in cm creates exactly the fixture outline', async () => 
   const page = await h.launch();
   await typeWalls(page, L_LENGTHS, L_ANGLES);
   await expect(page.getByRole('status')).toContainText('The walls close.');
-  await page.getByRole('button', { name: 'Create the room' }).click();
+  await page.getByRole('button', { name: 'Create the shop' }).click();
   const saved = await h.saveAs();
   expect(saved.room.outline).toEqual(lShapeWithColumn.outline);
   expectNewShop(saved, 3_000_000);
@@ -52,7 +52,7 @@ test('typing the angled room in cm creates exactly the fixture outline', async (
   const page = await h.launch();
   await typeWalls(page, ['800', '200', '447.2136', '600', '600'], ['90', '153.434949', '116.565051', '90', '90']);
   await expect(page.getByRole('status')).toContainText('The walls close.');
-  await page.getByRole('button', { name: 'Create the room' }).click();
+  await page.getByRole('button', { name: 'Create the shop' }).click();
   const saved = await h.saveAs();
   expect(saved.room.outline).toEqual(angledWall.outline);
   expectNewShop(saved, 3_000_000);
@@ -70,7 +70,7 @@ test('a wall that does not close offers suspects, and a diagonal narrows them to
   await expect(use1).toBeVisible();
   await expect(use3).toBeVisible();
   await expect(use5).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Create the room' })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Create the shop' })).toBeDisabled();
 
   // True diagonal from corner 1 to corner 4 is sqrt(6000^2 + 4000^2) = 7211.103 mm; 721.1 cm is within 20 mm.
   await page.getByRole('textbox', { name: 'Diagonal from corner' }).fill('1');
@@ -83,7 +83,7 @@ test('a wall that does not close offers suspects, and a diagonal narrows them to
   await use5.click();
   await expect(page.getByRole('textbox', { name: 'Wall 5 length', exact: true })).toHaveValue(/^600( cm)?$/);
   await expect(status).toContainText('The walls close.');
-  await expect(page.getByRole('button', { name: 'Create the room' })).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Create the shop' })).toBeEnabled();
 });
 
 test('a field that cannot be read shows the parser message and blocks creating', async () => {
@@ -91,7 +91,7 @@ test('a field that cannot be read shows the parser message and blocks creating',
   await typeWalls(page, L_LENGTHS, L_ANGLES);
   await page.getByRole('textbox', { name: 'Wall 1 length', exact: true }).fill('abc');
   await expect(page.getByText('This is not a length').first()).toBeVisible(FIRST);
-  await expect(page.getByRole('button', { name: 'Create the room' })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Create the shop' })).toBeDisabled();
 });
 
 test('a very short wall shows a warning', async () => {
@@ -104,8 +104,8 @@ test('a very short wall shows a warning', async () => {
 const SQUARE_6x4 = [um(0, 0), um(6000, 0), um(6000, 4000), um(0, 4000)];
 
 async function startDraw(page: Page): Promise<void> {
-  await expect(page.getByRole('button', { name: 'Draw the room' })).toBeVisible(FIRST);
-  await page.getByRole('button', { name: 'Draw the room' }).click();
+  await expect(page.getByRole('button', { name: 'Draw the shop' })).toBeVisible(FIRST);
+  await page.getByRole('button', { name: 'Draw the shop' }).click();
   await expect(page.locator('svg[aria-label="Plan"]')).toBeVisible(FIRST);
   await page.getByRole('textbox', { name: 'Ceiling height' }).fill('300');
 }
@@ -114,7 +114,7 @@ test('drawing counter-clockwise snaps to the 100 mm grid and keeps the order', a
   const page = await h.launch();
   await startDraw(page);
   for (const [x, y] of [[20, 20], [6020, -20], [5980, 4020], [-20, 3980]] as const) await clickWorld(page, x, y);
-  await page.getByRole('button', { name: 'Finish the room' }).click();
+  await page.getByRole('button', { name: 'Finish the shop' }).click();
   const saved = await h.saveAs();
   expect(saved.room.outline).toEqual(SQUARE_6x4);
   expectNewShop(saved, 3_000_000);
@@ -124,7 +124,7 @@ test('drawing clockwise is tidied to counter-clockwise with the first corner kep
   const page = await h.launch();
   await startDraw(page);
   for (const [x, y] of [[0, 0], [0, 4000], [6000, 4000], [6000, 0]] as const) await clickWorld(page, x, y);
-  await page.getByRole('button', { name: 'Finish the room' }).click();
+  await page.getByRole('button', { name: 'Finish the shop' }).click();
   const saved = await h.saveAs();
   expect(saved.room.outline).toEqual(SQUARE_6x4);
 });
@@ -134,7 +134,7 @@ test('undo last corner removes the last click', async () => {
   await startDraw(page);
   for (const [x, y] of [[0, 0], [0, 4000], [6000, 4000], [6000, 0], [3000, -2000]] as const) await clickWorld(page, x, y);
   await page.getByRole('button', { name: 'Undo last corner' }).click();
-  await page.getByRole('button', { name: 'Finish the room' }).click();
+  await page.getByRole('button', { name: 'Finish the shop' }).click();
   const saved = await h.saveAs();
   expect(saved.room.outline).toEqual(SQUARE_6x4);
 });

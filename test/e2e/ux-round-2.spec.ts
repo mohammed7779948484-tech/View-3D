@@ -144,7 +144,7 @@ test('C4: every wall-table angle starts at 90, so a plain rectangle needs only t
     await page.getByRole('textbox', { name: `Wall ${i + 1} length`, exact: true }).fill(length);
   }
   await expect(page.getByRole('status')).toContainText('The walls close.');
-  await page.getByRole('button', { name: 'Create the room' }).click();
+  await page.getByRole('button', { name: 'Create the shop' }).click();
   const saved = await h.saveAs();
   expect(saved.room.outline).toEqual([um(0, 0), um(8000, 0), um(8000, 6000), um(0, 6000)]);
   expect(saved.room.ceilingHeightUm).toBe(3_000_000);
@@ -156,16 +156,16 @@ test('C5: room problems sit in the plan column, and the layout options alert nam
   test.setTimeout(120_000);
   const page = await h.launch();
   await h.openRoom(noEntrance);
-  const list = page.getByRole('list', { name: 'Room problems', exact: true });
-  await expect(page.locator('.plan-column').getByRole('list', { name: 'Room problems', exact: true })).toBeVisible(FIRST);
-  await expect(list).toContainText('The room has no entrance.');
+  const list = page.getByRole('list', { name: 'Shop problems', exact: true });
+  await expect(page.locator('.plan-column').getByRole('list', { name: 'Shop problems', exact: true })).toBeVisible(FIRST);
+  await expect(list).toContainText('The shop has no entrance.');
 
   await expect(panel(page)).toHaveAttribute('data-auto-layout', 'idle', FIRST);
   await qty(page, names.counter).fill('1');
   await page.getByRole('button', { name: 'Run', exact: true }).click();
   await expect(panel(page)).toHaveAttribute('data-auto-layout', 'done', { timeout: 90_000 });
   const section = page.locator('section').filter({ has: page.getByRole('heading', { name: 'Layout options', exact: true }) });
-  await expect(section.getByRole('alert')).toContainText('The room has no entrance.', FIRST);
+  await expect(section.getByRole('alert')).toContainText('The shop has no entrance.', FIRST);
 });
 
 test('C6: the first door defaults to "Customer entrance"; a later door does not', async () => {

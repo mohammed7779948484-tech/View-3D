@@ -285,7 +285,7 @@ test('a product added on the catalog screen is offered for a room created afterw
     await page.getByRole('textbox', { name: `Wall ${i + 1} length`, exact: true }).fill(length);
     await page.getByRole('textbox', { name: `Wall ${i + 1} end angle`, exact: true }).fill('90');
   }
-  await page.getByRole('button', { name: 'Create the room' }).click();
+  await page.getByRole('button', { name: 'Create the shop' }).click();
 
   await expect(page.getByRole('heading', { name: 'Fixtures' })).toBeVisible(FIRST);
   await expect(page.getByRole('button', { name: 'Place Owner counter', exact: true })).toBeVisible(FIRST);

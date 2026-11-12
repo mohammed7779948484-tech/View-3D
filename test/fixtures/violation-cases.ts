@@ -299,7 +299,7 @@ export const violationCases: readonly ViolationCase[] = [
     first: 'g',
     expected: {
       placementIds: ['g'], detail: undefined, values: undefined,
-      message: `${GONDOLA} (g) is not fully inside the room.`,
+      message: `${GONDOLA} (g) is not fully inside the shop.`,
     },
   },
   {
