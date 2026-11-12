@@ -11,12 +11,13 @@ const SIZE = '\u0002';
 
 /** The translated sentence with the product name and size each in a <bdi>, so Latin names and numbers keep their order in Arabic. */
 function Isolated({ text, name, size }: { text: string; name: string; size: string | null }) {
+  // One span, so the button's flex layout keeps the sentence as one run of text.
   return (
-    <>
+    <span>
       {text.split(/(\u0001|\u0002)/).map((part, i) =>
         part === NAME ? <bdi key={i}>{name}</bdi> : part === SIZE ? <bdi key={i}>{size}</bdi> : part,
       )}
-    </>
+    </span>
   );
 }
 

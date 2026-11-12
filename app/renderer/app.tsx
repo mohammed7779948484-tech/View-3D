@@ -19,6 +19,11 @@ import { useCatalogProducts } from './catalog/use-catalog';
 import { FixturesPanel } from './editor-2d/fixtures-panel';
 import type { Picked } from './editor-2d/fixtures-panel';
 import { FixtureInspector } from './editor-2d/fixture-inspector';
+import { Copy, FolderOpen, Gauge, Languages, MousePointerClick, Package, PencilRuler, Redo2, Ruler, Save, SaveAll, ScanLine, Store, Undo2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
+import { Separator } from '@/components/ui/separator';
 import { AutoLayoutPanel } from './editor-2d/auto-layout-panel';
 import { OptionPicker } from './editor-2d/option-picker';
 import { View3D } from './view-3d/view-3d';
@@ -213,28 +218,37 @@ export function App() {
   );
 
   const header = (
-    <header className="app-header">
-      <h1>{t('app.title')}</h1>
-      <label className="unit">
-        {t('language.label')}
-        <select value={i18n.language} onChange={(event) => void i18n.changeLanguage(event.currentTarget.value)}>
-          {LANGUAGES.map((l) => (
-            <option key={l.code} value={l.code}>
-              {l.name}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label className="unit">
-        {t('unit.label')}
-        <select value={unit} onChange={(event) => setUnit(event.currentTarget.value as DisplayUnit)}>
-          {UNITS.map((u) => (
-            <option key={u} value={u}>
-              {u}
-            </option>
-          ))}
-        </select>
-      </label>
+    <header className="flex flex-wrap items-center justify-between gap-3 border-b bg-card/80 px-1 py-3 backdrop-blur">
+      <div className="flex items-center gap-2">
+        <span className="flex size-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
+          <Store aria-hidden="true" className="size-4" />
+        </span>
+        <h1>{t('app.title')}</h1>
+      </div>
+      <div className="flex flex-wrap items-center gap-4">
+        <label className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Languages aria-hidden="true" className="size-4" />
+          {t('language.label')}
+          <NativeSelect size="sm" value={i18n.language} onChange={(event) => void i18n.changeLanguage(event.currentTarget.value)}>
+            {LANGUAGES.map((l) => (
+              <NativeSelectOption key={l.code} value={l.code}>
+                {l.name}
+              </NativeSelectOption>
+            ))}
+          </NativeSelect>
+        </label>
+        <label className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Ruler aria-hidden="true" className="size-4" />
+          {t('unit.label')}
+          <NativeSelect size="sm" value={unit} onChange={(event) => setUnit(event.currentTarget.value as DisplayUnit)}>
+            {UNITS.map((u) => (
+              <NativeSelectOption key={u} value={u}>
+                {u}
+              </NativeSelectOption>
+            ))}
+          </NativeSelect>
+        </label>
+      </div>
     </header>
   );
 
@@ -269,27 +283,33 @@ export function App() {
         )}
         {screen === 'start' && (
           <section className="start">
-            <p>{t('start.noProject')}</p>
-            <div className="actions">
-              <button type="button" className="primary" onClick={() => setScreen('walls')}>
-                {t('start.typeWalls')}
-              </button>
-              <button type="button" onClick={() => setScreen('draw')}>
-                {t('start.draw')}
-              </button>
-              <button type="button" onClick={() => void importScan()}>
-                {t('start.importScan')}
-              </button>
-              <button type="button" onClick={() => void open()}>
-                {t('start.open')}
-              </button>
-              <button type="button" onClick={() => setScreen('catalog')}>
-                {t('start.catalog')}
-              </button>
+            <p className="text-muted-foreground">{t('start.noProject')}</p>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {(
+                [
+                  { icon: PencilRuler, label: t('start.typeWalls'), go: () => setScreen('walls'), primary: true },
+                  { icon: MousePointerClick, label: t('start.draw'), go: () => setScreen('draw') },
+                  { icon: ScanLine, label: t('start.importScan'), go: () => void importScan() },
+                  { icon: FolderOpen, label: t('start.open'), go: () => void open() },
+                  { icon: Package, label: t('start.catalog'), go: () => setScreen('catalog') },
+                ] as const
+              ).map(({ icon: Icon, label, go, ...rest }) => (
+                <Card key={label} className="gap-0 p-0">
+                  <Button
+                    variant={'primary' in rest ? 'default' : 'ghost'}
+                    className="h-auto w-full justify-start gap-3 rounded-xl p-5 text-base"
+                    onClick={go}
+                  >
+                    <Icon data-icon="inline-start" />
+                    {label}
+                  </Button>
+                </Card>
+              ))}
             </div>
-            <button type="button" className="quiet" onClick={() => setScreen('diagnostics')}>
+            <Button variant="link" className="self-start px-0 text-muted-foreground" onClick={() => setScreen('diagnostics')}>
+              <Gauge data-icon="inline-start" />
               {t('start.diagnostics')}
-            </button>
+            </Button>
           </section>
         )}
         {alert}
@@ -385,25 +405,33 @@ export function App() {
           }}
         />
       </label>
-      <div role="toolbar">
-        <button type="button" onClick={() => void save(project, 'save')}>
+      <div role="toolbar" className="flex flex-wrap items-center gap-2">
+        <Button variant="default" size="sm" onClick={() => void save(project, 'save')}>
+          <Save data-icon="inline-start" />
           {t('project.save')}
-        </button>
-        <button type="button" onClick={() => void save(project, 'save-as')}>
+        </Button>
+        <Button variant="outline" size="sm" onClick={() => void save(project, 'save-as')}>
+          <SaveAll data-icon="inline-start" />
           {t('project.saveAs')}
-        </button>
-        <button type="button" onClick={() => void saveCopy(project)}>
+        </Button>
+        <Button variant="outline" size="sm" onClick={() => void saveCopy(project)}>
+          <Copy data-icon="inline-start" />
           {t('project.saveCopy')}
-        </button>
-        <button type="button" disabled={!canUndo} onClick={() => documentStore.undo()}>
+        </Button>
+        <Separator orientation="vertical" className="mx-1 h-6" />
+        <Button variant="outline" size="sm" disabled={!canUndo} onClick={() => documentStore.undo()}>
+          <Undo2 data-icon="inline-start" />
           {t('project.undo')}
-        </button>
-        <button type="button" disabled={!canRedo} onClick={() => documentStore.redo()}>
+        </Button>
+        <Button variant="outline" size="sm" disabled={!canRedo} onClick={() => documentStore.redo()}>
+          <Redo2 data-icon="inline-start" />
           {t('project.redo')}
-        </button>
-        <button type="button" onClick={() => setEditingWalls(true)}>
+        </Button>
+        <Separator orientation="vertical" className="mx-1 h-6" />
+        <Button variant="outline" size="sm" onClick={() => setEditingWalls(true)}>
+          <PencilRuler data-icon="inline-start" />
           {t('project.editWalls')}
-        </button>
+        </Button>
       </div>
       {alert}
       <div className="workspace">

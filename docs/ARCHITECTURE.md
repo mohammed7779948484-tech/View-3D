@@ -140,7 +140,8 @@ Decided in outline (owner, 2026-11-11, `decisions/0007-local-electron-desktop-ap
 in `plans/M2-M4-plan.md`. Built so far: `app/main` (the window, locked down; dialogs and file
 access in `project-files.ts`), `app/preload` (the bridge), `app/shared` (types only: the bridge's
 requests and results) and `app/renderer` (`state/`, `storage/`, `i18n/`, the start and project
-screens). The rest below is still planned.
+screens; `components/ui/` holds the shadcn/ui components, `lib/utils.ts` their `cn()` helper, and
+`globals.css` the Tailwind theme; renderer code imports them as `@/...`). The rest below is still planned.
 
 V1 is a laptop-only, fully local **Electron** desktop app (electron-vite + electron-builder).
 

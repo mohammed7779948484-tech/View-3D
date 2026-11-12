@@ -127,6 +127,25 @@ disabled (`--disable-gpu --disable-software-rasterizer`, which the no-WebGL test
 WebGL at all; 3D then says it is not available and 2D keeps working. Correction: an earlier probe
 used a hidden window, which has no fallback, and wrongly concluded "no WebGL without a GPU".
 
+## Adopted before Milestone 4 (owner ruling 2026-11-12: reverses rulings 4 and 5)
+
+The owner asked for a more professional interface built with ready-made components. Personal,
+local use: open-source licences are no obstacle. Versions pinned exactly, each at least two weeks
+old when added.
+
+| Capability | Choice | Version (released) | Licence | Evidence | Why this one |
+|---|---|---|---|---|---|
+| Styling | tailwindcss, @tailwindcss/vite | 4.3.3 (2026-07-16) | MIT | `pnpm build`; every e2e test passes on the restyled screens | Utility classes for shadcn/ui; the Vite plugin needs no config file |
+| UI components | shadcn/ui (copied source in `app/renderer/components/ui`, style new-york, radix base, RTL classes) | CLI 4.23.0 | MIT | Button, Card, Input, Label, NativeSelect, Separator, Badge, Alert, Checkbox, Field, Progress, ScrollArea, Tooltip | Accessible, consistent components; the source is ours to change |
+| Primitives | radix-ui | 1.8.1 (2026-10-14) | MIT | used by the shadcn components | shadcn's radix base |
+| Variants / class merging | class-variance-authority, clsx, tailwind-merge | 0.7.1, 2.1.1, 3.7.0 | Apache-2.0 / MIT / MIT | `cn()` in `app/renderer/lib/utils.ts` | What shadcn components expect |
+| Animations | tw-animate-css | 1.4.0 (2026-02-28) | MIT | imported in globals.css | shadcn's animation utilities |
+| Icons | lucide-react | 1.66.0 (2026-10-31) | ISC | toolbar and start screen | shadcn's icon library; inline SVG, works offline |
+| 3D helpers | @react-three/drei | 10.7.9 (2026-09-25) | MIT | 3D view | Camera controls, edges, labels and soft shadows without writing them; nothing loaded from the network (no Environment presets, no CDN fonts) |
+
+Native `<select>` (shadcn NativeSelect) is kept instead of the Radix Select: it stays a real
+combobox, keyboard and RTL behave as the system does, and the tests drive it as one.
+
 ## Built ourselves (and why)
 
 | Capability | Why build |

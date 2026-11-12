@@ -1,0 +1,134 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/*
+ * shadcn/ui theme (new-york, slate) in the app's own colours: ink for primary, tape-measure
+ * yellow for the accent that marks measurements, brick red for problems.
+ */
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --radius: 0.5rem;
+  --background: oklch(0.985 0.002 120);
+  --foreground: oklch(0.28 0.02 250);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.28 0.02 250);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.28 0.02 250);
+  --primary: oklch(0.3 0.025 250);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.955 0.005 250);
+  --secondary-foreground: oklch(0.28 0.02 250);
+  --muted: oklch(0.955 0.005 250);
+  --muted-foreground: oklch(0.5 0.02 250);
+  --accent: oklch(0.86 0.15 90);
+  --accent-foreground: oklch(0.28 0.02 250);
+  --destructive: oklch(0.55 0.18 32);
+  --border: oklch(0.9 0.008 250);
+  --input: oklch(0.88 0.01 250);
+  --ring: oklch(0.6 0.02 250);
+}
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --font-sans: 'Segoe UI Variable', 'Segoe UI', Tahoma, system-ui, sans-serif;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/*
+ * The app's own building blocks, drawn with the shadcn/ui tokens so every screen matches the
+ * shadcn components: plain buttons look like Button (outline / default / ghost), plain inputs
+ * and selects like Input, a .panel like a Card.
+ */
+@layer components {
+  main { @apply mx-auto flex max-w-[1600px] flex-col gap-4 px-5 pb-8; }
+  h1 { @apply text-lg font-semibold tracking-tight; }
+  h2 { @apply text-base font-semibold tracking-tight; }
+  h3 { @apply text-sm font-semibold; }
+  h4 { @apply text-sm font-semibold text-destructive; }
+  :focus-visible { @apply outline-2 outline-offset-2 outline-ring; }
+
+  button:not([data-slot]) {
+    @apply inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded-md border border-input bg-background px-3 text-sm font-medium whitespace-nowrap shadow-xs transition-colors hover:bg-secondary disabled:pointer-events-none disabled:opacity-50;
+  }
+  button:not([data-slot]).primary, button:not([data-slot])[aria-pressed='true'] {
+    @apply border-primary bg-primary text-primary-foreground hover:bg-primary/90;
+  }
+  button:not([data-slot]).quiet {
+    @apply h-auto border-transparent bg-transparent px-1 text-muted-foreground underline-offset-4 shadow-none hover:bg-transparent hover:text-foreground hover:underline;
+  }
+  input:not([data-slot]):not([type='checkbox']):not([type='file']), select:not([data-slot]) {
+    @apply h-9 w-full min-w-0 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-invalid:border-destructive;
+  }
+  input[type='checkbox']:not([data-slot]) { @apply size-4 accent-primary; }
+  label { @apply text-sm; }
+  progress { @apply h-2 w-full overflow-hidden rounded-full accent-primary; }
+
+  .panel { @apply flex flex-col gap-3 rounded-xl border bg-card p-4 text-card-foreground shadow-sm; }
+  .panel > h2 { @apply mb-0; }
+  .actions { @apply flex flex-wrap items-center gap-2; }
+  .hint { @apply text-sm text-muted-foreground; }
+  .field { @apply flex flex-col gap-1.5; }
+  .field-error, [role='alert'] { @apply text-sm text-destructive; }
+  [role='alert'] ul { @apply list-disc ps-5; }
+  .items { @apply flex flex-col gap-2; }
+  .items > li { @apply flex items-center justify-between gap-2; }
+  .wall-rows { @apply flex flex-col gap-2 ps-5; }
+  .wall-row { @apply grid grid-cols-[1fr_1fr_auto] items-end gap-2; }
+  .status { @apply text-sm font-semibold; }
+  .status.ok { @apply text-emerald-700; }
+  .suspects { @apply flex flex-wrap items-center gap-2; }
+  .diagonal, .item-form { @apply flex flex-col gap-3 rounded-lg border p-3; }
+  .warnings, .room-problems { @apply list-disc ps-5 text-sm text-destructive; }
+  .project-name { @apply flex items-center gap-2 text-sm font-medium; }
+  [role='dialog'] { @apply fixed inset-x-0 top-24 z-50 mx-auto flex max-w-md flex-col gap-3 rounded-xl border bg-card p-5 shadow-lg; }
+  .check { @apply flex items-center gap-2; }
+  .diagnostics, .catalog, .start { @apply flex max-w-5xl flex-col gap-4; }
+  .facts { @apply grid grid-cols-[max-content_1fr] gap-x-4 gap-y-1 text-sm; }
+  .results { @apply my-2 w-full border-collapse text-sm; }
+  .results th, .results td { @apply border-b px-2 py-1.5 text-start; }
+  .products { @apply flex flex-col gap-2; }
+  .product { @apply flex items-start justify-between gap-4 rounded-lg border bg-card px-4 py-3 shadow-xs; }
+  .badge { @apply text-xs text-muted-foreground; }
+  .badge.verified { @apply text-emerald-700; }
+  .unknown { @apply font-semibold text-destructive; }
+  .size-row { @apply m-0 grid grid-cols-[repeat(3,1fr)_auto] items-end gap-2 border-0 p-0; }
+  .layout-problems { @apply flex flex-col gap-2; }
+  .layout-problems ul { @apply list-disc ps-5 text-sm text-destructive; }
+  .quantity { @apply grid grid-cols-[1fr_5rem] items-center gap-2; }
+  .option { @apply flex flex-col gap-2 border-t pt-3; }
+  .option .items { @apply gap-1 text-sm; }
+  .preview-banner { @apply flex items-center justify-between gap-3 rounded-lg border border-accent bg-accent/30 px-3 py-2 text-sm font-medium; }
+  .workspace { @apply grid items-start gap-5 min-[900px]:grid-cols-[minmax(18rem,24rem)_1fr]; }
+  .workspace > .plan-column { @apply sticky top-2 flex flex-col gap-3; }
+}
