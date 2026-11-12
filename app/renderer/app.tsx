@@ -464,6 +464,7 @@ export function App() {
           <OptionPicker
             result={layoutResult}
             room={project.room}
+            unit={unit}
             onShow={(option) => setPreviewRank(option.rank)}
             onUse={(option) => {
               setPreviewRank(null);

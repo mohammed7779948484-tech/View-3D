@@ -8,7 +8,7 @@ import { formatDisplayLength } from '../../../src/core/index';
 import type { AngleInputCode, DesignDocument, DisplayUnit, LengthInputCode, Room } from '../../../src/core/index';
 import { captureConfig, defaultConfig } from '../../../src/rules/index';
 import type { RoomProblem, Violation } from '../../../src/rules/index';
-import type { ReasonCode, Unplaced } from '../../../src/layout/index';
+import type { ReasonCode, ScoreTerm, Unplaced } from '../../../src/layout/index';
 
 const mm = (um: number | undefined): string => `${Math.round((um ?? 0) / 1000)} mm`;
 
@@ -112,4 +112,31 @@ export function unplacedText(t: TFunction, u: Unplaced): string {
   const head = t(tried === 1 ? 'unplaced.triedOne' : 'unplaced.triedMany', { n: tried });
   if (tried === 1 || parts.length === 1) return `${head} ${t(tried === 1 ? 'unplaced.itFailed' : 'unplaced.theyFailed', { reason: parts[0] })}`;
   return `${head} ${t('unplaced.mostFailed', { first: parts[0], rest: parts.slice(1).join(t('unplaced.then')) })}`;
+}
+
+/** A score term's note in the chosen language and unit, from its code and values; unknown codes keep the engine's words. */
+export function scoreNoteText(t: TFunction, term: ScoreTerm, unit: DisplayUnit): string {
+  const v = term.values ?? {};
+  const n = (key: string): number => v[key] ?? 0;
+  switch (term.code) {
+    case 'counter-distance':
+      return t('options.notes.counter-distance', { distance: lengthText(t, n('distanceUm'), unit) });
+    case 'open-view':
+      return t('options.notes.open-view', { clear: lengthText(t, n('clearUm'), unit) });
+    case 'island-rows':
+      return t(`options.notes.island-rows-${n('spots') === 1 ? 'one' : 'many'}-${n('rows') === 1 ? 'one' : 'many'}`, { spots: n('spots'), rows: n('rows') });
+    case 'placed':
+    case 'showcases-in-block':
+    case 'even-use':
+    case 'counter-missing':
+    case 'counter-not-requested':
+    case 'counter-faces':
+    case 'counter-side-on':
+    case 'counter-away':
+    case 'no-showcases':
+    case 'no-islands':
+      return t(`options.notes.${term.code}`, v);
+    default:
+      return term.note;
+  }
 }

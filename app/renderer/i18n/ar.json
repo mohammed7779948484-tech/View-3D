@@ -469,7 +469,25 @@
     },
     "show": "اعرض الخيار {{rank}} على المخطط",
     "previewing": "يُعرض الخيار {{rank}} على المخطط. لم يُستخدم بعد.",
-    "back": "ارجع إلى توزيعي"
+    "back": "ارجع إلى توزيعي",
+    "notes": {
+      "placed": "وُضعت {{placed}} من {{requested}}",
+      "counter-missing": "لم يمكن وضع الكاشير",
+      "counter-not-requested": "لم يُطلب كاشير",
+      "counter-distance": "على بعد {{distance}} من المدخل",
+      "counter-faces": "الكاشير يواجه المدخل",
+      "counter-side-on": "المدخل على جانب الكاشير",
+      "counter-away": "الكاشير لا يواجه المدخل",
+      "no-showcases": "لا فاترينات زجاجية في هذا التوزيع",
+      "showcases-in-block": "{{inBlock}} من {{showcases}} في منطقة الكاشير",
+      "no-islands": "لا جزر في هذا التوزيع",
+      "island-rows-one-one": "أماكن الجزر: {{spots}}، الصفوف: {{rows}}",
+      "island-rows-one-many": "أماكن الجزر: {{spots}}، الصفوف: {{rows}}",
+      "island-rows-many-one": "أماكن الجزر: {{spots}}، الصفوف: {{rows}}",
+      "island-rows-many-many": "أماكن الجزر: {{spots}}، الصفوف: {{rows}}",
+      "even-use": "قطع في {{used}} من {{cells}} أجزاء من الأرض",
+      "open-view": "{{clear}} خالية مباشرة أمام الباب"
+    }
   },
   "view3d": {
     "switch": "العرض",

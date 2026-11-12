@@ -48,7 +48,11 @@ export type Unplaced = {
   obstacles: Partial<Record<ReasonCode, number>>;
 };
 
-export type ScoreTerm = { term: string; weight: number; value: number; points: number; note: string };
+/**
+ * One part of an option's score. `note` is the engine's English sentence; `code` and `values`
+ * carry the same facts so the app can word them in any language and unit (lengths in um).
+ */
+export type ScoreTerm = { term: string; weight: number; value: number; points: number; note: string; code: string; values: Record<string, number> };
 
 export type MeasuredAisle = { from: Point; to: Point; widthUm: number; kind: 'main' | 'secondary'; label: string };
 

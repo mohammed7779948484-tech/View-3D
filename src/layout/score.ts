@@ -121,29 +121,32 @@ export function score(state: State, f: Frame, entrance: Entrance, requested: num
   const ys = state.room.outline.map((p) => p.x * f.v.x + p.y * f.v.y);
   const diag = Math.hypot(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys));
   const clamp = (v: number): number => Math.min(1, Math.max(0, v));
-  const term = (name: string, weight: number, value: number, text: string): ScoreTerm => ({
+  const term = (name: string, weight: number, value: number, text: string, code: string, values: Record<string, number> = {}): ScoreTerm => ({
     term: name,
     weight,
     value: Math.round(clamp(value) * 1000) / 1000,
     points: Math.round(clamp(value) * weight * 1000) / 1000,
     note: text,
+    code,
+    values,
   });
   const mm = (um: number): string => `${Math.round(um / 1000)} mm`;
   const terms: ScoreTerm[] = [];
   const placed = state.placed.length;
-  terms.push(term('Fixtures placed', SCORE_WEIGHTS.placed, requested === 0 ? 1 : placed / requested, `${placed} of ${requested} placed`));
+  terms.push(term('Fixtures placed', SCORE_WEIGHTS.placed, requested === 0 ? 1 : placed / requested, `${placed} of ${requested} placed`, 'placed', { placed, requested }));
 
   const counter = state.cashWrap.find((p) => p.product.placement === 'counter');
   const counterWanted = state.request.items.some((i) => i.product.placement === 'counter' && i.quantity > 0);
   if (counter === undefined) {
     const value = counterWanted ? 0 : 1;
     const why = counterWanted ? 'no counter could be placed' : 'no counter requested';
-    terms.push(term('Counter near the entrance', SCORE_WEIGHTS.counterNear, value, why));
-    terms.push(term('Counter faces the entrance', SCORE_WEIGHTS.counterFacing, value, why));
+    const code = counterWanted ? 'counter-missing' : 'counter-not-requested';
+    terms.push(term('Counter near the entrance', SCORE_WEIGHTS.counterNear, value, why, code));
+    terms.push(term('Counter faces the entrance', SCORE_WEIGHTS.counterFacing, value, why, code));
   } else {
     const c = counter.rect.center;
     const d = dist(c, entrance.point);
-    terms.push(term('Counter near the entrance', SCORE_WEIGHTS.counterNear, 1 - d / diag, `${mm(d)} from the entrance`));
+    terms.push(term('Counter near the entrance', SCORE_WEIGHTS.counterNear, 1 - d / diag, `${mm(d)} from the entrance`, 'counter-distance', { distanceUm: Math.round(d) }));
     const front = adjacentRect(counter.rect, 'front', counter.rect.depthUm).center;
     const fx = front.x - c.x;
     const fy = front.y - c.y;
@@ -154,16 +157,17 @@ export function score(state: State, f: Frame, entrance: Entrance, requested: num
         SCORE_WEIGHTS.counterFacing,
         facing,
         facing > 0.7 ? 'the counter looks at the entrance' : facing > 0.2 ? 'the entrance is to one side of the counter' : 'the counter does not look at the entrance',
+        facing > 0.7 ? 'counter-faces' : facing > 0.2 ? 'counter-side-on' : 'counter-away',
       ),
     );
   }
 
   const showcases = state.placed.filter((p) => isShowcase(p.unit));
   if (showcases.length === 0) {
-    terms.push(term('Showcases with the counter', SCORE_WEIGHTS.showcasesNear, 1, 'no glass showcases in this layout'));
+    terms.push(term('Showcases with the counter', SCORE_WEIGHTS.showcasesNear, 1, 'no glass showcases in this layout', 'no-showcases'));
   } else {
     const inBlock = showcases.filter((p) => state.cashWrap.includes(p)).length;
-    terms.push(term('Showcases with the counter', SCORE_WEIGHTS.showcasesNear, inBlock / showcases.length, `${inBlock} of ${showcases.length} in the checkout block`));
+    terms.push(term('Showcases with the counter', SCORE_WEIGHTS.showcasesNear, inBlock / showcases.length, `${inBlock} of ${showcases.length} in the checkout block`, 'showcases-in-block', { inBlock, showcases: showcases.length }));
   }
 
   const rows = gridRows(state, f);
@@ -174,11 +178,13 @@ export function score(state: State, f: Frame, entrance: Entrance, requested: num
       SCORE_WEIGHTS.rows,
       onGrid <= 1 ? 1 : (onGrid - rows.length) / (onGrid - 1),
       onGrid === 0 ? 'no islands in this layout' : `${onGrid} island spot${onGrid === 1 ? '' : 's'} in ${rows.length} row${rows.length === 1 ? '' : 's'}`,
+      onGrid === 0 ? 'no-islands' : 'island-rows',
+      { spots: onGrid, rows: rows.length },
     ),
   );
 
   const even = evenUse(state, f);
-  terms.push(term('Even use of the floor', SCORE_WEIGHTS.evenUse, even.value, `fixtures in ${even.used} of ${even.cells} parts of the floor`));
+  terms.push(term('Even use of the floor', SCORE_WEIGHTS.evenUse, even.value, `fixtures in ${even.used} of ${even.cells} parts of the floor`, 'even-use', { used: even.used, cells: even.cells }));
 
   // A corridor straight in from the door, a little narrower than the door and starting just inside
   // the wall, so that a fixture merely touching the corridor's edge or a rounded corner never
@@ -195,6 +201,6 @@ export function score(state: State, f: Frame, entrance: Entrance, requested: num
   };
   const withFixtures = clearAhead(state, door, 'front', null, state.placed);
   const empty = clearAhead(state, door, 'front', null, []);
-  terms.push(term('Open view from the entrance', SCORE_WEIGHTS.openEntrance, empty === 0 ? 1 : withFixtures / empty, `${mm(withFixtures)} clear straight ahead of the door`));
+  terms.push(term('Open view from the entrance', SCORE_WEIGHTS.openEntrance, empty === 0 ? 1 : withFixtures / empty, `${mm(withFixtures)} clear straight ahead of the door`, 'open-view', { clearUm: Math.round(withFixtures) }));
   return terms;
 }

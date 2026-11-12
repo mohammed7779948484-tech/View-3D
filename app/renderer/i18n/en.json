@@ -469,7 +469,25 @@
     },
     "show": "Show option {{rank}} on the plan",
     "previewing": "Showing option {{rank}} on the plan. It is not used yet.",
-    "back": "Back to my layout"
+    "back": "Back to my layout",
+    "notes": {
+      "placed": "{{placed}} of {{requested}} placed",
+      "counter-missing": "no counter could be placed",
+      "counter-not-requested": "no counter requested",
+      "counter-distance": "{{distance}} from the entrance",
+      "counter-faces": "the counter looks at the entrance",
+      "counter-side-on": "the entrance is to one side of the counter",
+      "counter-away": "the counter does not look at the entrance",
+      "no-showcases": "no glass showcases in this layout",
+      "showcases-in-block": "{{inBlock}} of {{showcases}} in the checkout block",
+      "no-islands": "no islands in this layout",
+      "island-rows-one-one": "{{spots}} island spot in {{rows}} row",
+      "island-rows-one-many": "{{spots}} island spot in {{rows}} rows",
+      "island-rows-many-one": "{{spots}} island spots in {{rows}} row",
+      "island-rows-many-many": "{{spots}} island spots in {{rows}} rows",
+      "even-use": "fixtures in {{used}} of {{cells}} parts of the floor",
+      "open-view": "{{clear}} clear straight ahead of the door"
+    }
   },
   "view3d": {
     "switch": "View",

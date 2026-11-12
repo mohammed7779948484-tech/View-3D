@@ -1,12 +1,12 @@
 /** The ranked options of the last automatic layout: score explained, what did not fit, and Use. */
 import { useTranslation } from 'react-i18next';
 import type { LayoutOption, LayoutResult } from '../../../src/layout/index';
-import type { Room } from '../../../src/core/index';
-import { problemText, unplacedText } from '../i18n/messages';
+import type { DisplayUnit, Room } from '../../../src/core/index';
+import { problemText, scoreNoteText, unplacedText } from '../i18n/messages';
 
-type Props = { result: LayoutResult; room: Room; onShow: (option: LayoutOption) => void; onUse: (option: LayoutOption) => void };
+type Props = { result: LayoutResult; room: Room; unit: DisplayUnit; onShow: (option: LayoutOption) => void; onUse: (option: LayoutOption) => void };
 
-export function OptionPicker({ result, room, onShow, onUse }: Props) {
+export function OptionPicker({ result, room, unit, onShow, onUse }: Props) {
   const { t } = useTranslation();
   // A term the strings do not know yet is shown as the engine names it.
   const term = (name: string): string => t(`options.terms.${name}`, { defaultValue: name });
@@ -36,9 +36,7 @@ export function OptionPicker({ result, room, onShow, onUse }: Props) {
                 <span dir="ltr">
                   {s.points.toFixed(1)} / {s.weight}
                 </span>{' '}
-                <span className="hint" lang="en" dir="ltr">
-                  {s.note}
-                </span>
+                <span className="hint">{scoreNoteText(t, s, unit)}</span>
               </li>
             ))}
           </ul>
