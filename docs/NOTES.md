@@ -192,6 +192,33 @@ confirmation.
 Answered on 2026-11-10: secondary aisle 915 mm; window rule by sill height; stand showcase is
 W48 × D20 × H72 in; single-sided units go on walls or back to back; entrance decompression zone.
 
+## Hands-on review of the app (2026-11-12)
+
+Claude used the built app like the owner would (Playwright driving the real window, screenshots
+read back): typed an 8 x 6 m room, added an entrance door, ran the automatic layout, used an
+option, selected a fixture, placed one by hand, switched to 3D and to Arabic. What was wrong or
+awkward, most important first. "Fixed" items have a test in `test/e2e/plan-readability.spec.ts`
+or the file named.
+
+1. (fixed) The door was invisible on the plan: drawn as a white gap, and the wall's length label sat on
+   top of it (a door in the middle of a wall). No swing, no word "Entrance". A fixture placed in
+   front of it was reported as "blocks the entrance" with nothing on the plan to show why.
+2. (fixed) Fixtures on the plan had no names: a counter, a showcase and a gondola were all plain boxes.
+3. (fixed) The walls had no numbers on the plan, but the door form asks for "Door wall" by number.
+4. (fixed) The selected fixture's panel and the layout problems were at the bottom of the left column,
+   below the four layout options (about 3500 px of page): the owner had to scroll away from the
+   plan to edit a fixture or read why it is red.
+5. The four layout options cannot be seen before using one; options 1 and 2 had identical
+   scores and notes, so they could not be told apart.
+6. Problems and score notes give lengths in mm whatever unit is chosen ("needs 915 mm clear"
+   with the unit set to cm); the score notes stay English in Arabic.
+7. In Arabic, a product name mixed with numbers is jumbled ("FT FULL VIEW LED lights Showcase، 72 4")
+   and "350 cm" reads "cm 350".
+8. The wall table starts with empty angle fields: a plain rectangle needs "90" typed four times.
+9. Running the layout in a room without an entrance says only "The room has problems"; the
+   problem itself is at the very bottom of the page.
+10. The 3D view shows no doors or windows.
+
 ## Log
 - 2026-11-10 Plan approved with changes. Initial README commit pushed to `main`.
 - 2026-11-10 Issue 1: scaffold, pinned dependencies, library spikes green (5 tests), typecheck clean.
@@ -267,3 +294,4 @@ W48 × D20 × H72 in; single-sided units go on walls or back to back; entrance d
 - 2026-11-12 Questions 13-17 decided by Claude on the owner's request (answers above). 10g done: weights 30/12/8/10/10/15/15, test first (7c12389, architecture test e457834); option 1 unchanged in every shop, golden hashes and gallery regenerated on purpose. 912 Vitest, 112 e2e.
 - 2026-11-12 10f on real products: three counter showcases served from the back (judged from the website photos at the owner's request; flagged). The real-products shop changes: option 1 still places 9 of 12 with the counter 2351 mm from the door, now with staff space behind the showcases; options 2 and 3 changed (gallery regenerated).
 - 2026-11-12 M3 10d (a) built and parked again: rotation test red in 5 cases (island rows after an open-floor block differ in a turned shop); patch kept in docs/parked/.
+- 2026-11-12 Hands-on review of the app (10 findings, NOTES section above). Fixed test-first: door swing and "Entrance" on the plan, wall numbers, labels clear of doors, fixture names, inspector and problems under the plan (7 e2e). 915 Vitest, 119 e2e.
