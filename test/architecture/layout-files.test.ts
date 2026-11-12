@@ -70,13 +70,13 @@ describe('src/layout public runtime API', () => {
 
   it('exports SCORE_WEIGHTS with the planned keys and values', () => {
     expect({ ...layout.SCORE_WEIGHTS }).toEqual({
-      placed: 45,
+      placed: 30,
       counterNear: 12,
       counterFacing: 8,
       showcasesNear: 10,
       rows: 10,
-      evenUse: 10,
-      openEntrance: 5,
+      evenUse: 15,
+      openEntrance: 15,
     });
     expect(Object.keys(layout.SCORE_WEIGHTS)).toEqual([
       'placed', 'counterNear', 'counterFacing', 'showcasesNear', 'rows', 'evenUse', 'openEntrance',
