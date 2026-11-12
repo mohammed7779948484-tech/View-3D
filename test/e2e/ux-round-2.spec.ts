@@ -123,7 +123,12 @@ test('C3: in Arabic the lengths of the openings list are isolated and product na
   expect(text).toContain('⁦350 cm⁩');
   expect(text).toContain('⁦100 cm⁩');
 
-  await expect(page.locator('button bdi').filter({ hasText: '4 FT FULL VIEW LED lights Showcase' })).toHaveCount(1, FIRST);
+  // The product has several sizes: one "Place ..." button per size, and each must wrap the name in a <bdi>.
+  const bdis = page.locator('button bdi').filter({ hasText: '4 FT FULL VIEW LED lights Showcase' });
+  await expect(bdis.first()).toBeVisible(FIRST);
+  const buttons = await page.locator('button').filter({ hasText: '4 FT FULL VIEW LED lights Showcase' }).count();
+  expect(buttons).toBeGreaterThanOrEqual(1);
+  await expect(bdis).toHaveCount(buttons);
 });
 
 test('C4: every wall-table angle starts at 90, so a plain rectangle needs only the lengths', async () => {
