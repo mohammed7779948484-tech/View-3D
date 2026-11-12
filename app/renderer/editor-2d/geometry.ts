@@ -44,7 +44,7 @@ export function viewBoxAround(points: readonly Point[], minMarginMm: number): { 
   const ys = points.map((p) => p.y / UM_PER_MM);
   // Room for the wall labels outside the walls: they grow with the plan (see Plan), so the margin does too.
   const span = Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys));
-  const marginMm = Math.max(minMarginMm, Math.ceil(span * 0.2));
+  const marginMm = Math.max(minMarginMm, Math.ceil(span * 0.25));
   const minX = Math.min(...xs) - marginMm;
   const maxX = Math.max(...xs) + marginMm;
   const minY = Math.min(...ys) - marginMm;

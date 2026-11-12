@@ -203,8 +203,8 @@ export function Plan({ outline, closed, unit, view, onPlanClick, onCornerMoved, 
         const cy = mm((a.y + b.y) / 2);
         const text = formatDisplayLength(wallLengthUm(a, b), unit);
         // How far the label reaches along the outward direction: half its width or half its height.
-        const reach = Math.abs(ox) * text.length * 0.32 * label + Math.abs(oy) * 1.25 * label;
-        const near = 0.7 * label + reach;
+        const reach = Math.abs(ox) * text.length * 0.32 * label + Math.abs(oy) * 1.6 * label;
+        const near = 0.9 * label + reach;
         const far = near + reach + 1.1 * label;
         return (
           <g key={i}>
