@@ -12,7 +12,7 @@ export type DescribedBox = { id: string; center: [number, number, number]; size:
 
 declare global {
   interface Window {
-    __view3dScene?: { describe(): { boxes: DescribedBox[] }; screenOf(xMm: number, yMm: number): { x: number; y: number } };
+    __view3dScene?: { describe(): { boxes: DescribedBox[]; walls: DescribedWall[] }; screenOf(xMm: number, yMm: number): { x: number; y: number } };
   }
 }
 
@@ -31,9 +31,12 @@ function describeMatrix(id: string, world: Matrix4, geometrySize: Vector3, probl
   };
 }
 
-export function describeScene(scene: Object3D): { boxes: DescribedBox[] } {
+export type DescribedWall = { center: [number, number, number]; size: [number, number, number]; yawRad: number };
+
+export function describeScene(scene: Object3D): { boxes: DescribedBox[]; walls: DescribedWall[] } {
   scene.updateMatrixWorld(true);
   const boxes: DescribedBox[] = [];
+  const walls: DescribedWall[] = [];
   scene.traverse((o) => {
     if (!(o instanceof Mesh)) return;
     o.geometry.computeBoundingBox();
@@ -48,9 +51,12 @@ export function describeScene(scene: Object3D): { boxes: DescribedBox[] } {
       });
     } else if (typeof o.userData['boxId'] === 'string') {
       boxes.push(describeMatrix(o.userData['boxId'] as string, o.matrixWorld, size, o.userData['problem'] === true));
+    } else if (o.userData['wallPiece'] === true) {
+      const { center, size: s, yawRad } = describeMatrix('wall', o.matrixWorld, size, false);
+      walls.push({ center, size: s, yawRad });
     }
   });
-  return { boxes };
+  return { boxes, walls };
 }
 
 /** Where the floor point at plan (xMm, yMm) is on the page, under the camera as it is now. */

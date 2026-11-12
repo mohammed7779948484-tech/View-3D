@@ -8,6 +8,8 @@ import { planToScene, rotationToYaw, umToScene } from './units';
 export type SceneBox = {
   id: string;
   category: Product['category'];
+  /** The product's name, shown beside the box. */
+  name: string;
   /** Metres, scene axes; y is half the height (the box stands on the floor). */
   center: [number, number, number];
   /** Width (scene x before turning), height (y), depth (scene z before turning), metres. */
@@ -27,6 +29,7 @@ export function sceneBoxes(document: DesignDocument): SceneBox[] {
     return {
       id: placement.id,
       category: product.category,
+      name: product.name,
       center: [at.x, height / 2, at.z],
       size: [umToScene(variant.widthUm), height, umToScene(variant.depthUm)],
       yawRad: rotationToYaw(placement.rotationUdeg),

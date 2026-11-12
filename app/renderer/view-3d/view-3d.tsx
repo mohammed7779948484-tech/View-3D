@@ -4,12 +4,13 @@
  * Renders only when something changes (frameloop "demand"); with no WebGL it says so.
  */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { ReactNode } from 'react';
+import type { ReactNode, RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Canvas, useThree } from '@react-three/fiber';
 import type { ThreeEvent } from '@react-three/fiber';
 import { Plane, Shape, Vector3 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { ContactShadows, Html } from '@react-three/drei';
 import type { DesignDocument, Point } from '../../../src/core/index';
 import { snap } from '../editor-2d/geometry';
 import { sceneBoxes } from './boxes';
@@ -44,6 +45,48 @@ function frameOf(outline: readonly Point[]): Frame {
   };
 }
 
+type WallPiece = { position: [number, number, number]; size: [number, number, number]; yawRad: number };
+
+/**
+ * Each wall as boxes, outside the shop's outline, with its doors and windows left open: full
+ * height between openings, and below a window's sill and above every opening up to the ceiling.
+ * A wall runs on by its thickness at both ends, so corners close.
+ */
+function wallPieces(doc: DesignDocument): WallPiece[] {
+  const outline = doc.room.outline;
+  const ceiling = umToScene(doc.room.ceilingHeightUm);
+  const pieces: WallPiece[] = [];
+  outline.forEach((a, i) => {
+    const b = outline[(i + 1) % outline.length]!;
+    const dx = umToScene(b.x - a.x);
+    const dy = umToScene(b.y - a.y);
+    const length = Math.hypot(dx, dy);
+    if (length === 0) return;
+    // Outward is the right of the wall's direction for a counter-clockwise outline.
+    const out = { x: (dy / length) * (WALL_THICKNESS_M / 2), y: (-dx / length) * (WALL_THICKNESS_M / 2) };
+    const yawRad = Math.atan2(dy, dx);
+    const piece = (from: number, to: number, bottom: number, top: number): void => {
+      if (to - from <= 0 || top - bottom <= 0) return;
+      const t = (from + to) / 2 / length;
+      const at = planToScene({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t });
+      pieces.push({ position: [at.x + out.x, (bottom + top) / 2, at.z - out.y], size: [to - from, top - bottom, WALL_THICKNESS_M], yawRad });
+    };
+    const holes = doc.room.openings
+      .filter((o) => o.wallIndex === i)
+      .map((o) => ({ from: umToScene(o.offsetUm), to: umToScene(o.offsetUm + o.widthUm), bottom: umToScene(o.sillHeightUm), top: Math.min(ceiling, umToScene(o.sillHeightUm + o.heightUm)) }))
+      .sort((p, q) => p.from - q.from);
+    let start = -WALL_THICKNESS_M;
+    for (const h of holes) {
+      piece(start, h.from, 0, ceiling);
+      piece(h.from, h.to, 0, h.bottom);
+      piece(h.from, h.to, h.top, ceiling);
+      start = Math.max(start, h.to);
+    }
+    piece(start, length + WALL_THICKNESS_M, 0, ceiling);
+  });
+  return pieces;
+}
+
 function Room({ doc, onFloorClick }: { doc: DesignDocument; onFloorClick?: (point: Point) => void }) {
   const outline = doc.room.outline;
   const height = umToScene(doc.room.ceilingHeightUm);
@@ -67,22 +110,12 @@ function Room({ doc, onFloorClick }: { doc: DesignDocument; onFloorClick?: (poin
         <shapeGeometry args={[floor]} />
         <meshLambertMaterial color="#e3e7ea" />
       </mesh>
-      {outline.map((a, i) => {
-        const b = outline[(i + 1) % outline.length]!;
-        const dx = umToScene(b.x - a.x);
-        const dy = umToScene(b.y - a.y);
-        const length = Math.hypot(dx, dy);
-        // Outward is the right of the wall's direction for a counter-clockwise outline.
-        const ox = (dy / length) * (WALL_THICKNESS_M / 2);
-        const oy = (-dx / length) * (WALL_THICKNESS_M / 2);
-        const mid = planToScene({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 });
-        return (
-          <mesh key={i} position={[mid.x + ox, height / 2, mid.z - oy]} rotation-y={Math.atan2(dy, dx)}>
-            <boxGeometry args={[length + WALL_THICKNESS_M * 2, height, WALL_THICKNESS_M]} />
-            <meshLambertMaterial color="#b9c2ca" transparent opacity={0.45} />
-          </mesh>
-        );
-      })}
+      {wallPieces(doc).map((w, i) => (
+        <mesh key={i} position={w.position} rotation-y={w.yawRad} userData={{ wallPiece: true }}>
+          <boxGeometry args={w.size} />
+          <meshLambertMaterial color="#b9c2ca" transparent opacity={0.45} />
+        </mesh>
+      ))}
     </>
   );
 }
@@ -165,6 +198,7 @@ export function View3D({ document, problemIds, onSelect, onMove, onPlace }: Prop
   const [aim, setAim] = useState<Aim>({ preset: 'corner', n: 0 });
   const press = (preset: CameraPreset): void => setAim((a) => ({ preset, n: a.n + 1 }));
   const controls = useRef<OrbitControls | null>(null);
+  const labelLayer = useRef<HTMLDivElement>(null);
   const boxes = useMemo(() => sceneBoxes(document), [document]);
   const outline = document.room.outline;
   const frame = useMemo(() => frameOf(outline), [outline]);
@@ -179,7 +213,7 @@ export function View3D({ document, problemIds, onSelect, onMove, onPlace }: Prop
           {t('view3d.corner')}
         </button>
       </div>
-      <div className="stage plan">
+      <div className="stage plan relative" ref={labelLayer}>
         <Canvas frameloop="demand" camera={{ fov: 50, near: 0.05, far: 500 }}>
           <color attach="background" args={['#f6f7f5']} />
           <ambientLight intensity={0.9} />
@@ -192,6 +226,16 @@ export function View3D({ document, problemIds, onSelect, onMove, onPlace }: Prop
           ) : (
             <FixtureBoxes boxes={boxes} instanced shadows={false} problemIds={problemIds} />
           )}
+          {boxes.map((b) => (
+            // A fixed portal: drei's default target changes once the canvas connects its events, and
+            // a label mounted before that would be emptied.
+            <Html key={b.id} portal={labelLayer as RefObject<HTMLElement>} position={[b.center[0], b.size[1] + 0.15, b.center[2]]} center zIndexRange={[10, 0]} style={{ pointerEvents: 'none' }}>
+              <span data-3d-label={b.id} className="rounded bg-card/90 px-1.5 py-0.5 text-[11px] whitespace-nowrap text-foreground shadow-sm">
+                {b.name}
+              </span>
+            </Html>
+          ))}
+          <ContactShadows position={[frame.centre.x, 0.002, frame.centre.z]} scale={frame.span * 1.2} opacity={0.35} blur={2} far={3} frames={1} />
           <CameraRig frame={frame} aim={aim} controls={controls} />
           <SceneProbe />
         </Canvas>
