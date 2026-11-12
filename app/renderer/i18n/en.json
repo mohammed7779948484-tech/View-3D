@@ -372,36 +372,36 @@
       "decompression": "{{a}} blocks {{door}}. Customers arriving need open floor and a clear view straight in from the entrance."
     },
     "window-blocked": {
-      "default": "{{a}} is {{height}} mm high and stands in front of window \"{{window}}\", whose sill is at {{sill}} mm."
+      "default": "{{a}} is {{height}} high and stands in front of window \"{{window}}\", whose sill is at {{sill}}."
     },
     "wall-unit-not-on-wall": {
       "default": "{{a}} is single-sided: its back must stand against a wall (clear of doors) or against the back of another single-sided unit."
     },
     "access-blocked": {
-      "default": "The space beside {{a}} needs {{required}} mm clear.",
-      "customer-front-wall": "The aisle in front of {{a}} needs {{required}} mm clear, but a wall is in the way.",
-      "customer-front-column": "The aisle in front of {{a}} needs {{required}} mm clear, but column \"{{column}}\" is in the way.",
-      "customer-front-fixture": "The aisle in front of {{a}} needs {{required}} mm clear, but {{b}} is in the way.",
-      "customer-back-wall": "The aisle behind {{a}} needs {{required}} mm clear, but a wall is in the way.",
-      "customer-back-column": "The aisle behind {{a}} needs {{required}} mm clear, but column \"{{column}}\" is in the way.",
-      "customer-back-fixture": "The aisle behind {{a}} needs {{required}} mm clear, but {{b}} is in the way.",
-      "staff-front-wall": "The staff space in front of {{a}} needs {{required}} mm clear, but a wall is in the way.",
-      "staff-front-column": "The staff space in front of {{a}} needs {{required}} mm clear, but column \"{{column}}\" is in the way.",
-      "staff-front-fixture": "The staff space in front of {{a}} needs {{required}} mm clear, but {{b}} is in the way.",
-      "staff-back-wall": "The staff space behind {{a}} needs {{required}} mm clear, but a wall is in the way.",
-      "staff-back-column": "The staff space behind {{a}} needs {{required}} mm clear, but column \"{{column}}\" is in the way.",
-      "staff-back-fixture": "The staff space behind {{a}} needs {{required}} mm clear, but {{b}} is in the way."
+      "default": "The space beside {{a}} needs {{required}} clear.",
+      "customer-front-wall": "The aisle in front of {{a}} needs {{required}} clear, but a wall is in the way.",
+      "customer-front-column": "The aisle in front of {{a}} needs {{required}} clear, but column \"{{column}}\" is in the way.",
+      "customer-front-fixture": "The aisle in front of {{a}} needs {{required}} clear, but {{b}} is in the way.",
+      "customer-back-wall": "The aisle behind {{a}} needs {{required}} clear, but a wall is in the way.",
+      "customer-back-column": "The aisle behind {{a}} needs {{required}} clear, but column \"{{column}}\" is in the way.",
+      "customer-back-fixture": "The aisle behind {{a}} needs {{required}} clear, but {{b}} is in the way.",
+      "staff-front-wall": "The staff space in front of {{a}} needs {{required}} clear, but a wall is in the way.",
+      "staff-front-column": "The staff space in front of {{a}} needs {{required}} clear, but column \"{{column}}\" is in the way.",
+      "staff-front-fixture": "The staff space in front of {{a}} needs {{required}} clear, but {{b}} is in the way.",
+      "staff-back-wall": "The staff space behind {{a}} needs {{required}} clear, but a wall is in the way.",
+      "staff-back-column": "The staff space behind {{a}} needs {{required}} clear, but column \"{{column}}\" is in the way.",
+      "staff-back-fixture": "The staff space behind {{a}} needs {{required}} clear, but {{b}} is in the way."
     },
     "aisle-too-narrow": {
-      "default": "The way from the entrance to {{a}} is narrower than {{required}} mm somewhere."
+      "default": "The way from the entrance to {{a}} is narrower than {{required}} somewhere."
     },
     "unreachable": {
       "default": "{{a}} cannot be reached.",
       "customer": "Customers cannot walk from the entrance to {{a}}.",
-      "staff": "Staff cannot get behind {{a}}: the way in is narrower than {{required}} mm."
+      "staff": "Staff cannot get behind {{a}}: the way in is narrower than {{required}}."
     },
     "main-aisle": {
-      "default": "The main aisle from the entrance to {{a}} is narrower than {{required}} mm somewhere."
+      "default": "The main aisle from the entrance to {{a}} is narrower than {{required}} somewhere."
     }
   },
   "layoutProblems": {
@@ -455,7 +455,7 @@
     "use": "Use option {{rank}}",
     "didNotFit": "Did not fit",
     "unplacedItem": "{{name}} x {{quantity}}",
-    "roomProblems": "The room has problems, so no layout was made. See the room problems.",
+    "roomProblems": "The room has problems, so no layout was made:",
     "none": "No option could be made.",
     "terms": {
       "Fixtures placed": "Fixtures placed",
@@ -465,7 +465,10 @@
       "Islands in rows": "Islands in rows",
       "Even use of the floor": "Even use of the floor",
       "Open view from the entrance": "Open view from the entrance"
-    }
+    },
+    "show": "Show option {{rank}} on the plan",
+    "previewing": "Showing option {{rank}} on the plan. It is not used yet.",
+    "back": "Back to my layout"
   },
   "view3d": {
     "switch": "View",
@@ -474,5 +477,8 @@
     "top": "Top view",
     "corner": "Corner view",
     "noWebgl": "3D is not available on this computer (no WebGL 2). The 2D plan still works."
+  },
+  "meta": {
+    "dir": "ltr"
   }
 }

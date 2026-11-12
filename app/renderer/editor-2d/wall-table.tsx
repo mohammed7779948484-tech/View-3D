@@ -24,7 +24,8 @@ type Props = {
 };
 
 const FIRST_ROWS = 4;
-const emptyRow = (): Row => ({ length: '', angle: '' });
+/** A new wall: no length yet, and an ordinary corner (90) at its end, the usual case. */
+const emptyRow = (): Row => ({ length: '', angle: '90' });
 
 /** "Type the walls": each wall's length and end angle, checked as the owner types. */
 export function WallTable({ unit, onCreate, onBack, start, submitLabel }: Props) {

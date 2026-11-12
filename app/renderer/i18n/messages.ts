@@ -4,12 +4,22 @@
  */
 import type { TFunction } from 'i18next';
 import type { CaptureProblem, SanityWarning } from '../../../src/capture/index';
-import type { AngleInputCode, DesignDocument, LengthInputCode, Room } from '../../../src/core/index';
+import { formatDisplayLength } from '../../../src/core/index';
+import type { AngleInputCode, DesignDocument, DisplayUnit, LengthInputCode, Room } from '../../../src/core/index';
 import { captureConfig, defaultConfig } from '../../../src/rules/index';
 import type { RoomProblem, Violation } from '../../../src/rules/index';
 import type { ReasonCode, Unplaced } from '../../../src/layout/index';
 
 const mm = (um: number | undefined): string => `${Math.round((um ?? 0) / 1000)} mm`;
+
+/**
+ * A length in the chosen unit for a sentence. In a right-to-left language it is wrapped in
+ * Unicode isolates, so "350 cm" keeps its order inside Arabic text.
+ */
+export function lengthText(t: TFunction, um: number, unit: DisplayUnit): string {
+  const text = formatDisplayLength(um, unit);
+  return t('meta.dir') === 'rtl' ? `\u2066${text}\u2069` : text;
+}
 
 /** "Window", "Door" or "Entrance" for an opening, in the current language. */
 function kindOf(t: TFunction, room: Room, id: string | undefined, lower: boolean): string {
@@ -57,16 +67,16 @@ export function warningText(t: TFunction, w: SanityWarning): string {
 
 /**
  * A layout problem in words, in the chosen language, from its rule, `detail` and `values`. In English
- * it is exactly the engine's own message. Fixtures are named `"name" (id)` as the engine names them.
+ * it is exactly the engine's own message (in mm). Lengths are in `unit`. Fixtures are named `"name" (id)` as the engine names them.
  */
-export function violationText(t: TFunction, doc: DesignDocument, v: Violation): string {
+export function violationText(t: TFunction, doc: DesignDocument, v: Violation, unit: DisplayUnit = 'mm'): string {
   const label = (id: string | undefined): string => {
     if (id === undefined) return '';
     const placement = doc.placements.find((p) => p.id === id);
     const name = doc.products.find((p) => p.id === placement?.productId)?.name ?? placement?.productId ?? id;
     return `"${name}" (${id})`;
   };
-  const value = (key: string): number => Math.round((v.values?.[key] ?? 0) / 1000);
+  const value = (key: string): string => lengthText(t, v.values?.[key] ?? 0, unit);
   const ghost = doc.placements.find((p) => p.id === v.placementIds[0]);
   const opening = doc.room.openings.find((o) => o.id === v.openingId);
   return t(`violations.${v.rule}.${v.detail ?? 'default'}`, {

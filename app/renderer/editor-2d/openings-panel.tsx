@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { formatDisplayLength, parseCoordinate, parseDistance, parseLength } from '../../../src/core/index';
 import type { DisplayUnit, Opening, Room } from '../../../src/core/index';
 import { validateRoom } from '../../../src/rules/index';
-import { lengthInputText, problemText } from '../i18n/messages';
+import { lengthInputText, lengthText, problemText } from '../i18n/messages';
 import { typedUnit } from './length-field';
 
 type Kind = 'door' | 'window' | 'column';
@@ -32,7 +32,9 @@ export function OpeningsPanel({ room, unit, onRoom }: Props) {
   const formId = useId();
   const [kind, setKind] = useState<Kind | null>(null);
   const [values, setValues] = useState<Record<string, string>>({});
-  const [door, setDoor] = useState({ isEntrance: false, swing: 'in' as 'in' | 'out' | 'none', hinge: 'start' as 'start' | 'end' });
+  // The first door of a room without an entrance is most likely the entrance.
+  const noEntrance = !room.openings.some((o) => o.door?.isEntrance === true);
+  const [door, setDoor] = useState({ isEntrance: noEntrance, swing: 'in' as 'in' | 'out' | 'none', hinge: 'start' as 'start' | 'end' });
   const [errors, setErrors] = useState<string[]>([]);
   const len = (um: number): string => formatDisplayLength(um, unit);
 
@@ -40,7 +42,7 @@ export function OpeningsPanel({ room, unit, onRoom }: Props) {
     setKind(next);
     setValues({});
     setErrors([]);
-    setDoor({ isEntrance: false, swing: 'in', hinge: 'start' });
+    setDoor({ isEntrance: noEntrance, swing: 'in', hinge: 'start' });
   }
 
   function add(): void {
@@ -109,8 +111,8 @@ export function OpeningsPanel({ room, unit, onRoom }: Props) {
               {t(o.kind === 'door' ? (o.door?.isEntrance ? 'openings.entranceItem' : 'openings.doorItem') : 'openings.windowItem', {
                 n: numberOf(o.id),
                 wall: o.wallIndex + 1,
-                offset: len(o.offsetUm),
-                width: len(o.widthUm),
+                offset: lengthText(t, o.offsetUm, unit),
+                width: lengthText(t, o.widthUm, unit),
               })}
             </span>
             <button

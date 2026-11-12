@@ -103,3 +103,4 @@ progress { inline-size: 100%; }
 .option h4 { font-size: 0.95rem; margin-block: 0.5rem 0.25rem; color: var(--problem); }
 .view-3d .stage { block-size: 70vh; }
 button[aria-pressed='true'] { background: var(--ink); color: white; }
+.preview-banner { background: #fbe9a8; border: 1px solid var(--ink); border-radius: 4px; padding: 0.5rem; }

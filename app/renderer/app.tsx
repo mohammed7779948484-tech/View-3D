@@ -86,6 +86,9 @@ export function App() {
   // Offered only while the project still has that very room (immer keeps it the same object until
   // it is edited; another project, or an edited room, is a different one; undo brings it back).
   const layoutResult = layout !== null && project !== null && layout.room === project.room ? layout.result : null;
+  /** An option shown on the plan before it is used (nothing in the document changes). */
+  const [previewRank, setPreviewRank] = useState<number | null>(null);
+  const preview = layoutResult?.options.find((o) => o.rank === previewRank) ?? null;
   // Live validation: every rule, on every change of the document (about 25 ms for 40 fixtures).
   // A broken room is listed by the room checks, not here.
   const violations = useMemo(() => (project === null ? [] : validateLayout(project).filter((v) => v.rule !== 'invalid-room')), [project]);
@@ -301,10 +304,11 @@ export function App() {
     setProblem(result.ok ? null : { message: t('fixtures.refused'), details: [] });
     return result.ok;
   };
-  const fixtures = project.placements.flatMap((p) => {
-    const product = project.products.find((q) => q.id === p.productId);
+  const shown = preview?.document ?? project;
+  const fixtures = shown.placements.flatMap((p) => {
+    const product = shown.products.find((q) => q.id === p.productId);
     const variant = product?.variants.find((v) => v.id === p.variantId);
-    const problem = violations.some((v) => v.placementIds.includes(p.id));
+    const problem = preview === null && violations.some((v) => v.placementIds.includes(p.id));
     return product === undefined || variant === undefined || variant.widthUm === null || variant.depthUm === null
       ? []
       : [{ id: p.id, corners: rectCorners(footprint(p, variant)), problem, label: product.name }];
@@ -424,8 +428,21 @@ export function App() {
           }
         />
         <FixturesPanel products={catalogProducts} picked={picked} onPick={setPicked} />
-        <AutoLayoutPanel products={catalogProducts} document={project} onResult={(text, room) => setLayout({ result: JSON.parse(text) as LayoutResult, room })} />
-        {layoutResult !== null && <OptionPicker result={layoutResult} onUse={(option) => editFixtures(useLayoutOption(option))} />}
+        <AutoLayoutPanel products={catalogProducts} document={project} onResult={(text, room) => {
+            setPreviewRank(null);
+            setLayout({ result: JSON.parse(text) as LayoutResult, room });
+          }} />
+        {layoutResult !== null && (
+          <OptionPicker
+            result={layoutResult}
+            room={project.room}
+            onShow={(option) => setPreviewRank(option.rank)}
+            onUse={(option) => {
+              setPreviewRank(null);
+              editFixtures(useLayoutOption(option));
+            }}
+          />
+        )}
         </div>
         <div className="plan-column">
         <div className="actions" role="group" aria-label={t('view3d.switch')}>
@@ -454,13 +471,23 @@ export function App() {
           view={viewBoxAround(project.room.outline, PLAN_MARGIN_MM)}
           onCornerMoved={(index, point) => editOutline(project.room.outline.map((p, i) => (i === index ? point : p)))}
           fixtures={fixtures}
-          selectedId={selectedId}
-          {...(picked === null
-            ? { onSelect: setSelectedId, onFixtureMoved: moveFixture }
-            : {
-                onPlanClick: placeAt,
-              })}
+          selectedId={preview === null ? selectedId : null}
+          {...(preview !== null
+            ? {}
+            : picked === null
+              ? { onSelect: setSelectedId, onFixtureMoved: moveFixture }
+              : {
+                  onPlanClick: placeAt,
+                })}
         />
+        )}
+        {preview !== null && (
+          <p role="status" className="preview-banner">
+            {t('options.previewing', { rank: preview.rank })}{' '}
+            <button type="button" onClick={() => setPreviewRank(null)}>
+              {t('options.back')}
+            </button>
+          </p>
         )}
         {selected !== undefined && (
           <FixtureInspector
@@ -483,19 +510,19 @@ export function App() {
           <ul aria-labelledby="layout-problems-title">
             {violations.map((v) => (
               <li key={`${v.rule}:${v.placementIds.join(',')}:${v.openingId ?? ''}:${v.columnId ?? ''}:${v.detail ?? ''}`} data-rule={v.rule}>
-                {violationText(t, project, v)}
+                {violationText(t, project, v, unit)}
               </li>
             ))}
           </ul>
           {violations.length === 0 && <p className="status ok">{t('layoutProblems.none')}</p>}
         </section>
+        <ul className="room-problems" aria-label={t('room.problems')}>
+          {roomProblems.map((p) => (
+            <li key={`${p.code}${p.index ?? ''}${p.openingId ?? ''}${p.columnId ?? ''}`}>{problemText(t, project.room, p)}</li>
+          ))}
+        </ul>
         </div>
       </div>
-      <ul className="room-problems" aria-label={t('room.problems')}>
-        {roomProblems.map((p) => (
-          <li key={`${p.code}${p.index ?? ''}${p.openingId ?? ''}${p.columnId ?? ''}`}>{problemText(t, project.room, p)}</li>
-        ))}
-      </ul>
       {askClose && (
         <div role="dialog" aria-modal="true" aria-labelledby="close-title">
           <h2 id="close-title">{t('close.title')}</h2>

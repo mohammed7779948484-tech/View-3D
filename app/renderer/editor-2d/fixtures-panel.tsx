@@ -6,15 +6,25 @@ import type { Product } from '../../../src/core/index';
 export type Picked = { product: Product; variantId: string };
 type Props = { products: readonly Product[] | null; picked: Picked | null; onPick: (picked: Picked | null) => void };
 
+const NAME = '\u0001';
+const SIZE = '\u0002';
+
+/** The translated sentence with the product name and size each in a <bdi>, so Latin names and numbers keep their order in Arabic. */
+function Isolated({ text, name, size }: { text: string; name: string; size: string | null }) {
+  return (
+    <>
+      {text.split(/(\u0001|\u0002)/).map((part, i) =>
+        part === NAME ? <bdi key={i}>{name}</bdi> : part === SIZE ? <bdi key={i}>{size}</bdi> : part,
+      )}
+    </>
+  );
+}
+
 export function FixturesPanel({ products, picked, onPick }: Props) {
   const { t } = useTranslation();
   const placeable = (products ?? []).flatMap((product) => {
     const variants = product.variants.filter((v) => isPlaceable(product, v.id));
-    return variants.map((v) => ({
-      product,
-      variantId: v.id,
-      label: variants.length === 1 ? t('fixtures.place', { name: product.name }) : t('fixtures.placeVariant', { name: product.name, size: v.label }),
-    }));
+    return variants.map((v) => ({ product, variantId: v.id, size: variants.length === 1 ? null : v.label }));
   });
   return (
     <section className="panel">
@@ -32,7 +42,7 @@ export function FixturesPanel({ products, picked, onPick }: Props) {
           {placeable.map((p) => (
             <li key={`${p.product.id}/${p.variantId}`}>
               <button type="button" onClick={() => onPick({ product: p.product, variantId: p.variantId })}>
-                {p.label}
+                <Isolated text={p.size === null ? t('fixtures.place', { name: NAME }) : t('fixtures.placeVariant', { name: NAME, size: SIZE })} name={p.product.name} size={p.size} />
               </button>
             </li>
           ))}
