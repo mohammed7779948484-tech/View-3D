@@ -154,10 +154,12 @@ Running log and decisions. Checkpointed after every step so work survives a rest
 
 Answered on 2026-11-12 (questions 13 to 17). The owner asked Claude to decide after checking;
 each answer is Claude's, with the evidence, and the owner can overrule any of them.
-- 14: no product is set to "served from the back". The website (read 2026-11-12, the 4 showcase
-  pages) says nothing about rear doors or which side opens; the "rear sliding doors" for 6FT EXTRA
-  VIEW in the M3 plan was never from the site. Product data is not invented, so all stay front.
-  The owner sets it in the catalog form (freestanding products only) when he checks a real unit.
+- 14: the website text does not say, so the owner asked Claude to judge from the website photos
+  (2026-11-12). The three counter-height glass showcases (`nhf-6ft-extra-view-showcase`,
+  `nhf-6ft-full-view-led-lights-showcase`, `nhf-s`) show two back glass panes overlapping like
+  sliding doors: served from the back, each with a flag saying it was judged from the photo. The
+  Stand showcase (`nhf-s-1`) has hinged doors on its front: stays front, on the wall. The
+  "rear sliding doors" in the M3 plan had no source; the plan now says so.
 - 15: weights 30/12/8/10/10/15/15. Both trade-off pairs keep today's order (open view at the door
   before the last empty part of the floor; counter near the entrance before a wider view), which
   is usual shop practice. Correction to the earlier claim "moves nothing": option 1 is unchanged in
@@ -257,3 +259,4 @@ W48 × D20 × H72 in; single-sided units go on walls or back to back; entrance d
 - 2026-11-11 M3 issue 10e: measured, parked (question 17): every shop with an angled corner already has a complete checkout block in its best options; the open-floor turn depends on 10d.
 - 2026-11-12 Review of PR 3 (one reviewer, every claim checked by a run): 8 real bugs fixed test-first. Snaps reached across the room (back to back 8 m along a line; wall snap in L-shaped rooms), old layout options could be used on another room, the catalog was read once, a used option kept old product copies, the 3D camera reset on every edit, an orbit drag placed a product, and rear service was accepted for non-freestanding kinds. Not fixed: pointer-cancel during a 3D drag (no deterministic test) and trig outside src/geometry (style). 908 Vitest, 112 e2e.
 - 2026-11-12 Questions 13-17 decided by Claude on the owner's request (answers above). 10g done: weights 30/12/8/10/10/15/15, test first (7c12389, architecture test e457834); option 1 unchanged in every shop, golden hashes and gallery regenerated on purpose. 912 Vitest, 112 e2e.
+- 2026-11-12 10f on real products: three counter showcases served from the back (judged from the website photos at the owner's request; flagged). The real-products shop changes: option 1 still places 9 of 12 with the counter 2351 mm from the door, now with staff space behind the showcases; options 2 and 3 changed (gallery regenerated).

@@ -30,7 +30,7 @@ counter 10, islands in rows 10, even use of the floor 15, open view from the ent
 45/12/8/10/10/10/5). The score only orders options that place the same number of fixtures with the
 same checkout block (10b ranks those first). Option 1 is the same in every test shop; lower options
 reorder in two shops not drawn here (angled entrance, benchmark), where an option using the whole
-floor moves up. The two pairs below keep their order (`test/layout/score-weights.test.ts`).
+floor moves up. Pair 1 below keeps its order (`test/layout/score-weights.test.ts`).
 
 **Pair 1, shop with an angled wall.** Option 1 keeps 4140 mm clear straight ahead of the door but
 leaves one part of the floor empty (7 of 8). Option 2 uses every part (8 of 8) but has only
@@ -40,12 +40,14 @@ leaves one part of the floor empty (7 of 8). Option 2 uses every part (8 of 8) b
 |---|---|
 | ![option 1](layouts/angled-wall/option-1.svg) | ![option 2](layouts/angled-wall/option-2.svg) |
 
-**Pair 2, shop with a back-room door.** Option 2 has the counter 2351 mm from the entrance and
-fixtures in 6 of 9 parts of the floor, with 2632 mm clear ahead of the door. Option 3 has the
-counter 3859 mm away and fixtures in 5 of 9 parts, but 3516 mm clear ahead of the door. Option 2
-ranks first.
+**Pair 2, shop with a back-room door.** Since 2026-11-12 its three glass counter showcases are
+served from the back (staff space behind them), which changed its options. Option 2 has the counter
+3859 mm from the entrance with 2 of 3 showcases in the checkout block and fixtures in 6 of 9 parts
+of the floor. Option 3 has the counter nearer (2351 mm) but only 1 of 3 showcases with it and
+3465 mm clear ahead of the door. Option 2 ranks first: a fuller checkout block outweighs the
+nearer counter.
 
-| Option 2 (counter near, even floor) | Option 3 (open view) |
+| Option 2 (fuller checkout block) | Option 3 (counter near, open view) |
 |---|---|
 | ![option 2](layouts/protected-doorway-real-products/option-2.svg) | ![option 3](layouts/protected-doorway-real-products/option-3.svg) |
 

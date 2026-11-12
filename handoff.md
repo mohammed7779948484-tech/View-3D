@@ -25,7 +25,7 @@
 | 10c swap and relocate | parked (decided: wait) | no shop leaves room for more (measured); waits for a real shop that shows it |
 | 10d free-standing counter | next (decided: a) | trial measured (gains in 2 shops, +0.6 s benchmark, rounding-sensitive pick); rebuild in place of the third counter wall |
 | 10e L-block without right angle | parked (decided: after 10d) | no shop gains in its best options (measured) |
-| 10f service side | done | proven, CI green; no real product set: the website does not say which open from the back (answer 14) |
+| 10f service side | done | proven; the three counter showcases served from the back, judged from the website photos (answer 14); the Stand showcase stays front |
 | 10g score weights | done | 30/12/8/10/10/15/15; test 7c12389 (+ e457834); option 1 unchanged everywhere; lower options reorder in angled-entrance and benchmark; golden + gallery regenerated |
 | Review of PR 3 | 8 fixes | tests first (26fae27, 70a5128, 8f844bc); 908 Vitest + 112 e2e; open: pointer-cancel in a 3D drag left untested and unfixed |
 
