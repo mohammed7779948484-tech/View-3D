@@ -302,7 +302,8 @@ function freeSpotAlong(room: Room, wall: WallSegment, widthUm: number, alongUm: 
 
 /**
  * The nearest pose with the rectangle's back flush against a wall and its front facing the room,
- * when its centre is within the snap distance of where it would stand; otherwise null.
+ * when its centre is within the snap distance of where it would stand and it overlaps the wall
+ * along its length; otherwise null.
  */
 export function snapToWall(room: Room, rect: OrientedRect, config: PlanningConfig): WallSnap | null {
   let best: WallSnap | null = null;
@@ -313,7 +314,11 @@ export function snapToWall(room: Room, rect: OrientedRect, config: PlanningConfi
     const fromWall = dx * wall.inwardNormal.x + dy * wall.inwardNormal.y;
     const gap = Math.abs(fromWall - rect.depthUm / 2);
     if (gap > config.wallSnapDistanceUm || gap >= bestGap) continue;
-    const along = freeSpotAlong(room, wall, rect.widthUm, dx * wall.direction.x + dy * wall.direction.y, config);
+    // Only a wall the unit overlaps along its length: in an L-shaped room the line of an inner
+    // wall runs on across the open floor, and a unit there must not jump onto that wall.
+    const alongUm = dx * wall.direction.x + dy * wall.direction.y;
+    if (alongUm + rect.widthUm / 2 <= 0 || alongUm - rect.widthUm / 2 >= wall.lengthUm) continue;
+    const along = freeSpotAlong(room, wall, rect.widthUm, alongUm, config);
     const pose = along === null ? null : poseOnWall(wall, rect.widthUm, rect.depthUm, along);
     if (pose === null) continue;
     best = pose;

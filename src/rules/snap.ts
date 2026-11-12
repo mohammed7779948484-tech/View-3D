@@ -3,6 +3,7 @@ import type { Point, Room } from '../core/index';
 import { distancePointToSegment, wallSegments } from '../geometry/index';
 import type { OrientedRect } from '../geometry/index';
 import type { PlanningConfig } from './config';
+import { backIsCovered } from './validate';
 import type { PlacedFixture } from './validate';
 
 const QUARTER_TURN_UDEG = 90_000_000;
@@ -37,7 +38,8 @@ export type BackToBackSnap = { center: Point; rotationUdeg: number; partnerId: s
  * Back to back with another single-sided unit: when `rect` faces roughly away from a partner
  * (within 45 degrees) and its back is within the snap distance of the partner's back, it turns to
  * face exactly away, puts its back on the partner's back, and slides along it only as far as the
- * partner's back still covers its own (a wider unit is centred). Nearest partner; tie: lowest id.
+ * partner's back still covers its own (a wider unit is centred). Only a partner it overlaps along
+ * the partner's back, and whose back is not already covered. Nearest partner; tie: lowest id.
  */
 export function snapBackToBack(rect: OrientedRect, fixtures: readonly PlacedFixture[], config: PlanningConfig): BackToBackSnap | null {
   const moverBackDir = { x: Math.sin(radians(rect.rotationUdeg)), y: -Math.cos(radians(rect.rotationUdeg)) };
@@ -55,8 +57,9 @@ export function snapBackToBack(rect: OrientedRect, fixtures: readonly PlacedFixt
     const half = f.rect.depthUm / 2;
     const gap = Math.abs((moverBack.x - c.x) * back.x + (moverBack.y - c.y) * back.y - half);
     if (gap > config.wallSnapDistanceUm || (best !== null && gap >= best.gap)) continue;
-    const slack = (f.rect.widthUm - rect.widthUm) / 2;
     const offset = (rect.center.x - c.x) * along.x + (rect.center.y - c.y) * along.y;
+    if (Math.abs(offset) >= (f.rect.widthUm + rect.widthUm) / 2 || backIsCovered(f, fixtures, config)) continue;
+    const slack = (f.rect.widthUm - rect.widthUm) / 2;
     const s = slack >= 0 ? Math.min(Math.max(offset, -slack), slack) : 0;
     const out = half + rect.depthUm / 2;
     best = {

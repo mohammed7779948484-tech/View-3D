@@ -122,13 +122,15 @@ export function ProductForm({ initial, existingIds, unit, onSave, onCancel }: Pr
           ))}
         </select>
       </div>
-      <div className="field">
-        <label htmlFor="product-served-from">{t('catalog.servedFrom')}</label>
-        <select id="product-served-from" value={servedFrom} onChange={(e) => setServedFrom(e.currentTarget.value as 'front' | 'rear')}>
-          <option value="front">{t('catalog.servedFromOptions.front')}</option>
-          <option value="rear">{t('catalog.servedFromOptions.rear')}</option>
-        </select>
-      </div>
+      {placement === 'freestanding' && (
+        <div className="field">
+          <label htmlFor="product-served-from">{t('catalog.servedFrom')}</label>
+          <select id="product-served-from" value={servedFrom} onChange={(e) => setServedFrom(e.currentTarget.value as 'front' | 'rear')}>
+            <option value="front">{t('catalog.servedFromOptions.front')}</option>
+            <option value="rear">{t('catalog.servedFromOptions.rear')}</option>
+          </select>
+        </div>
+      )}
       <p className="hint">{t('catalog.sizesHint')}</p>
       {sizes.map((s, row) => (
         <fieldset key={s.id} className="size-row">

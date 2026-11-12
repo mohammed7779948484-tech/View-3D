@@ -290,6 +290,8 @@ export const ProductSchema = z
     /**
      * Which side staff serve it from. "rear" (e.g. rear sliding doors) needs staff space behind it,
      * so it never stands with its back to a wall. Absent means "front". Set only by the owner.
+     * Only a freestanding product can be served from the rear: a wall unit must stand back to a
+     * wall, and an island or counter already has staff space by its kind.
      */
     serviceSide: z.enum(['front', 'rear']).optional(),
   })
@@ -302,6 +304,9 @@ export const ProductSchema = z
         message: 'a product with an unknown dimension must have verification "unknown"',
         path: ['verification'],
       });
+    }
+    if (product.serviceSide === 'rear' && product.placement !== 'freestanding') {
+      ctx.addIssue({ code: 'custom', message: 'only a freestanding product can be served from the rear', path: ['serviceSide'] });
     }
     if (complete && product.verification === 'unknown') {
       ctx.addIssue({

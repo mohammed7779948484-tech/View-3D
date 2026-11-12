@@ -91,7 +91,7 @@ export function ownerProduct(input: OwnerProductInput): { ok: true; product: Pro
     source: { url: null, dimensionsAsWritten: null },
     flags: [FLAG_CLEARANCES],
     testOnly: false,
-    ...(input.serviceSide === 'rear' ? { serviceSide: 'rear' } : {}),
+    ...(input.serviceSide === 'rear' && input.placement === 'freestanding' ? { serviceSide: 'rear' } : {}),
   });
   return parsed.success ? { ok: true, product: parsed.data } : { ok: false, code: 'invalid-product', errors: issues(parsed.error) };
 }
