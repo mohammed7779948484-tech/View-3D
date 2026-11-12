@@ -20,15 +20,21 @@ import { gridRows, spots } from './island-grid';
 import type { Frame } from './island-grid';
 import type { Entrance } from './walls';
 
-/** Score weights; they add up to 100. First guesses, to be tuned with the owner. */
+/**
+ * Score weights; they add up to 100 (M3 issue 10g, decided 2026-11-12). Options are ranked by
+ * fixtures placed first (10b), so "placed" only lifts the printed score; even use of the floor and
+ * the open view from the entrance count more than at first. Both trade-off pairs in
+ * snapshots/README.md keep their order: the open view at the door wins over the last empty part
+ * of the floor, and a counter near the entrance wins over a wider view.
+ */
 export const SCORE_WEIGHTS = {
-  placed: 45,
+  placed: 30,
   counterNear: 12,
   counterFacing: 8,
   showcasesNear: 10,
   rows: 10,
-  evenUse: 10,
-  openEntrance: 5,
+  evenUse: 15,
+  openEntrance: 15,
 } as const;
 
 /** Clear distance straight ahead of a rectangle's front (or back) edge, up to the measuring limit. */
