@@ -142,3 +142,23 @@ test('an over-full request shows what did not fit, with the reason, in English a
   expect(arabic).not.toContain('{{');
   expect(/[٠-٩]/.test(arabic)).toBe(false);
 });
+
+test('editing the room removes the option picker, so "Use option" can never apply to a changed room', async () => {
+  test.setTimeout(120_000);
+  const page = await h.launch();
+  await h.openRoom(protectedDoorway);
+  await run(page, 3);
+  await expect(page.getByRole('heading', { name: 'Layout options', exact: true })).toBeVisible();
+  await expect(option(page, 1).getByRole('button', { name: 'Use option 1', exact: true })).toBeVisible();
+
+  // Wall 1 runs (0,0) -> (7000,0), 700 cm; typing 750 moves its end corner to (7500, 0).
+  const box = page.getByRole('textbox', { name: 'Wall 1 length', exact: true });
+  await box.fill('750');
+  await box.press('Enter');
+  const edited = await h.saveAs();
+  expect(edited.room.outline[1]).toEqual({ x: 7_500_000, y: 0 });
+
+  await expect(page.getByRole('heading', { name: 'Layout options', exact: true })).toHaveCount(0);
+  await expect(page.locator('[data-option]')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Use option 1', exact: true })).toHaveCount(0);
+});

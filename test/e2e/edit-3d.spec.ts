@@ -145,3 +145,67 @@ test('a press and release on a box without moving selects it and does not move i
   await expect(page.getByText('(b1)')).toBeVisible(FIRST);
   expect(await centerOf('b1')).toEqual({ x: 2_000_000, y: 2_500_000 });
 });
+
+const FLOOR_POINT = { x: 6000, y: 500 }; // empty floor in protectedDoorway, away from the bin at (2000, 2500)
+
+/** Presses on empty floor at `from` and drags 200 px to the right: orbits the camera. */
+async function orbit3d(page: Page, from: { x: number; y: number }): Promise<void> {
+  const a = await screen3d(page, from.x, from.y);
+  await page.mouse.move(a.x, a.y);
+  await page.mouse.down();
+  for (let i = 1; i <= 10; i++) await page.mouse.move(a.x + 20 * i, a.y);
+  await page.mouse.up();
+}
+
+const moved = (a: { x: number; y: number }, b: { x: number; y: number }): number => Math.hypot(a.x - b.x, a.y - b.y);
+
+test('an edit in 3D keeps the orbited camera', async () => {
+  const page = await h.launch();
+  await h.openDocument(makeDoc(protectedDoorway, testProducts, [bin('b1', 2000, 2500)]));
+  await topView3d(page);
+  await click3d(page, 2000, 2500);
+  await expect(page.getByText('(b1)')).toBeVisible(FIRST);
+
+  const preset = await screen3d(page, FLOOR_POINT.x, FLOOR_POINT.y);
+  await orbit3d(page, { x: 4000, y: 4000 });
+  const orbited = await screen3d(page, FLOOR_POINT.x, FLOOR_POINT.y);
+  expect(moved(preset, orbited), 'the drag orbits the camera').toBeGreaterThan(5);
+
+  // An edit through the same commands as everything else: the camera must not jump back.
+  await btn(page, 'Rotate 90°').click();
+  await expect.poll(async () => ((await h.saveAs()).placements as Placement[])[0]!.rotationUdeg).toBe(90_000_000);
+  const afterEdit = await screen3d(page, FLOOR_POINT.x, FLOOR_POINT.y);
+  expect(moved(afterEdit, orbited), 'screenOf after the edit equals the orbited value').toBeLessThanOrEqual(1);
+});
+
+test('pressing the already-active preset button returns an orbited camera to the preset', async () => {
+  const page = await h.launch();
+  await h.openDocument(makeDoc(protectedDoorway, testProducts, [bin('b1', 2000, 2500)]));
+  await topView3d(page);
+  const preset = await screen3d(page, FLOOR_POINT.x, FLOOR_POINT.y);
+  await orbit3d(page, { x: 4000, y: 4000 });
+  expect(moved(preset, await screen3d(page, FLOOR_POINT.x, FLOOR_POINT.y)), 'the drag orbits the camera').toBeGreaterThan(5);
+
+  await btn(page, 'Top view').click(); // the top preset is already active
+  await expect.poll(async () => moved(await screen3d(page, FLOOR_POINT.x, FLOOR_POINT.y), preset), FIRST).toBeLessThanOrEqual(1);
+});
+
+test('placing in 3D: a drag on the floor orbits and does not place; a plain click places', async () => {
+  const page = await h.launch();
+  await h.openRoom(protectedDoorway);
+  await topView3d(page);
+  await btn(page, `Place ${counter.name}`).click();
+  const before = await screen3d(page, 6000, 4000);
+
+  const a = await screen3d(page, 6000, 4000);
+  await page.mouse.move(a.x, a.y);
+  await page.mouse.down();
+  for (let i = 1; i <= 10; i++) await page.mouse.move(a.x - 15 * i, a.y);
+  await page.mouse.up();
+  expect((await h.saveAs()).placements, 'a drag must not place').toEqual([]);
+  expect(moved(before, await screen3d(page, 6000, 4000)), 'the drag orbited the camera').toBeGreaterThan(5);
+
+  await click3d(page, 3000, 2000);
+  await expect(selectedPanel(page)).toBeVisible(FIRST);
+  expect(((await h.saveAs()).placements as Placement[]).map((p) => p.id)).toEqual(['p1']);
+});

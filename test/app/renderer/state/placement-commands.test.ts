@@ -2,6 +2,7 @@
 import { describe, expect, it } from 'vitest';
 import { seedProducts } from '../../../../src/catalog/index';
 import type { DesignDocument, Product } from '../../../../src/core/index';
+import { DesignDocumentSchema } from '../../../../src/core/index';
 import { quarterTurn } from '../../../../src/rules/index';
 import { protectedDoorway } from '../../../fixtures/rooms';
 import { createDocumentStore } from '../../../../app/renderer/state/document-store';
@@ -12,6 +13,7 @@ import {
   placeProduct,
   rotatePlacement,
   setPlacementPose,
+  useLayoutOption,
 } from '../../../../app/renderer/state/placement-commands';
 
 const seed = (id: string): Product => {
@@ -166,5 +168,61 @@ describe('undo', () => {
       expect(bytes(s)).toBe(beforeText);
       s.redo();
     }
+  });
+});
+
+describe('useLayoutOption: products the option uses', () => {
+  const extraVariant = {
+    ...counter.variants[0]!,
+    id: 'option-only-variant',
+    label: 'Option only variant',
+  };
+  // The option's copy of the counter carries a variant the document's copy lacks.
+  const newerCounter: Product = { ...counter, variants: [...counter.variants, extraVariant] };
+
+  function storeWithOldCopies() {
+    return createDocumentStore(
+      structuredClone({
+        schemaVersion: 1,
+        id: 'option-test',
+        name: 'Option test',
+        room: protectedDoorway,
+        products: [counter, unknownSize],
+        placements: [],
+      }) as DesignDocument,
+    );
+  }
+  const option = (): { document: DesignDocument } => ({
+    document: {
+      schemaVersion: 1,
+      id: 'option-doc',
+      name: 'Option doc',
+      room: protectedDoorway,
+      products: [newerCounter],
+      placements: [
+        { id: 'p1', productId: 'nhf-c', variantId: 'option-only-variant', center: c0, rotationUdeg: 0 },
+      ],
+    },
+  });
+
+  it("replaces the document's copy of a used product with the option's copy, deep-equal", () => {
+    const s = storeWithOldCopies();
+    expect(s.edit(useLayoutOption(option()))).toEqual({ ok: true });
+    const used = doc(s).products.filter((p) => p.id === 'nhf-c');
+    expect(used).toEqual([newerCounter]);
+    expect(used[0]).not.toBe(newerCounter);
+  });
+
+  it('leaves products the option does not use as they were', () => {
+    const s = storeWithOldCopies();
+    expect(s.edit(useLayoutOption(option()))).toEqual({ ok: true });
+    expect(doc(s).products.filter((p) => p.id === 'nhf-s')).toEqual([unknownSize]);
+    expect(doc(s).products.map((p) => p.id).sort()).toEqual(['nhf-c', 'nhf-s']);
+  });
+
+  it('the result passes DesignDocumentSchema (the placement variant exists)', () => {
+    const s = storeWithOldCopies();
+    expect(s.edit(useLayoutOption(option()))).toEqual({ ok: true });
+    expect(DesignDocumentSchema.safeParse(doc(s)).success).toBe(true);
   });
 });

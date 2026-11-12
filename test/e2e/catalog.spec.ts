@@ -260,3 +260,32 @@ test('a corrupt catalog.json shows an alert, disables adding, and is never rewri
   app = undefined;
   expect(readFileSync(catalogPath()).equals(Buffer.from('{oops'))).toBe(true);
 });
+
+test('a product added on the catalog screen is offered for a room created afterwards, without a restart', async () => {
+  const page = await openCatalog();
+  await addProductThroughForm(page, {
+    name: 'Owner counter',
+    category: 'counter',
+    placement: 'counter',
+    width: '48 in',
+    depth: '24 in',
+    height: '38 in',
+    price: '700',
+  });
+  await expect(row(page, 'owner-1')).toBeVisible(FIRST);
+  await page.getByRole('button', { name: 'Back' }).click();
+
+  // Create a 500 x 400 cm room by typing four walls.
+  await page.getByRole('button', { name: 'Type the walls' }).click(FIRST);
+  await page.getByRole('textbox', { name: 'Ceiling height' }).fill('300');
+  const lengths = ['500', '400', '500', '400'];
+  for (const [i, length] of lengths.entries()) {
+    await page.getByRole('textbox', { name: `Wall ${i + 1} length`, exact: true }).fill(length);
+    await page.getByRole('textbox', { name: `Wall ${i + 1} end angle`, exact: true }).fill('90');
+  }
+  await page.getByRole('button', { name: 'Create the room' }).click();
+
+  await expect(page.getByRole('heading', { name: 'Fixtures' })).toBeVisible(FIRST);
+  await expect(page.getByRole('button', { name: 'Place Owner counter', exact: true })).toBeVisible(FIRST);
+  await expect(page.getByRole('spinbutton', { name: 'Quantity of Owner counter', exact: true })).toBeVisible(FIRST);
+});
