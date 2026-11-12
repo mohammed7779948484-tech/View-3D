@@ -17,6 +17,7 @@ const SKETCH_VIEW = { x: -2000, y: -17000, width: 24000, height: 19000 };
 export function DrawRoom({ unit, onCreate, onBack }: Props) {
   const { t } = useTranslation();
   const [corners, setCorners] = useState<Point[]>([]);
+  const [closed, setClosed] = useState(false);
   const [ceiling, setCeiling] = useState('');
   const [problem, setProblem] = useState<string | null>(null);
   const ceilingRead = parseLength(ceiling, typedUnit(unit));
@@ -42,11 +43,19 @@ export function DrawRoom({ unit, onCreate, onBack }: Props) {
           {ceiling.trim() !== '' && !ceilingRead.ok && <p className="field-error">{lengthInputText(t, ceilingRead.code)}</p>}
         </div>
         {problem !== null && <p role="alert">{problem}</p>}
+        {corners.length >= 3 && !ceilingRead.ok && <p className="hint">{t('draw.needCeiling')}</p>}
         <div className="actions">
           <button type="button" className="primary" disabled={corners.length < 3 || !ceilingRead.ok} onClick={finish}>
             {t('draw.finish')}
           </button>
-          <button type="button" disabled={corners.length === 0} onClick={() => setCorners((c) => c.slice(0, -1))}>
+          <button
+            type="button"
+            disabled={corners.length === 0}
+            onClick={() => {
+              setClosed(false);
+              setCorners((c) => c.slice(0, -1));
+            }}
+          >
             {t('draw.undoCorner')}
           </button>
           <button type="button" className="quiet" onClick={onBack}>
@@ -54,7 +63,15 @@ export function DrawRoom({ unit, onCreate, onBack }: Props) {
           </button>
         </div>
       </section>
-      <Plan outline={corners} closed={false} unit={unit} view={SKETCH_VIEW} onPlanClick={(p) => setCorners((c) => [...c, p])} />
+      <Plan
+        outline={corners}
+        closed={closed}
+        unit={unit}
+        view={SKETCH_VIEW}
+        grid
+        onCloseOutline={() => setClosed(true)}
+        {...(closed ? {} : { onPlanClick: (p: Point) => setCorners((c) => [...c, p]) })}
+      />
     </div>
   );
 }

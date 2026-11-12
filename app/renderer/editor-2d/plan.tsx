@@ -22,7 +22,18 @@ type Props = {
   onSelect?: (id: string) => void;
   /** A fixture was dragged and released, moved by this snapped delta. */
   onFixtureMoved?: (id: string, dxUm: number, dyUm: number) => void;
+  /** While drawing: the first corner was clicked again (3 or more corners), so the outline closes. */
+  onCloseOutline?: () => void;
+  /** A 1 m grid and a 1 m scale bar, for drawing on an empty sheet. */
+  grid?: boolean;
 };
+
+/** A label's screen box in world units (x right, y down), for keeping labels apart. */
+type Box = { x0: number; y0: number; x1: number; y1: number };
+const boxAround = (x: number, y: number, halfW: number, halfH: number): Box => ({ x0: x - halfW, y0: y - halfH, x1: x + halfW, y1: y + halfH });
+const clash = (a: Box, b: Box): boolean => a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1;
+/** Steps a label may move further out to get clear of the labels before it. */
+const LABEL_STEPS = 12;
 
 const mm = (um: number): number => um / 1000;
 /** Points on the quarter circle a door leaf sweeps (display only). */
@@ -39,7 +50,7 @@ function readableAngle(a: Point, b: Point): number {
  * The plan as svg. World coordinates are millimetres with y up inside `<g data-world>`; labels sit
  * outside it so their text is not mirrored. Every label is formatted from the document.
  */
-export function Plan({ outline, closed, unit, view, onPlanClick, onCornerMoved, openings = [], columns = [], fixtures = [], selectedId = null, onSelect, onFixtureMoved }: Props) {
+export function Plan({ outline, closed, unit, view, onPlanClick, onCornerMoved, openings = [], columns = [], fixtures = [], selectedId = null, onSelect, onFixtureMoved, onCloseOutline, grid = false }: Props) {
   const { t } = useTranslation();
   const tEntrance = t('plan.entrance');
   const world = useRef<SVGGElement>(null);
@@ -59,6 +70,9 @@ export function Plan({ outline, closed, unit, view, onPlanClick, onCornerMoved, 
     setMove(next);
   };
   const shown = drag === null ? outline : outline.map((p, i) => (i === drag.index ? drag.point : p));
+  // While drawing, where the next corner would go (snapped), so a line can follow the mouse.
+  const [hover, setHover] = useState<Point | null>(null);
+  const drawing = !closed && onPlanClick !== undefined;
   const size = Math.max(view.width, view.height);
   const handle = size / 90;
   const label = size / 42;
@@ -67,17 +81,83 @@ export function Plan({ outline, closed, unit, view, onPlanClick, onCornerMoved, 
 
   const walls = closed ? shown.map((p, i) => [p, shown[(i + 1) % shown.length]!] as const) : shown.slice(1).map((p, i) => [shown[i]!, p] as const);
 
+  // Each wall's length, then its number further out, both outside the shop and clear of the wall
+  // and its doors. A label that would touch an earlier one moves further out; the view then grows
+  // to show every label.
+  const layoutLabels = (list: readonly (readonly [Point, Point])[]) => {
+    const placed: Box[] = [];
+    return list.map(([a, b], i) => {
+      const length = mm(Math.hypot(b.x - a.x, b.y - a.y)) || 1;
+      const ox = mm(b.y - a.y) / length;
+      const oy = -mm(b.x - a.x) / length;
+      const cx = mm((a.x + b.x) / 2);
+      const cy = mm((a.y + b.y) / 2);
+      const text = formatDisplayLength(wallLengthUm(a, b), unit);
+      // Generous text boxes: fonts differ between Linux and Windows.
+      const halfW = (text.length * 0.66 + 0.8) * label * 0.5;
+      const halfH = 1.25 * label;
+      const badge = 1.1 * label;
+      const reach = Math.abs(ox) * halfW + Math.abs(oy) * halfH;
+      let near = 0.9 * label + reach;
+      let far = near + reach + 1.1 * label;
+      let boxes: Box[] = [];
+      for (let step = 0; step < LABEL_STEPS; step++) {
+        boxes = [boxAround(cx + ox * near, -(cy + oy * near), halfW, halfH), boxAround(cx + ox * far, -(cy + oy * far), badge, badge)];
+        if (!boxes.some((q) => placed.some((r) => clash(q, r)))) break;
+        near += 1.2 * label;
+        far += 1.2 * label;
+      }
+      placed.push(...boxes);
+      return { i, text, length: { x: cx + ox * near, y: -(cy + oy * near) }, number: { x: cx + ox * far, y: -(cy + oy * far) }, boxes };
+    });
+  };
+  const wallLabels = layoutLabels(walls);
+  // The view follows the stored outline only, never a corner being dragged: a view that moved
+  // under the pointer would move the corner too.
+  const storedWalls = closed ? outline.map((p, i) => [p, outline[(i + 1) % outline.length]!] as const) : outline.slice(1).map((p, i) => [outline[i]!, p] as const);
+  const shownView = layoutLabels(storedWalls)
+    .flatMap((w) => w.boxes)
+    .reduce(
+      (v, q) => {
+        const x0 = Math.min(v.x, q.x0 - label);
+        const y0 = Math.min(v.y, q.y0 - label);
+        const x1 = Math.max(v.x + v.width, q.x1 + label);
+        const y1 = Math.max(v.y + v.height, q.y1 + label);
+        return { x: x0, y: y0, width: x1 - x0, height: y1 - y0 };
+      },
+      { ...view },
+    );
+
   return (
     <svg
       className="plan"
       aria-label={t('plan.label')}
-      viewBox={`${view.x} ${view.y} ${view.width} ${view.height}`}
+      viewBox={`${shownView.x} ${shownView.y} ${shownView.width} ${shownView.height}`}
       onClick={(event) => {
         const p = onPlanClick && !(event.target instanceof SVGCircleElement) ? at(event) : null;
         if (p !== null) onPlanClick?.(p);
       }}
+      onPointerMove={(event) => {
+        if (!drawing || shown.length === 0) return;
+        const p = at(event);
+        if (p !== null && (hover === null || p.x !== hover.x || p.y !== hover.y)) setHover(p);
+      }}
+      onPointerLeave={() => setHover(null)}
     >
       <g ref={world} data-world="" transform="scale(1 -1)">
+        {grid && (
+          // Wider than the view box: the svg keeps its aspect, so the sheet shows more than the box.
+          <g data-grid="" className="plan-grid">
+            {Array.from({ length: Math.ceil((view.width * 3) / 1000) + 1 }, (_, i) => {
+              const x = (Math.floor((view.x - view.width) / 1000) + i) * 1000;
+              return <line key={`x${i}`} x1={x} y1={-(view.y - view.height)} x2={x} y2={-(view.y + 2 * view.height)} />;
+            })}
+            {Array.from({ length: Math.ceil((view.height * 3) / 1000) + 1 }, (_, i) => {
+              const y = (Math.floor(-(view.y + 2 * view.height) / 1000) + i) * 1000;
+              return <line key={`y${i}`} x1={view.x - view.width} y1={y} x2={view.x + 2 * view.width} y2={y} />;
+            })}
+          </g>
+        )}
         {shown.length > 1 &&
           (closed ? (
             <polygon className="plan-room" points={shown.map((p) => `${mm(p.x)},${mm(p.y)}`).join(' ')} />
@@ -160,6 +240,16 @@ export function Plan({ outline, closed, unit, view, onPlanClick, onCornerMoved, 
             </g>
           );
         })}
+        {drawing && hover !== null && shown.length > 0 && (
+          <line
+            className="plan-draw-preview"
+            data-draw-preview=""
+            x1={mm(shown[shown.length - 1]!.x)}
+            y1={mm(shown[shown.length - 1]!.y)}
+            x2={mm(hover.x)}
+            y2={mm(hover.y)}
+          />
+        )}
         {shown.map((p, i) => (
           <circle
             key={i}
@@ -169,6 +259,9 @@ export function Plan({ outline, closed, unit, view, onPlanClick, onCornerMoved, 
             cx={mm(p.x)}
             cy={mm(p.y)}
             r={handle}
+            onClick={() => {
+              if (i === 0 && drawing && shown.length >= 3) onCloseOutline?.();
+            }}
             onPointerDown={(event) => {
               if (onCornerMoved === undefined) return;
               event.currentTarget.setPointerCapture(event.pointerId);
@@ -193,31 +286,37 @@ export function Plan({ outline, closed, unit, view, onPlanClick, onCornerMoved, 
           />
         ))}
       </g>
-      {walls.map(([a, b], i) => {
-        // Outside the room (right of the wall's direction), clear of the wall and of any door in it.
-        // The length first, then the wall's number (the door form asks for walls by number) further out.
-        const length = mm(Math.hypot(b.x - a.x, b.y - a.y)) || 1;
-        const ox = mm(b.y - a.y) / length;
-        const oy = -mm(b.x - a.x) / length;
-        const cx = mm((a.x + b.x) / 2);
-        const cy = mm((a.y + b.y) / 2);
-        const text = formatDisplayLength(wallLengthUm(a, b), unit);
-        // How far the label reaches along the outward direction: half its width or half its height.
-        const reach = Math.abs(ox) * text.length * 0.32 * label + Math.abs(oy) * 1.6 * label;
-        const near = 0.9 * label + reach;
-        const far = near + reach + 1.1 * label;
-        return (
-          <g key={i}>
-            <text className="plan-length" data-wall={i} x={cx + ox * near} y={-(cy + oy * near)} fontSize={label} direction="ltr">
-              {text}
-            </text>
-            <circle className="plan-wall-badge" cx={cx + ox * far} cy={-(cy + oy * far)} r={label * 0.8} />
-            <text className="plan-wall-number" data-wall-number={i} x={cx + ox * far} y={-(cy + oy * far)} fontSize={label * 0.9} direction="ltr">
-              {i + 1}
-            </text>
-          </g>
-        );
-      })}
+      {wallLabels.map((w) => (
+        <g key={w.i}>
+          <text className="plan-length" data-wall={w.i} x={w.length.x} y={w.length.y} fontSize={label} direction="ltr">
+            {w.text}
+          </text>
+          <circle className="plan-wall-badge" cx={w.number.x} cy={w.number.y} r={label * 0.8} />
+          <text className="plan-wall-number" data-wall-number={w.i} x={w.number.x} y={w.number.y} fontSize={label * 0.9} direction="ltr">
+            {w.i + 1}
+          </text>
+        </g>
+      ))}
+      {drawing && hover !== null && shown.length > 0 && (
+        <text
+          className="plan-length plan-draw-preview-length"
+          data-draw-preview-length=""
+          x={mm((shown[shown.length - 1]!.x + hover.x) / 2)}
+          y={-mm((shown[shown.length - 1]!.y + hover.y) / 2) - label * 1.2}
+          fontSize={label}
+          direction="ltr"
+        >
+          {formatDisplayLength(wallLengthUm(shown[shown.length - 1]!, hover), unit)}
+        </text>
+      )}
+      {grid && (
+        <g data-scale-bar="" className="plan-scale">
+          <line x1={view.x + label} y1={view.y + view.height - label} x2={view.x + label + 1000} y2={view.y + view.height - label} />
+          <text x={view.x + label + 500} y={view.y + view.height - label * 1.8} fontSize={label * 0.8} direction="ltr">
+            {formatDisplayLength(1_000_000, unit)}
+          </text>
+        </g>
+      )}
       {closed &&
         openings.map((o) => {
           if (o.kind !== 'door' || o.door?.isEntrance !== true) return null;

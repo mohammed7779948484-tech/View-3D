@@ -6,7 +6,7 @@ import { formatDisplayLength, parseDistance, parseLength } from '../../../src/co
 import type { DisplayUnit, Room } from '../../../src/core/index';
 import type { PendingWindow, ScanFinding } from '../../../src/import-scan/index';
 import { validateRoom } from '../../../src/rules/index';
-import { lengthInputText, problemText } from '../i18n/messages';
+import { lengthInputText, lengthText, problemText } from '../i18n/messages';
 import { viewBoxAround } from './geometry';
 import { typedUnit } from './length-field';
 import { nextId } from './openings-panel';
@@ -15,9 +15,9 @@ import { Plan } from './plan';
 type Props = { room: Room; pendingWindows: PendingWindow[]; findings: ScanFinding[]; unit: DisplayUnit; onUse: (room: Room) => void; onBack: () => void };
 
 const PREVIEW_MARGIN_MM = 1500;
-const mm = (um: number): string => `${Math.round(um / 1000)} mm`;
-
-function findingText(t: TFunction, f: ScanFinding): string {
+/** A scan finding in words, lengths in the chosen unit. */
+function findingText(t: TFunction, f: ScanFinding, unit: DisplayUnit): string {
+  const mm = (um: number): string => lengthText(t, um, unit);
   switch (f.code) {
     case 'gap-closed':
     case 'gap-filled':
@@ -89,7 +89,7 @@ export function ScanReview({ room: scanned, pendingWindows, findings, unit, onUs
         <h2>{t('scan.title')}</h2>
         <ul className="warnings" aria-label={t('scan.findingsLabel')}>
           {findings.map((f, i) => (
-            <li key={`${f.code}${i}`}>{findingText(t, f)}</li>
+            <li key={`${f.code}${i}`}>{findingText(t, f, unit)}</li>
           ))}
         </ul>
         {waiting.map((w, i) => (

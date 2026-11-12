@@ -76,7 +76,8 @@
     "hint": "Click each corner in turn. Corners snap to a grid (10 cm on a large screen); type the exact lengths afterwards.",
     "finish": "Finish the shop",
     "undoCorner": "Undo last corner",
-    "notARoom": "These corners do not make a shop: the walls cross or a corner repeats."
+    "notARoom": "These corners do not make a shop: the walls cross or a corner repeats.",
+    "needCeiling": "Type the ceiling height to finish."
   },
   "common": {
     "back": "Back"

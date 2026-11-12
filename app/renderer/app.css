@@ -104,3 +104,8 @@ progress { inline-size: 100%; }
 .view-3d .stage { block-size: 70vh; }
 button[aria-pressed='true'] { background: var(--ink); color: white; }
 .preview-banner { background: #fbe9a8; border: 1px solid var(--ink); border-radius: 4px; padding: 0.5rem; }
+.plan-grid line { stroke: #e3e7ea; stroke-width: 1px; vector-effect: non-scaling-stroke; }
+.plan-draw-preview { stroke: var(--ink); stroke-width: 2px; stroke-dasharray: 6 4; vector-effect: non-scaling-stroke; pointer-events: none; }
+.plan-draw-preview-length { pointer-events: none; }
+.plan-scale line { stroke: var(--ink); stroke-width: 3px; vector-effect: non-scaling-stroke; }
+.plan-scale text { fill: var(--ink); text-anchor: middle; }
