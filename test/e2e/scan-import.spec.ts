@@ -65,8 +65,8 @@ test('the sample: review, decide the window, use the room, and the saved room is
   const items = findings(page).getByRole('listitem');
   await expect(items).toHaveCount(5, FIRST);
   const text = (await items.allInnerTexts()).join('\n');
-  expect(text).toContain('811 mm');
-  expect(text).toContain('471 mm');
+  expect(text).toContain('81.1 cm');
+  expect(text).toContain('47.1 cm');
   expect(text.toLowerCase()).toContain('sill');
   await expect(useRoom(page)).toBeDisabled();
   await expect(page.getByRole('button', { name: 'Back' })).toBeVisible();
