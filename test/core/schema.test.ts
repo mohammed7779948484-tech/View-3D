@@ -324,7 +324,10 @@ describe('part schemas', () => {
 });
 
 describe('ProductSchema: serviceSide (which side the staff serve a fixture from)', () => {
-  const withServiceSide = (value: unknown) => ({ ...validDocument().products[0], serviceSide: value });
+  // serviceSide 'rear' is only valid on a freestanding product, so the base is one (a synthetic test product).
+  const freestanding: Record<string, unknown> = { ...testShowcaseRear };
+  delete freestanding['serviceSide'];
+  const withServiceSide = (value: unknown) => ({ ...freestanding, serviceSide: value });
 
   it("keeps 'rear' on a product", () => {
     const result = ProductSchema.safeParse(withServiceSide('rear'));
@@ -344,14 +347,14 @@ describe('ProductSchema: serviceSide (which side the staff serve a fixture from)
 
   it('a document with a rear product parses and keeps the field', () => {
     const doc = validDocument();
-    doc.products[0] = withServiceSide('rear');
+    doc.products[1] = withServiceSide('rear');
     const result = parseDesignDocument(doc);
     expect(result.ok).toBe(true);
-    if (result.ok) expect(result.document.products[0]!.serviceSide).toBe('rear');
+    if (result.ok) expect(result.document.products[1]!.serviceSide).toBe('rear');
   });
 
   it('a product without the field still parses and gets no key added (absent means front)', () => {
-    const result = ProductSchema.safeParse(validDocument().products[0]);
+    const result = ProductSchema.safeParse(freestanding);
     expect(result.success).toBe(true);
     if (result.success) expect('serviceSide' in result.data).toBe(false);
   });

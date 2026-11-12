@@ -164,10 +164,17 @@ describe('ownerProduct', () => {
 
   describe('serviceSide', () => {
     it("'rear' gives the product serviceSide 'rear' and changes nothing else", () => {
-      const p = ownerOk(counterInput({ serviceSide: 'rear' }));
+      const p = ownerOk(counterInput({ placement: 'freestanding', serviceSide: 'rear' }));
       const { serviceSide, ...rest } = p;
       expect(serviceSide).toBe('rear');
-      expect(rest).toEqual(ownerOk(counterInput()));
+      expect(rest).toEqual(ownerOk(counterInput({ placement: 'freestanding' })));
+    });
+
+    it("'rear' on a counter or a wall product is dropped: the form only offers it for freestanding", () => {
+      for (const placement of ['counter', 'wall'] as const) {
+        const p = ownerOk(counterInput({ placement, serviceSide: 'rear' }));
+        expect('serviceSide' in p, placement).toBe(false);
+      }
     });
 
     it("omitted or 'front' leaves no serviceSide key at all (byte-identical to before)", () => {
@@ -179,7 +186,7 @@ describe('ownerProduct', () => {
     });
 
     it('a rear product survives add, serialize and parse', () => {
-      const rear = ownerOk(counterInput({ serviceSide: 'rear' }));
+      const rear = ownerOk(counterInput({ placement: 'freestanding', serviceSide: 'rear' }));
       const added = okCatalog(addProduct(seedCatalog(), rear));
       const back = okCatalog(parseCatalog(serializeCatalog(added)));
       expect(back.products[9]!.serviceSide).toBe('rear');

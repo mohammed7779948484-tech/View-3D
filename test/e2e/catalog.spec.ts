@@ -117,6 +117,7 @@ test('adding a product with every size known writes a verified owner-1', async (
 test("the form has a \"Served from\" select with front (default) and rear; rear is written to catalog.json", async () => {
   const page = await openCatalog();
   await page.getByRole('button', { name: 'Add a product' }).click();
+  await page.getByLabel('Placement', { exact: true }).selectOption('freestanding'); // the choice is only offered for freestanding
   const served = page.getByLabel('Served from', { exact: true });
   await expect(served).toBeVisible(FIRST);
   await expect(served).toHaveValue('front');
@@ -147,14 +148,14 @@ test('a product added with the default "Served from" has no serviceSide key', as
 
 test('editing a seed product without touching "Served from" leaves no serviceSide key', async () => {
   const page = await openCatalog();
-  const name = seed('nhf-c').name;
+  const name = seed('nhf-6ft-extra-view-showcase').name;
   await expect.poll(productsOnDisk, FIRST).not.toBeNull();
   await page.getByRole('button', { name: `Edit ${name}`, exact: true }).click();
   await expect(page.getByLabel('Served from', { exact: true })).toHaveValue('front', FIRST);
   await page.getByLabel('Name', { exact: true }).fill(`${name} 2`);
   await page.getByRole('button', { name: 'Save product' }).click();
-  await expect.poll(() => productsOnDisk()?.find((p) => p.id === 'nhf-c')?.name, FIRST).toBe(`${name} 2`);
-  const edited = readCatalog().products.find((p) => p.id === 'nhf-c')!;
+  await expect.poll(() => productsOnDisk()?.find((p) => p.id === 'nhf-6ft-extra-view-showcase')?.name, FIRST).toBe(`${name} 2`);
+  const edited = readCatalog().products.find((p) => p.id === 'nhf-6ft-extra-view-showcase')!;
   expect('serviceSide' in edited).toBe(false);
 });
 
@@ -220,33 +221,33 @@ test('editing a name changes only that product, in place', async () => {
 
 test('removing a product asks first, then deletes only that product', async () => {
   const page = await openCatalog();
-  const name = seed('nhf-c').name;
-  await expect(row(page, 'nhf-c')).toBeVisible(FIRST);
+  const name = seed('nhf-6ft-extra-view-showcase').name;
+  await expect(row(page, 'nhf-6ft-extra-view-showcase')).toBeVisible(FIRST);
   await expect.poll(productsOnDisk, FIRST).not.toBeNull();
   await page.getByRole('button', { name: `Remove ${name}`, exact: true }).click();
   await expect(page.getByRole('button', { name: 'Yes, remove' })).toBeVisible(FIRST);
   expect(productsOnDisk()).toEqual(seedProducts); // nothing is removed before the answer
   await page.getByRole('button', { name: 'Yes, remove' }).click();
   await expect.poll(() => productsOnDisk()?.length, FIRST).toBe(8);
-  expect(readCatalog().products).toEqual(seedProducts.filter((p) => p.id !== 'nhf-c'));
-  await expect(row(page, 'nhf-c')).toHaveCount(0);
+  expect(readCatalog().products).toEqual(seedProducts.filter((p) => p.id !== 'nhf-6ft-extra-view-showcase'));
+  await expect(row(page, 'nhf-6ft-extra-view-showcase')).toHaveCount(0);
 });
 
 test('confirming an unverified product verifies it and nothing else; unknown ones have no Confirm', async () => {
   const page = await openCatalog();
-  const c = seed('nhf-c');
+  const c = seed('nhf-6ft-extra-view-showcase');
   expect(c.verification).toBe('unverified');
   await expect(row(page, 'nhf-s').getByRole('button', { name: `Edit ${seed('nhf-s').name}`, exact: true })).toBeVisible(FIRST);
   await expect(page.getByRole('button', { name: `Confirm ${seed('nhf-s').name}`, exact: true })).toHaveCount(0);
-  await expect(row(page, 'nhf-c').getByRole('button', { name: `Confirm ${c.name}`, exact: true })).toBeVisible();
+  await expect(row(page, 'nhf-6ft-extra-view-showcase').getByRole('button', { name: `Confirm ${c.name}`, exact: true })).toBeVisible();
 
   await page.getByRole('button', { name: `Confirm ${c.name}`, exact: true }).click();
-  await expect.poll(() => productsOnDisk()?.find((p) => p.id === 'nhf-c')?.verification, FIRST).toBe('verified');
-  const index = seedProducts.findIndex((p) => p.id === 'nhf-c');
+  await expect.poll(() => productsOnDisk()?.find((p) => p.id === 'nhf-6ft-extra-view-showcase')?.verification, FIRST).toBe('verified');
+  const index = seedProducts.findIndex((p) => p.id === 'nhf-6ft-extra-view-showcase');
   const after = readCatalog().products;
   expect(after[index]).toEqual({ ...c, verification: 'verified' });
   expect(after.filter((_, i) => i !== index)).toEqual(seedProducts.filter((_, i) => i !== index));
-  await expect(row(page, 'nhf-c')).toHaveAttribute('data-verification', 'verified', FIRST);
+  await expect(row(page, 'nhf-6ft-extra-view-showcase')).toHaveAttribute('data-verification', 'verified', FIRST);
   await expect(page.getByRole('button', { name: `Confirm ${c.name}`, exact: true })).toHaveCount(0);
 });
 
