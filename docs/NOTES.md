@@ -158,6 +158,19 @@ Running log and decisions. Checkpointed after every step so work survives a rest
     ways: our own JPG/WebP set through a `pnpm patch` of Pascal's material paths, or a texture
     decoder built without eval. Pascal works without them: walls and floors are plain.
 
+22. Open problem, to fix in phase 2 (owner, 2026-11-13): on Ubuntu CI the Pascal page once reported
+    "Instance dropped in popErrorScope" twice (CI run 43522790928 on commit d7a4409, test "no error
+    in the Pascal page or its workers"). Seen once in 6 Ubuntu runs; never on Windows CI or the
+    owner's laptop.
+    - Known: three's WebGPU backend calls `device.popErrorScope().then(...)` without a `catch`. When
+      the device or its connection is lost while pipelines are being built, the page gets this
+      unhandled error.
+    - Not found: why the connection is lost on Ubuntu. Not reproduced on the laptop by killing
+      Chromium's GPU process during and after loading, or with one CPU core.
+    - The test's failure message now names the canvas kind, Pascal's "[viewer]" log and any
+      Chromium child process that ended, so the next failure carries its evidence.
+    - Next: reproduce on Linux (WSL Ubuntu 24.04 is on the laptop, with xvfb-run).
+
 Answered by the owner on 2026-11-13 (questions 18 to 20; details in `decisions/0008`):
 - 18 (should Pascal's scene be what is edited, with our micrometre document derived from it?): yes. Pascal's scene is edited; our micrometre document is always derived from it by one
   pure, deterministic function in `src/` and never edited by hand. Conditions: a property test

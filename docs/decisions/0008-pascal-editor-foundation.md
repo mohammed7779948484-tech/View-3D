@@ -134,6 +134,9 @@ replace it; `next` is not installed (checked: no `next` folder anywhere in `node
   is unchanged.
 - **Seen on the laptop.** NVIDIA and SwiftShader both draw the shop with "L shop 94.9 m²" in
   metres (before textures were switched off; the later screenshots are listed in NOTES).
+- **Open problem, to fix in phase 2** (owner, 2026-11-13). An intermittent "Instance dropped in
+  popErrorScope" error appeared in the Pascal page on Ubuntu CI: once in 6 runs, never on
+  Windows. Details and what is known are in NOTES question 22.
 - **Not done in phase 1.**
   - Pascal edits are not saved; phase 3 brings the adapter.
   - Pascal's item catalog still names furniture pictures on Pascal's servers. They are refused
