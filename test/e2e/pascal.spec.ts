@@ -174,6 +174,11 @@ test('no error in the Pascal page or its workers', async () => {
   const pascal = await opened;
   const pageErrors: string[] = [];
   pascal.on('pageerror', (e) => pageErrors.push(e.message));
+  // Pascal's own renderer messages ("[viewer] WebGPU device ready", a fallback...), shown when the test fails.
+  const viewerLog: string[] = [];
+  pascal.on('console', (m) => {
+    if (m.text().startsWith('[viewer')) viewerLog.push(`${m.type()}: ${m.text().slice(0, 200)}`);
+  });
   const cdp = await pascal.context().newCDPSession(pascal);
   await cdp.send('Log.enable');
   const logErrors: string[] = [];
@@ -184,8 +189,12 @@ test('no error in the Pascal page or its workers', async () => {
   await expect(pascal.locator('[data-testid="pascal-host"]')).toHaveAttribute('data-walls', '6', { timeout: SLOW });
   await pascal.waitForTimeout(8_000); // workers start late.
 
-  expect(pageErrors).toEqual([]);
-  expect(logErrors).toEqual([]);
+  const canvases = await pascal.evaluate(() =>
+    [...document.querySelectorAll('[data-testid="pascal-host"] canvas')].map((c) => (c.getContext('webgpu') === null ? 'not-webgpu' : 'webgpu')),
+  );
+  const context = `Pascal canvases: ${canvases.join(', ')}; Pascal renderer log: ${viewerLog.join(' | ')}`;
+  expect(pageErrors, context).toEqual([]);
+  expect(logErrors, context).toEqual([]);
 });
 
 test('without WebGPU: a clear message, and the 2D editor stays', async () => {

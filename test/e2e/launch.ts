@@ -10,7 +10,10 @@ const softwareArgs = ['--enable-unsafe-swiftshader'];
 // Tests only: CI has no GPU either for WebGPU. These two switches give Chromium a SwiftShader WebGPU adapter even with no GPU
 // (requestAdapter() returns vendor google, architecture swiftshader). The shipped app never sets them: without a real
 // WebGPU adapter it shows a message and the 2D editor stays usable.
-const webgpuArgs = ['--enable-unsafe-webgpu', '--use-webgpu-adapter=swiftshader'];
+// --ignore-gpu-blocklist: the Windows CI runner's only GPU is "Microsoft Basic Render Driver", which Chromium blocklists;
+// it then runs its GPU part in-process with no graphics backend, and no SwiftShader WebGPU adapter appears (CI log of
+// 2026-11-13; reproduced on the owner's laptop with --disable-gpu --in-process-gpu).
+const webgpuArgs = ['--enable-unsafe-webgpu', '--use-webgpu-adapter=swiftshader', '--ignore-gpu-blocklist'];
 const REPO_ROOT = resolve(import.meta.dirname, '../..');
 
 /**
