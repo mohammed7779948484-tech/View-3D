@@ -1,0 +1,355 @@
+{
+  "nodes": {
+    "site_sgqqe7drm9fzwgnh": {
+      "object": "node",
+      "id": "site_sgqqe7drm9fzwgnh",
+      "type": "site",
+      "parentId": null,
+      "visible": true,
+      "metadata": {},
+      "polygon": {
+        "type": "polygon",
+        "points": [
+          [
+            -15,
+            -15
+          ],
+          [
+            15,
+            -15
+          ],
+          [
+            15,
+            15
+          ],
+          [
+            -15,
+            15
+          ]
+        ]
+      },
+      "children": [
+        "building_paah5zae24j0ouy0"
+      ]
+    },
+    "building_paah5zae24j0ouy0": {
+      "object": "node",
+      "id": "building_paah5zae24j0ouy0",
+      "type": "building",
+      "parentId": "site_sgqqe7drm9fzwgnh",
+      "visible": true,
+      "metadata": {},
+      "children": [
+        "level_klt5zj8qlh3s0bx3"
+      ],
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    "level_klt5zj8qlh3s0bx3": {
+      "object": "node",
+      "id": "level_klt5zj8qlh3s0bx3",
+      "type": "level",
+      "parentId": "building_paah5zae24j0ouy0",
+      "visible": true,
+      "metadata": {},
+      "children": [
+        "wall_lshop1",
+        "wall_lshop2",
+        "wall_lshop3",
+        "wall_lshop4",
+        "wall_lshop5",
+        "wall_lshop6",
+        "ceiling_tnjvagykaunq4ekn",
+        "slab_00029dm9lcz7v7nu",
+        "zone_bdgrfgndi2bnio2w"
+      ],
+      "level": 0,
+      "baseElevation": 0,
+      "height": 2.5
+    },
+    "wall_lshop1": {
+      "object": "node",
+      "id": "wall_lshop1",
+      "type": "wall",
+      "name": "Wall 1",
+      "parentId": "level_klt5zj8qlh3s0bx3",
+      "visible": true,
+      "metadata": {},
+      "children": [],
+      "start": [
+        0,
+        0
+      ],
+      "end": [
+        12.345,
+        0
+      ],
+      "frontSide": "interior",
+      "backSide": "exterior"
+    },
+    "wall_lshop2": {
+      "object": "node",
+      "id": "wall_lshop2",
+      "type": "wall",
+      "name": "Wall 2",
+      "parentId": "level_klt5zj8qlh3s0bx3",
+      "visible": true,
+      "metadata": {},
+      "children": [],
+      "start": [
+        12.345,
+        0
+      ],
+      "end": [
+        12.345,
+        5.545
+      ],
+      "frontSide": "interior",
+      "backSide": "exterior"
+    },
+    "wall_lshop3": {
+      "object": "node",
+      "id": "wall_lshop3",
+      "type": "wall",
+      "name": "Wall 3",
+      "parentId": "level_klt5zj8qlh3s0bx3",
+      "visible": true,
+      "metadata": {},
+      "children": [],
+      "start": [
+        12.345,
+        5.545
+      ],
+      "end": [
+        8.24,
+        5.545
+      ],
+      "frontSide": "interior",
+      "backSide": "exterior"
+    },
+    "wall_lshop4": {
+      "object": "node",
+      "id": "wall_lshop4",
+      "type": "wall",
+      "name": "Wall 4",
+      "parentId": "level_klt5zj8qlh3s0bx3",
+      "visible": true,
+      "metadata": {},
+      "children": [],
+      "start": [
+        8.24,
+        5.545
+      ],
+      "end": [
+        8.24,
+        8.76
+      ],
+      "frontSide": "interior",
+      "backSide": "exterior"
+    },
+    "wall_lshop5": {
+      "object": "node",
+      "id": "wall_lshop5",
+      "type": "wall",
+      "name": "Wall 5",
+      "parentId": "level_klt5zj8qlh3s0bx3",
+      "visible": true,
+      "metadata": {},
+      "children": [],
+      "start": [
+        8.24,
+        8.76
+      ],
+      "end": [
+        0,
+        8.76
+      ],
+      "frontSide": "interior",
+      "backSide": "exterior"
+    },
+    "wall_lshop6": {
+      "object": "node",
+      "id": "wall_lshop6",
+      "type": "wall",
+      "name": "Wall 6",
+      "parentId": "level_klt5zj8qlh3s0bx3",
+      "visible": true,
+      "metadata": {},
+      "children": [],
+      "start": [
+        0,
+        8.76
+      ],
+      "end": [
+        0,
+        0
+      ],
+      "frontSide": "interior",
+      "backSide": "exterior"
+    },
+    "ceiling_tnjvagykaunq4ekn": {
+      "object": "node",
+      "id": "ceiling_tnjvagykaunq4ekn",
+      "type": "ceiling",
+      "name": "Shop Ceiling",
+      "parentId": "level_klt5zj8qlh3s0bx3",
+      "visible": true,
+      "metadata": {},
+      "children": [],
+      "polygon": [
+        [
+          0.05,
+          0.05
+        ],
+        [
+          12.295,
+          0.05
+        ],
+        [
+          12.295,
+          5.495
+        ],
+        [
+          8.19,
+          5.495
+        ],
+        [
+          8.19,
+          8.71
+        ],
+        [
+          0.05,
+          8.71
+        ]
+      ],
+      "holes": [],
+      "holeMetadata": [],
+      "boundary": "auto",
+      "zoneId": "zone_bdgrfgndi2bnio2w",
+      "autoFromWalls": true
+    },
+    "slab_00029dm9lcz7v7nu": {
+      "object": "node",
+      "id": "slab_00029dm9lcz7v7nu",
+      "type": "slab",
+      "name": "Floor plate",
+      "parentId": "level_klt5zj8qlh3s0bx3",
+      "visible": true,
+      "metadata": {},
+      "polygon": [
+        [
+          -0.05,
+          -0.05
+        ],
+        [
+          12.395,
+          -0.05
+        ],
+        [
+          12.395,
+          5.595
+        ],
+        [
+          8.29,
+          5.595
+        ],
+        [
+          8.29,
+          8.81
+        ],
+        [
+          -0.05,
+          8.81
+        ]
+      ],
+      "holes": [],
+      "holeMetadata": [],
+      "elevation": 0.05,
+      "foundation": {
+        "type": "none"
+      },
+      "thickness": 0.05,
+      "recessed": false,
+      "boundary": "auto",
+      "plateRole": "base",
+      "zoneIds": [
+        "zone_bdgrfgndi2bnio2w"
+      ],
+      "autoFromWalls": true
+    },
+    "zone_bdgrfgndi2bnio2w": {
+      "object": "node",
+      "id": "zone_bdgrfgndi2bnio2w",
+      "type": "zone",
+      "name": "L shop",
+      "parentId": "level_klt5zj8qlh3s0bx3",
+      "visible": true,
+      "metadata": {},
+      "polygon": [
+        [
+          0,
+          0
+        ],
+        [
+          12.345,
+          0
+        ],
+        [
+          12.345,
+          5.545
+        ],
+        [
+          8.24,
+          5.545
+        ],
+        [
+          8.24,
+          8.76
+        ],
+        [
+          0,
+          8.76
+        ]
+      ],
+      "holes": [],
+      "autoFromWalls": true,
+      "boundaryWallIds": [
+        "wall_lshop1",
+        "wall_lshop2",
+        "wall_lshop3",
+        "wall_lshop4",
+        "wall_lshop5",
+        "wall_lshop6"
+      ],
+      "boundarySeparatorIds": [],
+      "seed": [
+        2,
+        2
+      ],
+      "spaceRole": "room",
+      "roomNumber": "",
+      "enclosureStatus": "enclosed",
+      "floorFinish": "",
+      "wallFinish": "",
+      "ceilingFinish": "",
+      "ceilingHeight": 2.7,
+      "occupancy": "",
+      "clearDimensionPolicy": "none",
+      "color": "#22c55e"
+    }
+  },
+  "rootNodeIds": [
+    "site_sgqqe7drm9fzwgnh"
+  ],
+  "collections": {},
+  "materials": {},
+  "installedPlugins": []
+}

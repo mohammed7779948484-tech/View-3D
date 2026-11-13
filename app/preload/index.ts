@@ -1,4 +1,4 @@
-/** The narrow bridge: seven functions, no Node and no raw ipcRenderer for the renderer (decisions/0007). */
+/** The narrow bridge: eight functions, no Node and no raw ipcRenderer for the renderer (decisions/0007). */
 import { contextBridge, ipcRenderer } from 'electron';
 import type { ProjectBridge, SaveRequest } from '../shared/project-api';
 
@@ -16,6 +16,7 @@ const bridge: ProjectBridge = {
   closeWindow: () => ipcRenderer.send('window:close'),
   loadCatalog: () => ipcRenderer.invoke('catalog:load'),
   saveCatalog: (text: string) => ipcRenderer.invoke('catalog:save', text),
+  openPascal: () => ipcRenderer.send('pascal:open'),
 };
 
 contextBridge.exposeInMainWorld('view3d', bridge);

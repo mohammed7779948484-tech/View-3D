@@ -62,6 +62,53 @@ replace it; `next` is not installed (checked: no `next` folder anywhere in `node
    Pascal's views.
 5. Retire `app/renderer/editor-2d` and `app/renderer/view-3d`.
 
+## Phase 1 as built (2026-11-13)
+
+- **Where.** `app/renderer/pascal/` is a second page with its own window, opened from the start
+  screen ("Pascal editor (preview)") through the preload's `openPascal()`. The main window and the
+  current editors are unchanged. The Pascal window is locked down like the main one and has no
+  preload. Pascal's styles share colour names with ours, so its own page keeps them apart.
+- **Own origin.** The page is served as `view3d://app/pascal/index.html` by a privileged, secure,
+  standard scheme (`app/main/pascal-protocol.ts`) that maps `/` to the built renderer folder.
+  Pascal's hard-coded `/icons/...` and `/material/...` paths then resolve to bundled files.
+  Anything outside the folder is "not found" (unit-tested, including encoded `..` and backslashes).
+- **WebGPU gate.** The start button asks for a WebGPU adapter first. Without one it shows "Pascal's
+  editor needs WebGPU..." (Arabic and English) and opens nothing; the 2D editor stays. The page
+  checks again before starting Pascal. Software WebGPU appears only with test switches
+  (`--enable-unsafe-webgpu --use-webgpu-adapter=swiftshader`). Measured in Electron 45: with
+  `--disable-gpu` and no such switch, `requestAdapter()` returns null. Not covered: if Pascal gets
+  an adapter but its WebGPU start then fails, Pascal falls back to WebGL by itself.
+- **Offline.**
+  - `configureViewer` points textures, icons, sounds and the Draco and Basis decoders at the
+    app's files.
+  - `useGLTF.setDecoderPath` covers one model that Pascal loads through drei's default Draco path
+    (gstatic.com).
+  - The Iconify icons Pascal names are bundled at build time; fetching is switched off.
+- **Proven by `test/e2e/pascal.spec.ts`.**
+  - The shop shows (6 walls, metric, a WebGPU canvas).
+  - The window is locked down.
+  - While Pascal loads, the main process sees no remote request, no local file fails, textures
+    (`.ktx2`) and the Basis decoder load from `view3d://`, and the page reports no CSP refusal.
+  - Without WebGPU: the message shows, no window opens, and the walls screen opens.
+- **CSP of the Pascal page.** The app's policy plus exactly three entries. Each was removed in
+  turn and the test failed with the browser's refusal:
+  - `'wasm-unsafe-eval'`: "Compiling or instantiating WebAssembly module violates...";
+  - `connect-src data:`: "Fetch API cannot load data:model/gltf-binary...";
+  - `worker-src 'self' blob:`: "Creating a worker from 'blob:view3d://app/...' violates...".
+
+  `blob:` in `img-src` and `connect-src` (tried in the trial) is not needed. The main page's CSP
+  is unchanged.
+- **Seen on the laptop.** NVIDIA and SwiftShader both draw the shop with "L shop 94.9 m²" in
+  metres.
+- **Not done in phase 1.**
+  - Pascal edits are not saved; phase 3 brings the adapter.
+  - Pascal's item catalog still names furniture pictures on Pascal's servers. They are refused
+    (not loaded) if that panel is opened; our products replace them in phase 2.
+  - The NSIS installer itself was not run on the laptop. The packaged app it installs was: the 4
+    Pascal tests and the 5 smoke tests pass against it (`pnpm package:dir`,
+    `VIEW3D_EXE=release/win-unpacked/View-3D.exe`, 417 MB), with Pascal's files read from inside
+    `app.asar`. CI's Windows job builds and installs the installer.
+
 ## Results of the Windows trial (2026-11-12)
 
 Machine: Windows 11 Home 10.0.26200, Microsoft Edge 157.0.4341.42, Node 24.22.3 (fnm), pnpm

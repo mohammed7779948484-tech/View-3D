@@ -6,7 +6,16 @@ export type PascalViewerConfig = {
   decoders: { dracoPath: string; basisPath: string };
 };
 
+/**
+ * Pascal's defaults point at its own servers (editor.pascal.app, gstatic.com, jsdelivr.net). Every one is
+ * replaced with a folder of the app: textures and icons from app/renderer/public, decoders copied from three.
+ */
 export function pascalViewerConfig(base: string): PascalViewerConfig {
-  void base;
-  throw new Error('not implemented');
+  const root = base.replace(/\/+$/, '');
+  return {
+    assetsBaseUrl: root,
+    sfxBaseUrl: `${root}/audios/sfx`,
+    iconsBaseUrl: `${root}/icons`,
+    decoders: { dracoPath: `${root}/decoders/draco/`, basisPath: `${root}/decoders/basis/` },
+  };
 }

@@ -19,7 +19,7 @@ import { useCatalogProducts } from './catalog/use-catalog';
 import { FixturesPanel } from './editor-2d/fixtures-panel';
 import type { Picked } from './editor-2d/fixtures-panel';
 import { FixtureInspector } from './editor-2d/fixture-inspector';
-import { Copy, FolderOpen, Gauge, Languages, MousePointerClick, Package, PencilRuler, Redo2, Ruler, Save, SaveAll, ScanLine, Store, Undo2 } from 'lucide-react';
+import { Box, Copy, FolderOpen, Gauge, Languages, MousePointerClick, Package, PencilRuler, Redo2, Ruler, Save, SaveAll, ScanLine, Store, Undo2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
@@ -176,6 +176,15 @@ export function App() {
     setScreen('scan');
   }
 
+  /** Pascal's editor needs WebGPU (owner, 2026-11-13): without an adapter it says so and opens nothing; 2D stays. */
+  async function openPascal(): Promise<void> {
+    const gpu = (navigator as Navigator & { gpu?: { requestAdapter(options?: { featureLevel?: string }): Promise<unknown> } }).gpu;
+    const adapter = await gpu?.requestAdapter({ featureLevel: 'compatibility' }).catch(() => null);
+    if (adapter === null || adapter === undefined) return setProblem({ message: t('pascal.noWebGpu'), details: [] });
+    setProblem(null);
+    bridge().openPascal();
+  }
+
   function useScannedRoom(room: Room): void {
     const created = newDocument(room.outline, room.ceilingHeightUm, t('project.newName'));
     if (created === null) return setProblem({ message: t('draw.notARoom'), details: [] });
@@ -292,6 +301,7 @@ export function App() {
                   { icon: ScanLine, label: t('start.importScan'), go: () => void importScan() },
                   { icon: FolderOpen, label: t('start.open'), go: () => void open() },
                   { icon: Package, label: t('start.catalog'), go: () => setScreen('catalog') },
+                  { icon: Box, label: t('start.pascal'), go: () => void openPascal() },
                 ] as const
               ).map(({ icon: Icon, label, go, ...rest }) => (
                 <Card key={label} className="gap-0 p-0">

@@ -146,12 +146,42 @@ old when added.
 Native `<select>` (shadcn NativeSelect) is kept instead of the Radix Select: it stays a real
 combobox, keyboard and RTL behave as the system does, and the tests drive it as one.
 
-## Spiked, not adopted (Pascal editor)
+## Adopted in phase 1 of decision 0008 (Pascal editor, 2026-11-13)
 
-Tried on the owner's Windows laptop on 2026-11-12 (`decisions/0008-pascal-editor-foundation.md`,
-status proposed). Versions, release dates and licences read from the npm registry the same day.
-Nothing here moves to "Adopted" until phase 1 of 0008 (the host in the packaged app) lands. The
-trial ran in folders next to the repository; no View-3D code or `package.json` changed.
+Owner's yes 2026-11-13 (NOTES questions 18 to 20). All exact versions, devDependencies (bundled by
+electron-vite like the rest of the renderer). Licences and dates from the npm registry.
+
+| Package | Version (released) | Licence | Why |
+|---|---|---|---|
+| @pascal-app/core, viewer, editor, nodes | 1.1.4 (2026-11-12) | MIT | The 2D/3D editing layer (0008). One copy each in `node_modules/.pnpm` (checked) |
+| zustand | 5.1.0 (2026-11-06) | MIT | Peer of `@pascal-app/nodes`; Pascal's stores |
+| @iconify/react | 6.0.4 (2026-11-01) | MIT | Already used by Pascal's editor; we call `addCollection` and switch its fetching off so no icon is downloaded. Same copy as the editor's (one folder in `.pnpm`) |
+| @iconify-json/lucide | 1.2.150 (2026-10-31) | ISC | Icon data for the 36 Lucide icons Pascal uses; only those are bundled (`virtual:pascal-icons`). Not the newest (1.2.154 is one day old): a settled release; none of them has `scribble`, which Pascal names |
+| @iconify-json/mdi | 1.2.3 (2025-01-20) | Apache-2.0 | 4 icons |
+| @iconify-json/ph | 1.2.2 (2024-12-16) | MIT | 4 icons |
+| @iconify-json/carbon | 1.2.29 (2026-10-23) | Apache-2.0 | 1 icon |
+| @iconify-json/qlementine-icons | 1.2.16 (2026-08-24) | MIT | 1 icon |
+
+`next` is not installed: `.pnpmfile.cjs` removes it from the editor's peer list (pnpm would
+otherwise install Next.js), and four Vite aliases point its `next/image` imports at shims.
+Draco and Basis decoders are three's own (`three/examples/jsm/libs`, three 0.187.0, already
+adopted), copied next to the page at build time.
+
+**Pascal's asset files** (`app/renderer/public/`: `icons/`, `material/`, `audios/`, `cursor.svg`,
+29.3 MB, 689 files). 466 come from Pascal's repository (`apps/editor/public`, commit 99ebcf8,
+2026-11-12); its MIT licence is copied as `LICENSE-pascal.txt`. The other 223 are the compressed
+`.ktx2` textures and thumbnails that `@pascal-app/core` 1.1.4 names but the repository holds only
+as JPG/WebP originals: downloaded once on 2026-11-13 from `https://editor.pascal.app` (the
+package's default asset host), the same files Pascal's own site uses. **Not verified:** where the
+texture images originally come from and whether a licence other than the repository's MIT covers
+them; no separate texture licence was found in the repository. Needs the owner before shipping to
+customers.
+
+## Spiked before adoption (Pascal editor)
+
+Tried on the owner's Windows laptop on 2026-11-12 (`decisions/0008-pascal-editor-foundation.md`).
+Versions, release dates and licences read from the npm registry the same day. The trial ran in
+folders next to the repository; no View-3D code or `package.json` changed.
 
 | Package | Version (released) | Licence | What the trial proved |
 |---|---|---|---|

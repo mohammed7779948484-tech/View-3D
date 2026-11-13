@@ -12,6 +12,12 @@
     "paths": {
       "@/*": [
         "./app/renderer/*"
+      ],
+      "@pascal-app/editor": [
+        "./app/renderer/pascal/pascal-editor.d.ts"
+      ],
+      "@pascal-app/editor/*": [
+        "./app/renderer/pascal/pascal-editor.d.ts"
       ]
     }
   },

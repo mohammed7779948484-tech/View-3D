@@ -4,14 +4,15 @@
  * The renderer never names a file: it asks through the preload bridge, and this process shows the
  * native dialog and remembers the current project file.
  */
-import { app, BrowserWindow, dialog, ipcMain, Menu, session } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, Menu, net, protocol, session } from 'electron';
 import type { IpcMainEvent, IpcMainInvokeEvent } from 'electron';
 import { basename, dirname, isAbsolute, join, relative } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { parseDesignDocument } from '../../src/core/index';
 import type { OpenResult, SaveRequest, SaveResult } from '../shared/project-api';
 import { readProjectFile, writeProjectFile } from './project-files';
 import { loadCatalogFile, saveCatalogFile } from './catalog-file';
+import { PASCAL_PAGE_URL, PASCAL_SCHEME, pascalFilePath } from './pascal-protocol';
 
 const RENDERER_HTML = join(import.meta.dirname, '../renderer/index.html');
 const PRELOAD = join(import.meta.dirname, '../preload/index.cjs');
@@ -33,6 +34,14 @@ const SCAN_FILTERS = [{ name: 'Room scan (RoomTrace JSON)', extensions: ['json']
 const NOT_IN_FILE_NAMES = /[\\/:*?"<>|]/g;
 /** A project file is a few hundred kilobytes; anything far bigger is not one of ours. */
 const MAX_PROJECT_TEXT = 50_000_000;
+
+// Pascal's window (decisions/0008, phase 1) gets its own origin, view3d://app/, serving the same folder as the
+// page: Pascal asks for absolute paths like /icons/... that file:// would send to the drive root. Standard and
+// secure, so `/` resolves and WebGPU (secure contexts only) is offered. Must be registered before `ready`.
+protocol.registerSchemesAsPrivileged([{ scheme: PASCAL_SCHEME, privileges: { standard: true, secure: true, supportFetchAPI: true } }]);
+
+/** Pascal's editor window while it is open; one at a time. */
+let pascalWindow: BrowserWindow | null = null;
 
 /** The project file open in the window, once it was opened or saved. */
 let currentPath: string | null = null;
@@ -108,7 +117,30 @@ function createWindow(): void {
     event.preventDefault();
     window.webContents.send('window:close-requested');
   });
+  // Pascal's window belongs to this one: it goes when the app window goes.
+  window.on('closed', () => pascalWindow?.close());
   void window.loadFile(RENDERER_HTML);
+}
+
+/** Pascal's editor: as locked down as the main window, and without the preload (it needs no bridge). */
+function openPascalWindow(): void {
+  if (pascalWindow !== null && !pascalWindow.isDestroyed()) {
+    pascalWindow.focus();
+    return;
+  }
+  const window = new BrowserWindow({
+    width: 1280,
+    height: 800,
+    title: 'View-3D: Pascal editor (preview)',
+    webPreferences: { contextIsolation: true, nodeIntegration: false, sandbox: true },
+  });
+  window.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
+  window.webContents.on('will-navigate', (event) => event.preventDefault());
+  window.on('closed', () => {
+    pascalWindow = null;
+  });
+  pascalWindow = window;
+  void window.loadURL(PASCAL_PAGE_URL);
 }
 
 ipcMain.handle('project:open', (event) => {
@@ -134,6 +166,9 @@ ipcMain.handle('catalog:save', (event, text: unknown) => {
   if (!fromOurPage(event) || typeof text !== 'string' || text.length > MAX_PROJECT_TEXT) throw new Error('catalog:save: refused');
   return saveCatalogFile(app.getPath('userData'), text);
 });
+ipcMain.on('pascal:open', (event) => {
+  if (fromOurPage(event)) openPascalWindow();
+});
 ipcMain.on('window:close', (event) => {
   if (!fromOurPage(event)) return;
   closeConfirmed = true;
@@ -149,6 +184,16 @@ void app.whenReady().then(() => {
   session.defaultSession.setPermissionRequestHandler((_contents, _permission, callback) => callback(false));
   // One listener only (Electron keeps the last): remote requests and files outside the page's folder are refused.
   session.defaultSession.webRequest.onBeforeRequest({ urls: ['<all_urls>'] }, (details, callback) => callback({ cancel: !allowedRequest(details.url) }));
+  // view3d://app/<path> serves only files inside the page's folder; anything else is "not found".
+  protocol.handle(PASCAL_SCHEME, async (request) => {
+    const file = pascalFilePath(request.url, RENDERER_DIR);
+    if (file === null) return new Response('Not found', { status: 404 });
+    try {
+      return await net.fetch(pathToFileURL(file).toString());
+    } catch {
+      return new Response('Not found', { status: 404 });
+    }
+  });
   // No menu: the default one would reload the page or quit without asking, and opens developer tools.
   Menu.setApplicationMenu(null);
   createWindow();
