@@ -33,8 +33,25 @@ test.afterEach(async () => {
   app = undefined;
 });
 
-/** Clicks the start-screen Pascal button and returns the window it opens. */
+/**
+ * Clicks the start-screen Pascal button and returns the window it opens. First it checks that the test's software
+ * WebGPU (launch option webgpu) gives an adapter and a device; if not, the failure names Chromium's GPU status
+ * instead of only timing out on a window that the WebGPU gate rightly never opens.
+ */
 async function openPascal(main: Page, strings: Strings): Promise<Page> {
+  const device = await main.evaluate(async () => {
+    const gpu = (navigator as unknown as { gpu?: { requestAdapter(o: object): Promise<{ info: { vendor: string; architecture: string }; requestDevice(): Promise<{ destroy(): void }> } | null> } }).gpu;
+    if (gpu === undefined) return 'no navigator.gpu';
+    const adapter = await gpu.requestAdapter({ featureLevel: 'compatibility' });
+    if (adapter === null) return 'no adapter';
+    const made = await adapter.requestDevice().then((d) => (d.destroy(), 'ok'), (e: unknown) => `no device: ${String(e)}`);
+    return made === 'ok' ? `ok ${adapter.info.vendor}/${adapter.info.architecture}` : made;
+  });
+  if (!device.startsWith('ok')) {
+    const status = await app!.evaluate(({ app: electronApp }) => electronApp.getGPUFeatureStatus());
+    const info = await app!.evaluate(({ app: electronApp }) => electronApp.getGPUInfo('basic'));
+    expect(device, `test WebGPU unavailable. GPU feature status: ${JSON.stringify(status)}; GPU info: ${JSON.stringify(info)}`).toMatch(/^ok/);
+  }
   const opened = app!.waitForEvent('window', { timeout: SLOW });
   await main.getByRole('button', { name: strings.start.pascal, exact: true }).click();
   return opened;
