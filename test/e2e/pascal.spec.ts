@@ -56,6 +56,8 @@ test('opens Pascal\'s editor with the L-shaped test shop', async () => {
     [...el.querySelectorAll('canvas')].filter((c) => c.getContext('webgpu') !== null).length,
   );
   expect(webgpuCanvases).toBeGreaterThan(0);
+  // Owner's decision: no textures in this batch (the Basis decoder needs eval, which the CSP forbids).
+  await expect(host).toHaveAttribute('data-textures', 'false');
 
   // The main window stays open on its start screen.
   expect(app.windows().length).toBe(2);
@@ -117,7 +119,7 @@ test('no request leaves the computer while Pascal loads', async () => {
 
   const pascal = await openPascal(launched.page, strings);
   await expect(pascal.locator('[data-testid="pascal-host"]')).toHaveAttribute('data-walls', '6', { timeout: SLOW });
-  await pascal.waitForTimeout(5_000); // late loads: sounds, icons and textures that start after the scene is up.
+  await pascal.waitForTimeout(5_000); // late loads: sounds and icons that start after the scene is up.
 
   const requests = await app.evaluate(() => (globalThis as { __requests?: { url: string; error?: string }[] }).__requests ?? []);
   expect(requests.length, 'the collectors saw no request at all').toBeGreaterThan(0);
@@ -128,11 +130,12 @@ test('no request leaves the computer while Pascal loads', async () => {
 
   // Every local file Pascal asked for was found.
   expect(requests.filter((r) => r.error !== undefined && r.url.startsWith('view3d:'))).toEqual([]);
-  // Textures and the Basis decoder came from the app's own files. The main process's log is the evidence: the
-  // page's Resource Timing does not record view3d:// loads (measured: its list stays empty while these load).
+  // Owner's decision: no textures in this batch (the Basis decoder needs eval, which the CSP forbids), so neither the
+  // texture files nor the decoder may be loaded. The main process's log is the evidence: the page's Resource Timing
+  // does not record view3d:// loads (measured: its list stays empty while these load).
   const loaded = requests.filter((r) => r.error === undefined).map((r) => r.url);
-  expect(loaded.filter((n) => n.startsWith('view3d://app/material/') && n.endsWith('.ktx2')).length).toBeGreaterThan(0);
-  expect(loaded.filter((n) => n.endsWith('/decoders/basis/basis_transcoder.wasm')).length).toBeGreaterThan(0);
+  expect(loaded.filter((u) => u.includes('/material/'))).toEqual([]);
+  expect(loaded.filter((u) => u.includes('/decoders/basis/'))).toEqual([]);
 
   const draco = await pascal.evaluate(async () => {
     const get = (globalThis as unknown as { fetch(u: string): Promise<{ ok: boolean }> }).fetch;
@@ -141,6 +144,31 @@ test('no request leaves the computer while Pascal loads', async () => {
     return [wasm.ok, wrapper.ok];
   });
   expect(draco).toEqual([true, true]);
+});
+
+test('no error in the Pascal page or its workers', async () => {
+  test.setTimeout(150_000);
+  const strings = english();
+  const launched = await launchApp({ webgpu: true });
+  app = launched.app;
+
+  const opened = app.waitForEvent('window', { timeout: SLOW });
+  await launched.page.getByRole('button', { name: strings.start.pascal, exact: true }).click();
+  const pascal = await opened;
+  const pageErrors: string[] = [];
+  pascal.on('pageerror', (e) => pageErrors.push(e.message));
+  const cdp = await pascal.context().newCDPSession(pascal);
+  await cdp.send('Log.enable');
+  const logErrors: string[] = [];
+  cdp.on('Log.entryAdded', (e) => {
+    if (e.entry.level === 'error') logErrors.push(`${e.entry.source}: ${e.entry.text} ${e.entry.url ?? ''}`.trim());
+  });
+
+  await expect(pascal.locator('[data-testid="pascal-host"]')).toHaveAttribute('data-walls', '6', { timeout: SLOW });
+  await pascal.waitForTimeout(8_000); // workers start late.
+
+  expect(pageErrors).toEqual([]);
+  expect(logErrors).toEqual([]);
 });
 
 test('without WebGPU: a clear message, and the 2D editor stays', async () => {
