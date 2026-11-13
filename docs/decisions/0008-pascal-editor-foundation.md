@@ -64,9 +64,15 @@ owner's computer has integrated graphics only; this laptop also has a discrete G
 picks the NVIDIA one by default. Evidence (screenshots, logs) is in `..\pascal-evidence` next to
 the repository on the owner's laptop, not committed.
 
-Frame rates are `requestAnimationFrame` callbacks counted in headed Edge (Playwright, default GPU,
-no software flags) while the camera is orbited with the right mouse button for 5 s, 3 runs.
-They cannot exceed the display's refresh rate.
+**How speed is measured.** Pascal's viewer draws on its own clock and caps itself at **50 frames
+per second** (`maxFps = 50` in `<Viewer>`; `<Editor>` does not pass it, so a host cannot change
+it). The number that matters is how many frames Pascal really draws: each WebGPU frame starts with
+`GPUCanvasContext.getCurrentTexture()`, so its calls are counted while the camera is orbited with
+the right mouse button for 5 s, 3 runs, on the charger. A frame counts as slow when it takes more
+than 33.4 ms (under 30 fps). Screenshots taken during the drag differ from each other, so the
+camera really turned. Correction: the first version of this record counted the browser's
+animation frames instead (238.8 fps NVIDIA, 81.5 fps Intel). Those show how busy the browser was,
+not how fast Pascal draws.
 
 **Trial A, Pascal's own CLI** (`npx @pascal-app/cli editor`, runtime 1.1.4):
 - Starts on Windows: yes. Downloads 127.6 MB once, verifies the digest, serves
@@ -76,8 +82,7 @@ They cannot exceed the display's refresh rate.
 - A rectangle room drawn with the Rectangle tool (two clicks) is in the saved scene: 4 walls, a
   slab, a ceiling, a zone (read back from `GET /api/scenes/<id>`).
 - Console: no errors; only untranslated-message and three.js deprecation warnings.
-- Speed on the NVIDIA GPU, on the charger: 240 fps idle and while orbiting (4.2 ms per frame,
-  the display's limit). It stays a trial tool: plugin install is not enabled in this CLI release.
+- It stays a trial tool: plugin install is not enabled in this CLI release.
 
 **Trial B, our Vite host** (Vite 8.3.7, React 19.3.1, packages 1.1.4, no `next`):
 - Installed with pnpm (owner's instruction, instead of the brief's npm): 46 s clean, with
@@ -90,10 +95,7 @@ They cannot exceed the display's refresh rate.
   repo), one 404 (no favicon). The L-shaped shop shows in 2D and 3D; its label reads
   "L shop, 94.9 m²" (expected 94.94). The 3D/2D switch works both ways. One more rectangle room
   drawn (shortcut B) appears in both views and is saved by our `onSave` (10 walls, 2 zones).
-- Speed, same scene, on the charger: NVIDIA median 238.8 fps (3 runs 238.4 to 239.2; frame
-  median 4.2 ms, 95th percentile 4.3 ms: the display's limit). Intel integrated GPU, forced with
-  `--force_low_power_gpu --use-webgpu-power-preference=force-low-power`: median 81.5 fps (runs
-  132.2, 71.2, 81.5; 95th-percentile frame 20.9 to 25 ms), well above the 30 fps target.
+- Speed: see the table below.
 
 **Electron check** (`..\pascal-vite-trial\electron-check\main.cjs`, outside the repo; a window
 with `sandbox`, `contextIsolation`, no `nodeIntegration`, permissions refused, and the same
@@ -114,11 +116,38 @@ request filter as `app/main/index.ts`: remote schemes and files outside the page
    `img-src` and `worker-src 'self' blob:` renders the scene with its area and no CSP error
    except the remote Draco decoder. Only the first two additions are proven necessary; the
    `blob:` ones were added together and not tested one by one.
-Not measured in Electron: frame rate, and the Intel GPU.
+
+**Speed** (frames Pascal draws, median of 3 runs of 5 s; slow = over 33.4 ms). Electron runs use
+build 4 above in the locked-down window. The Intel GPU is forced with
+`--force_low_power_gpu --use-webgpu-power-preference=force-low-power` (Chromium ignores
+`powerPreference` on Windows). "60 shelves" is the L-shaped shop plus 60 of Pascal's built-in
+bookshelf units (1.2 x 0.45 x 1.8 m, 5 rows, 2 columns, back panel), the project's 60-fixture
+target; they need no files from the internet.
+
+| Scene | Where | GPU | fps (3 runs) | 95th-percentile frame | Slow frames |
+|---|---|---|---|---|---|
+| Walls only | Electron | NVIDIA | 50 (50, 50, 50) | 21.3 to 21.9 ms | 0 of 751 |
+| Walls only | Electron | Intel | 50 (49.9, 50, 50) | 21.5 to 22.2 ms | 1 of 752 |
+| Walls only | Edge | NVIDIA | 50 (50, 50, 50) | 21.6 to 21.9 ms | 1 of 752 |
+| Walls only, textures | Edge | Intel | 49.4 (49.4, 50, 49.3) | 21.6 to 36.7 ms | 28 of 748 |
+| Walls only, no textures | Edge | Intel | 49.8 (49.8, 50, 49.6) | 21.6 to 35.2 ms | 30 of 751 |
+| 60 shelves | Electron | NVIDIA | 49.9 (49.2, 49.9, 50) | 21.7 to 21.9 ms | 3 of 746 |
+| 60 shelves | Electron | Intel | 48.2 (48.2, 48.4, 46.9) | 23.5 to 32.4 ms | 19 of 720 |
+| 60 shelves, textures | Edge | Intel | 46.3 (46.9, 46.3, 45.9) | 28.2 to 31 ms | 31 of 699 |
+
+Every run is above the 30 fps target; the slowest run drew 45.9 fps. The NVIDIA GPU holds the
+50 fps cap even with 60 shelves. The Intel GPU loses 2 to 4 fps with 60 shelves and shows short
+stutters (single frames up to 48 ms); the first run with shelves had one 116 to 163 ms frame on
+both GPUs, most likely the one-time preparation of the shelf's GPU programs. Textures make no
+measurable difference. Edge on Intel stutters more than Electron on Intel at a similar render
+size (1544 x 852 against 1513 x 803 pixels); why was not found. Not measured: a shelf hosting
+items, real product models (GLB), and the 2D view's speed.
 
 **Gotchas found**
 - On battery at 10 % the whole browser ran at about 26 fps, an empty page too. Measure speed only
   on the charger.
+- Pascal caps its 3D at 50 fps and `<Editor>` offers no way to raise it. Counting browser
+  animation frames measures the browser, not Pascal: count draws (see "How speed is measured").
 - Two separate `pnpm add` runs gave two copies of every `@pascal-app` package (different peer
   hashes). Two copies of `core` mean two node registries. Install in one step and check
   `node_modules/.pnpm` for one copy each.

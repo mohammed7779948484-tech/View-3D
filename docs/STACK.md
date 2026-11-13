@@ -156,7 +156,7 @@ trial ran in folders next to the repository; no View-3D code or `package.json` c
 | Package | Version (released) | Licence | What the trial proved |
 |---|---|---|---|
 | @pascal-app/core | 1.1.4 (2026-11-12) | MIT | Scene graph, node registry, i18n; loads our L-shaped test shop (94.9 m², expected 94.94) |
-| @pascal-app/viewer | 1.1.4 (2026-11-12) | MIT | WebGPU 3D on both GPUs of the laptop: NVIDIA median 238.8 fps (display limit), Intel integrated median 81.5 fps while orbiting |
+| @pascal-app/viewer | 1.1.4 (2026-11-12) | MIT | WebGPU 3D on both GPUs of the laptop, at its own 50 fps cap: with 60 bookshelf units, orbiting in Electron, NVIDIA 49.9 fps and Intel integrated 48.2 fps (slowest run of all 45.9; target 30) |
 | @pascal-app/editor | 1.1.4 (2026-11-12) | MIT | 2D and 3D editing, switch between them, draw a room; ships TypeScript source; built by Vite 8.3.7 with 4 `next` aliases and no `next` installed (0 errors, about 5 s) |
 | @pascal-app/nodes | 1.1.4 (2026-11-12) | MIT | The built-in node kinds (walls, zones, slabs, doors...) registered by our host |
 | @pascal-app/cli | 1.1.4 (2026-11-12) | MIT | Runs on Windows (127.6 MB runtime, WebGPU); a closed prebuilt app without plugin install, so for trying Pascal only |
