@@ -190,7 +190,7 @@ test('no error in the Pascal page or its workers', async () => {
   await pascal.waitForTimeout(8_000); // workers start late.
 
   const canvases = await pascal.evaluate(() =>
-    [...document.querySelectorAll('[data-testid="pascal-host"] canvas')].map((c) => (c.getContext('webgpu') === null ? 'not-webgpu' : 'webgpu')),
+    [...document.querySelectorAll<HTMLCanvasElement>('[data-testid="pascal-host"] canvas')].map((c) => (c.getContext('webgpu') === null ? 'not-webgpu' : 'webgpu')),
   );
   const context = `Pascal canvases: ${canvases.join(', ')}; Pascal renderer log: ${viewerLog.join(' | ')}`;
   expect(pageErrors, context).toEqual([]);
