@@ -169,6 +169,12 @@ test('no error in the Pascal page or its workers', async () => {
   const launched = await launchApp({ webgpu: true });
   app = launched.app;
 
+  // Chromium child processes that end (a GPU process lost under software rendering, say), shown when the test fails.
+  await app.evaluate(({ app: electronApp }) => {
+    const gone: string[] = [];
+    (globalThis as { __gone?: string[] }).__gone = gone;
+    electronApp.on('child-process-gone', (_event, details) => gone.push(`${details.type}: ${details.reason} (${details.exitCode})`));
+  });
   const opened = app.waitForEvent('window', { timeout: SLOW });
   await launched.page.getByRole('button', { name: strings.start.pascal, exact: true }).click();
   const pascal = await opened;
@@ -192,7 +198,8 @@ test('no error in the Pascal page or its workers', async () => {
   const canvases = await pascal.evaluate(() =>
     [...document.querySelectorAll<HTMLCanvasElement>('[data-testid="pascal-host"] canvas')].map((c) => (c.getContext('webgpu') === null ? 'not-webgpu' : 'webgpu')),
   );
-  const context = `Pascal canvases: ${canvases.join(', ')}; Pascal renderer log: ${viewerLog.join(' | ')}`;
+  const gone = await app.evaluate(() => (globalThis as { __gone?: string[] }).__gone ?? []);
+  const context = `Pascal canvases: ${canvases.join(', ')}; child processes gone: ${gone.join(', ') || 'none'}; Pascal renderer log: ${viewerLog.join(' | ')}`;
   expect(pageErrors, context).toEqual([]);
   expect(logErrors, context).toEqual([]);
 });
