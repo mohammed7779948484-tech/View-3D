@@ -126,13 +126,13 @@ test('no request leaves the computer while Pascal loads', async () => {
 
   expect(consoleTexts.filter((t) => t.includes('Content Security Policy'))).toEqual([]);
 
-  const names = await pascal.evaluate(() =>
-    (globalThis as unknown as { performance: { getEntriesByType(t: string): { name: string }[] } }).performance
-      .getEntriesByType('resource')
-      .map((e) => e.name),
-  );
-  expect(names.filter((n) => n.startsWith('view3d://app/material/') && n.endsWith('.ktx2')).length).toBeGreaterThan(0);
-  expect(names.filter((n) => n.endsWith('/decoders/basis/basis_transcoder.wasm')).length).toBeGreaterThan(0);
+  // Every local file Pascal asked for was found.
+  expect(requests.filter((r) => r.error !== undefined && r.url.startsWith('view3d:'))).toEqual([]);
+  // Textures and the Basis decoder came from the app's own files. The main process's log is the evidence: the
+  // page's Resource Timing does not record view3d:// loads (measured: its list stays empty while these load).
+  const loaded = requests.filter((r) => r.error === undefined).map((r) => r.url);
+  expect(loaded.filter((n) => n.startsWith('view3d://app/material/') && n.endsWith('.ktx2')).length).toBeGreaterThan(0);
+  expect(loaded.filter((n) => n.endsWith('/decoders/basis/basis_transcoder.wasm')).length).toBeGreaterThan(0);
 
   const draco = await pascal.evaluate(async () => {
     const get = (globalThis as unknown as { fetch(u: string): Promise<{ ok: boolean }> }).fetch;
