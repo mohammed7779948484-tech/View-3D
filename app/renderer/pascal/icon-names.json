@@ -1,0 +1,14 @@
+{
+  "_comment": "Iconify icons that Pascal 1.1.4 names in its code (found by searching @pascal-app/* for 'set:name'). Bundled at build time by electron.vite.config.ts so none is fetched from api.iconify.design. Check this list when Pascal is upgraded. Left out: lucide:scribble (freehand walls), which Pascal names but no Lucide release contains (checked 1.2.150 to 1.2.154), so it shows blank in Pascal too.",
+  "carbon": ["cut-out"],
+  "lucide": [
+    "ban", "box", "boxes", "circle-check", "copy", "copy-plus", "eraser", "fence", "grid-2x2", "house", "land-plot",
+    "magnet", "minus", "mouse-pointer-click", "palette", "pentagon", "pipette", "rectangle-horizontal",
+    "rectangle-vertical", "repeat", "ruler-dimension-line", "scan", "scan-search", "scissors", "space",
+    "spline", "split", "square", "square-dashed", "table-2", "target", "toggle-left", "toggle-right", "triangle",
+    "waypoints", "x"
+  ],
+  "mdi": ["cancel", "eraser-variant", "select-drag", "trash-can-outline"],
+  "ph": ["arrow-fat-up", "mouse-left-click-fill", "mouse-right-click-fill", "mouse-scroll-fill"],
+  "qlementine-icons": ["mouse-middle-button-16"]
+}

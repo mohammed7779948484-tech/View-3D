@@ -10,7 +10,10 @@ desktop app (no phone, PWA, sync or hosting; `docs/decisions/0007-local-electron
 
 1. The measurement is the truth: what is drawn matches reality (tolerance 1 mm).
 2. Deterministic: same input, same output, byte for byte. No random numbers, no clock.
-3. One JSON design document is the single source of truth; 2D, 3D, BOM, exports derive from it.
+3. Pascal's scene is what is edited. Our integer-micrometre design document is always derived from
+   it by one pure, deterministic function in `src/` (no Pascal or React dependency) and is never
+   edited by hand; rules, layout, BOM and exports read that document (owner, 2026-11-13,
+   `docs/decisions/0008`). Until phase 3 of 0008 lands, the current editors still edit the document.
 4. Real products only. Never invent a dimension or price; unknown stays `unknown` and is flagged.
 5. A sales tool before a design tool: fast, convincing, Arabic-friendly (RTL).
 6. Simple for a non-engineer.

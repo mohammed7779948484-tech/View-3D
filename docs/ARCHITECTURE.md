@@ -148,10 +148,12 @@ V1 is a laptop-only, fully local **Electron** desktop app (electron-vite + elect
 ```
 app/                          the desktop app                         imports ->  src/*
   main/                       Electron main process: windows, native open/save dialogs,
-                              all disk access, printToPDF (M4)
+                              all disk access, printToPDF (M4); pascal-protocol.ts maps view3d://app/<path>
+                              to a file inside the built renderer folder (Pascal's window, decisions/0008)
   preload/                    the narrow, typed API the renderer may call (no Node in the renderer):
                               window.view3d = openProject, openScan, saveProject, onCloseRequested,
-                              closeWindow, loadCatalog, saveCatalog (catalog.json in userData, M3)
+                              closeWindow, loadCatalog, saveCatalog (catalog.json in userData, M3),
+                              openPascal (Pascal's window, decisions/0008 phase 1)
   shared/                     types only, imported by main, preload and renderer
   renderer/                   the UI (React)
     state/                    the open document + undo history (the only mutable copy); placement-commands.ts:
@@ -166,6 +168,11 @@ app/                          the desktop app                         imports ->
     catalog/                  the owner's catalog screen and product form (M3); the file itself is
                               read and written by app/main/catalog-file.ts
     storage/  i18n/           project files (via preload), Arabic/English
+    pascal/                   Pascal's editor (decisions/0008, phase 1): its own page (index.html, own CSP) in its
+                              own window, served as view3d://app/pascal/index.html; English only; no preload. Its
+                              assets are local: public/ (Pascal's icons and sounds; no textures, decisions/0008) and
+                              decoders/draco (copied from three at build). webgpu-gate.ts asks for what Pascal needs. shims/ replace next/image; pascal-editor.d.ts gives tsc the
+                              editor's types. Stays beside editor-2d and view-3d until phase 5
 src/                          the engine (this document)              never imports app/
   capture/        (M2)        wall-by-wall entry, closure and diagonal checks   -> core, geometry, rules
                               (rules for its tolerances in src/rules/config.ts)

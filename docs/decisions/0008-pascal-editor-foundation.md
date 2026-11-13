@@ -1,7 +1,9 @@
 # 0008 Pascal Editor packages as the 2D/3D editing layer
 
-**Status:** proposed (2026-11-12). Agreed in outline with the owner; nothing is adopted until
-phase 1 lands. Reverses "our own editor" (`../plans/M2-M4-plan.md` section 4) only once accepted.
+**Status:** accepted (the owner, 2026-11-13; his answers to NOTES questions 18 to 20 are below).
+Proposed 2026-11-12. **Phase 1 done** (2026-11-13, see "Phase 1 as built"); phases 2 to 5 to
+come. Reverses "our own editor" (`../plans/M2-M4-plan.md` section 4). Upgrading Pascal:
+`../UPGRADING_PASCAL.md`.
 
 **Decision.** Use Pascal Editor's published npm packages (`@pascal-app/core`, `viewer`, `editor`,
 `nodes`, one exact version, MIT) as the 2D/3D editing layer inside our own Electron +
@@ -21,16 +23,23 @@ stays ours.
 nodes never import it. Four Vite aliases to small shims (`next/image` renders a plain `<img>`)
 replace it; `next` is not installed (checked: no `next` folder anywhere in `node_modules`).
 
-## Open points (need the owner)
+## The owner's answers (2026-11-13)
 
-1. **Source of truth.** Today one integer-micrometre `DesignDocument` is the truth (CLAUDE.md
-   principle 3). With Pascal, the edited thing is Pascal's scene (floating-point metres). Proposal
-   on the table: Pascal's scene is edited, our document is derived from it by the adapter (within
-   1 mm). Not decided; needs the owner's explicit yes, because it changes a principle.
-2. **WebGPU-first 3D.** The viewer uses WebGPU with post-processing and falls back to WebGL only
-   without a WebGPU device. On this laptop WebGPU runs on both GPUs (results below). Accept it?
-3. **No Arabic in the Pascal editor** (owner ruling): its locales are en, ja, es, fr, zh-CN; our
-   own screens keep Arabic and RTL.
+1. **Source of truth: yes.** Pascal's scene is what is edited. Our integer-micrometre design
+   document is always derived from it by one pure, deterministic function in `src/` (no Pascal or
+   React dependency) and is never edited by hand. Principle 3 in `CLAUDE.md` and `TEAM_RULES.md`
+   now says this. Conditions:
+   - (a) a property test proves that the round trip scene -> document -> scene keeps every length
+     within 1 mm;
+   - (b) no invented dimensions: the fixture node carries only the product id and its version;
+     what is `unknown` stays `unknown` and cannot be placed;
+   - (c) the engine, the rules and the catalog in `src/` do not change.
+2. **WebGPU-first 3D: yes.** Without WebGPU the app shows a clear message and the 2D editor stays
+   fully usable. Software rendering is never turned on. Pascal itself falls back to WebGL when it
+   finds no WebGPU device (`initializeGpuRenderer` in `@pascal-app/viewer`), so the host checks
+   for a WebGPU adapter before Pascal starts.
+3. **Pascal editor in English only: yes.** Our own screens (start, catalog, quotes, the PDF) stay
+   in Arabic and English.
 
 ## Risks
 
@@ -40,7 +49,8 @@ replace it; `next` is not installed (checked: no `next` folder anywhere in `node
   Tailwind must scan it (`@source`). A Pascal release can break our build.
 - Pascal reaches the internet by default (textures, icons, Draco decoder; see results). V1 is
   fully offline (`0007`), so every one of these must be pointed at bundled local files.
-- Our Content Security Policy must be loosened in two places for Pascal to work (results).
+- Pascal's page needs three CSP entries beyond ours (none of them `unsafe-eval`; phase 1 below);
+  the main page's policy is unchanged.
 - Two models (scene and document) until the source-of-truth question is settled.
 - Package size grows (built host: 18.7 MB); the owner ruled size does not matter for a local app.
 
@@ -54,15 +64,97 @@ replace it; `next` is not installed (checked: no `next` folder anywhere in `node
    Pascal's views.
 5. Retire `app/renderer/editor-2d` and `app/renderer/view-3d`.
 
+## Phase 1 as built (2026-11-13)
+
+- **Where.** `app/renderer/pascal/` is a second page with its own window, opened from the start
+  screen ("Pascal editor (preview)") through the preload's `openPascal()`. The main window and the
+  current editors are unchanged. The Pascal window is locked down like the main one and has no
+  preload. Pascal's styles share colour names with ours, so its own page keeps them apart.
+- **Own origin.** The page is served as `view3d://app/pascal/index.html` by a privileged, secure,
+  standard scheme (`app/main/pascal-protocol.ts`) that maps `/` to the built renderer folder.
+  Pascal's hard-coded absolute paths (`/icons/...`, `/cursor.svg`) then resolve to bundled files.
+  Anything outside the folder is "not found" (unit-tested, including encoded `..` and backslashes).
+- **WebGPU gate** (`app/renderer/pascal/webgpu-gate.ts`). It asks for exactly what Pascal asks
+  for, no less: an adapter with `featureLevel: 'compatibility'`, then a device with all the
+  adapter's features, each within Pascal's 4 s. Without a device Pascal would fall back to WebGL,
+  so the start button shows "Pascal's editor needs WebGPU..." (Arabic and English) and opens
+  nothing; the 2D editor stays. The Pascal page checks again before starting Pascal. A unit test
+  reads Pascal's own start-up code (`renderer-capability.js`), so an upgrade that asks for more
+  fails the build. Software WebGPU appears only with test switches
+  (`--enable-unsafe-webgpu --use-webgpu-adapter=swiftshader`). Measured in Electron 45: with
+  `--disable-gpu` and no such switch, `requestAdapter()` returns null. Not covered: a device that
+  Pascal gets but whose renderer start then fails; Pascal would fall back to WebGL by itself.
+- **No textures in this batch** (independent review, 2026-11-13).
+  - The cause: three's texture decoder (`basis_transcoder.js`, Emscripten embind) builds functions
+    from strings. In the Pascal window its four workers threw "EvalError: Evaluating a string as
+    JavaScript violates ... 'unsafe-eval'". The first test missed it, because it read only the
+    page's console. Allowing `unsafe-eval` is forbidden.
+  - Alternatives compared:
+    - three ships no Basis decoder without eval.
+    - Pascal 1.1.4 names `.ktx2` files for every texture (412 paths in `core`'s material
+      library). Using the JPG/WebP originals would need a `pnpm patch` of those paths. 223 of the
+      originals are not in Pascal's repository at all, and the licence of the texture images is
+      not verified either.
+  - So, by the owner's rule: Pascal runs with its textures setting off (`setTextures(false)`),
+    no texture file and no Basis decoder is shipped, and the walls and floors are plain.
+  - Later item: textures come back only when (1) their licence is verified and (2) they decode
+    without `unsafe-eval` (for example, our own JPG/WebP set through a `pnpm patch`, or a
+    decoder built without eval).
+  - Pascal's view bar can still switch textures on; the files are then "not found", and nothing
+    goes online.
+- **Offline.**
+  - `configureViewer` points icons, sounds and the Draco decoder at the app's files. The texture
+    and Basis paths also point inside the app, so nothing would go online.
+  - `useGLTF.setDecoderPath` covers one model that Pascal loads through drei's default Draco path
+    (gstatic.com).
+  - The Iconify icons Pascal names are bundled at build time; fetching is switched off.
+- **Assets in the repository.** `app/renderer/public` holds only Pascal's icons, sounds and
+  cursor, copied from its MIT repository, plus `LICENSE-pascal.txt`. The sources are in
+  `STACK.md`, and a unit test refuses any other file. This branch's history was rewritten so that
+  the textures downloaded from Pascal's server never reach `main`.
+- **Proven by `test/e2e/pascal.spec.ts`.**
+  - The shop shows (6 walls, metric, textures off, a WebGPU canvas).
+  - The window is locked down.
+  - While Pascal loads:
+    - the main process sees no remote request;
+    - no local file fails;
+    - no texture or Basis decoder is requested;
+    - the page reports no CSP refusal.
+  - No error is reported in the page or any of its workers: `pageerror` plus CDP `Log`, which
+    reach the workers.
+  - Without WebGPU: the message shows, no window opens, and the walls screen opens.
+- **CSP of the Pascal page.** The app's policy plus exactly three entries. Each was removed in
+  turn and the test failed with the browser's refusal:
+  - `'wasm-unsafe-eval'` (compiles WebAssembly; it does not allow eval of strings):
+    "Compiling or instantiating WebAssembly module violates...";
+  - `connect-src data:`: "Fetch API cannot load data:model/gltf-binary...";
+  - `worker-src 'self' blob:`: "Creating a worker from 'blob:view3d://app/...' violates...".
+
+  `blob:` in `img-src` and `connect-src` (tried in the trial) is not needed. The main page's CSP
+  is unchanged.
+- **Seen on the laptop.** NVIDIA and SwiftShader both draw the shop with "L shop 94.9 m²" in
+  metres (before textures were switched off; the later screenshots are listed in NOTES).
+- **Open problem, to fix in phase 2** (owner, 2026-11-13). An intermittent "Instance dropped in
+  popErrorScope" error appeared in the Pascal page on Ubuntu CI: once in 6 runs, never on
+  Windows. Details and what is known are in NOTES question 22.
+- **Not done in phase 1.**
+  - Pascal edits are not saved; phase 3 brings the adapter.
+  - Pascal's item catalog still names furniture pictures on Pascal's servers. They are refused
+    (not loaded) if that panel is opened; our products replace them in phase 2.
+  - The NSIS installer itself was not run on the laptop. The packaged app it installs was: the 4
+    Pascal tests and the 5 smoke tests pass against it (`pnpm package:dir`,
+    `VIEW3D_EXE=release/win-unpacked/View-3D.exe`, 417 MB), with Pascal's files read from inside
+    `app.asar`. CI's Windows job builds and installs the installer.
+
 ## Results of the Windows trial (2026-11-12)
 
 Machine: Windows 11 Home 10.0.26200, Microsoft Edge 157.0.4341.42, Node 24.22.3 (fnm), pnpm
 10.33.0, Electron 45.3.0 (Chromium 156). Two GPUs: Intel Graphics (WebGPU `intel` / `xe-lpg`,
 PCI 0x7D67, driver 32.0.101.8826) and NVIDIA GeForce RTX 5070 Ti Laptop GPU (WebGPU `nvidia` /
-`blackwell`, driver 32.0.15.9191). Display 2560 x 1600 at 240 Hz. Note: `TEAM_RULES.md` says the
-owner's computer has integrated graphics only; this laptop also has a discrete GPU, and Chromium
-picks the NVIDIA one by default. Evidence (screenshots, logs) is in `..\pascal-evidence` next to
-the repository on the owner's laptop, not committed.
+`blackwell`, driver 32.0.15.9191). Display 2560 x 1600 at 240 Hz. This is the owner's laptop;
+Chromium picks the NVIDIA chip by default, and the Intel results are the ones that stand for
+weaker computers (`TEAM_RULES.md`, corrected 2026-11-13). Evidence (screenshots, logs) is in
+`..\pascal-evidence` next to the repository on the owner's laptop, not committed.
 
 **How speed is measured.** Pascal's viewer draws on its own clock and caps itself at **50 frames
 per second** (`maxFps = 50` in `<Viewer>`; `<Editor>` does not pass it, so a host cannot change
@@ -153,7 +245,9 @@ items, real product models (GLB), and the 2D view's speed.
   `node_modules/.pnpm` for one copy each.
 - Units come from the computer's time zone (Pacific here, so feet). The setting is saved in
   `localStorage["viewer-preferences"]` as `unit`; our host must set metric itself.
-- `<Editor>` has no `projectName` prop in 1.1.4. Without `sidebarTabs` the host has no Build
+- `<Editor>` does have a `projectName` prop in 1.1.4 (`projectName?: string | null`,
+  `packages/editor/src/components/editor/index.tsx` line 328; corrected 2026-11-13, the first
+  version of this record wrongly said it had none). Without `sidebarTabs` the host has no Build
   panel (Pascal's Rectangle, Walls, Door buttons live in its app, not in the package); the tools
   still work through their shortcuts. The 3D/2D switch buttons are not exposed with the role
   "button", so tests must find them by text.

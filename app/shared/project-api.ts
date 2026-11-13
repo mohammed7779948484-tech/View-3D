@@ -19,6 +19,8 @@ export type ProjectBridge = CatalogBridge & {
   onCloseRequested(listener: () => void): () => void;
   /** Closes the window without asking again. */
   closeWindow(): void;
+  /** Opens Pascal's editor in its own window, or brings it forward (decisions/0008, phase 1). */
+  openPascal(): void;
 };
 
 /** The owner's catalog file (`<userData>/catalog.json`); created from the website seed on first start. */

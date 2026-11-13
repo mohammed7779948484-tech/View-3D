@@ -43,14 +43,19 @@ Every agent reads this file before acting. Source: the owner's intake answers an
 
 1. The measurement is the truth: what is on screen matches reality.
 2. Deterministic, not probabilistic. Same input gives the same output, byte for byte.
-3. One JSON design document is the single source of truth; everything else is derived.
+3. Pascal's scene is what is edited. Our integer-micrometre design document is always derived from
+   it by one pure, deterministic function in `src/` (no Pascal or React dependency) and is never
+   edited by hand (owner, 2026-11-13, `decisions/0008`). Until phase 3 of 0008 lands, the current
+   editors still edit the document.
 4. Real products only.
 5. A sales tool before a design tool: fast, convincing, Arabic-friendly (RTL).
 6. Simple for a non-engineer.
 
 ## Context for later milestones
 
-- Owner's computer: Windows, integrated graphics. Keep 3D light.
+- Owner's computer: Windows, with two graphics chips: NVIDIA RTX 5070 Ti and Intel built-in. The
+  test on the Intel chip is the one that counts, because it stands for weaker computers. Keep 3D
+  light.
 - V1 is a laptop-only, fully local Electron desktop app (unsigned installer; one-time SmartScreen
   warning accepted). No phone screen, PWA, sync or hosting in V1 (`decisions/0007`).
 - Room input: numeric wall-by-wall entry and the 2D editor on the laptop, plus import of files
