@@ -152,6 +152,19 @@ Running log and decisions. Checkpointed after every step so work survives a rest
     first. Recommended: decide 16 first; then 10e is built only if one of your shops shows a split
     checkout block next to an angled corner.
 
+18. Pascal editor (`decisions/0008`), source of truth: should Pascal's scene be what you edit, with
+    our measured design document (whole micrometres) worked out from it every time (within 1 mm)?
+    This changes principle 3 ("one JSON design document is the single source of truth"), so it
+    needs your yes. Nothing is built until you answer.
+
+19. Pascal's 3D uses WebGPU first. On your laptop it worked on both graphics chips (NVIDIA: 240
+    frames per second, the screen's limit; Intel built-in: about 81 while turning the camera).
+    Accept WebGPU-first 3D for the app?
+
+20. Keep Arabic out of the Pascal editor (your ruling: it ships English, Japanese, Spanish,
+    French, Chinese), while our own screens (start, catalog, quotes) stay in Arabic and English?
+    Please confirm this still holds once you see it in the app.
+
 Answered on 2026-11-12 (questions 13 to 17). The owner asked Claude to decide after checking;
 each answer is Claude's, with the evidence, and the owner can overrule any of them.
 - 14: the website text does not say, so the owner asked Claude to judge from the website photos
@@ -300,3 +313,4 @@ or the file named.
 - 2026-11-12 Owner: adopt shadcn/ui + Tailwind and drei (reverses rulings 4 and 5) and rebuild the UI with them before M4; call it a shop, not a room; licences are no obstacle for personal local use (paid things still need his yes). Plan in handoff.md section 3.
 - 2026-11-12 "Shop" in every text the owner reads (en, ar, engine messages). Drawing by mouse fixed (close on first corner, line follows the mouse, grid and scale, Finish explains, labels never overlap, scan findings in the chosen unit). RoomTrace JSON v2 import checked on the owner's sample. 915 Vitest, 131 e2e.
 - 2026-11-12 UI rebuilt on Tailwind + shadcn/ui (start screen, title bar, toolbar, cards; same roles and names, so the e2e suite proves it); 3D with drei: walls open at doors and windows, fixture names, contact shadows; score notes worded per code in the chosen language and unit. 919 Vitest, 136 e2e.
+- 2026-11-12 Pascal editor trial on the owner's Windows laptop (decision 0008, proposed; branch claude/pascal-foundation): CLI 1.1.4 runs (WebGPU); our Vite host with packages 1.1.4 and no next builds in about 5 s with 0 errors and shows the L-shaped test shop (94.9 m2) in 2D and 3D; orbit median 238.8 fps on NVIDIA (display limit), 81.5 fps on the Intel integrated GPU. In a locked-down Electron 45 window it renders from file:// with base './', but our CSP blocks WebAssembly and a data: fetch (scene crash) and Pascal fetches textures, icons and the Draco decoder from the internet by default. Open questions 18-20 added. Docs only.
