@@ -170,8 +170,8 @@ app/                          the desktop app                         imports ->
     storage/  i18n/           project files (via preload), Arabic/English
     pascal/                   Pascal's editor (decisions/0008, phase 1): its own page (index.html, own CSP) in its
                               own window, served as view3d://app/pascal/index.html; English only; no preload. Its
-                              assets are local: public/ (Pascal's icons, textures, sounds) and decoders/ (copied
-                              from three at build). shims/ replace next/image; pascal-editor.d.ts gives tsc the
+                              assets are local: public/ (Pascal's icons and sounds; no textures, decisions/0008) and
+                              decoders/draco (copied from three at build). webgpu-gate.ts asks for what Pascal needs. shims/ replace next/image; pascal-editor.d.ts gives tsc the
                               editor's types. Stays beside editor-2d and view-3d until phase 5
 src/                          the engine (this document)              never imports app/
   capture/        (M2)        wall-by-wall entry, closure and diagonal checks   -> core, geometry, rules

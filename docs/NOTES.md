@@ -152,29 +152,21 @@ Running log and decisions. Checkpointed after every step so work survives a rest
     first. Recommended: decide 16 first; then 10e is built only if one of your shops shows a split
     checkout block next to an angled corner.
 
-18. Pascal editor (`decisions/0008`), source of truth: should Pascal's scene be what you edit, with
-    our measured design document (whole micrometres) worked out from it every time (within 1 mm)?
-    This changes principle 3 ("one JSON design document is the single source of truth"), so it
-    needs your yes. Nothing is built until you answer.
-
-19. Pascal's 3D uses WebGPU first. On your laptop it worked on both graphics chips, inside an
-    Electron window like ours: with 60 shelf units it drew 49.9 frames per second on NVIDIA and
-    48.2 on the Intel built-in chip while turning the camera (Pascal never goes above 50; the
-    target is 30). Accept WebGPU-first 3D for the app?
-
-20. Keep Arabic out of the Pascal editor (your ruling: it ships English, Japanese, Spanish,
-    French, Chinese), while our own screens (start, catalog, quotes) stay in Arabic and English?
-    Please confirm this still holds once you see it in the app.
+21. Later item (not for now): textures in Pascal's 3D. They are off since 2026-11-13
+    (`decisions/0008`, "No textures in this batch"). They need two things first: (1) texture
+    images whose licence is verified, and (2) a way to decode them without `unsafe-eval`. Two
+    ways: our own JPG/WebP set through a `pnpm patch` of Pascal's material paths, or a texture
+    decoder built without eval. Pascal works without them: walls and floors are plain.
 
 Answered by the owner on 2026-11-13 (questions 18 to 20; details in `decisions/0008`):
-- 18: yes. Pascal's scene is edited; our micrometre document is always derived from it by one
+- 18 (should Pascal's scene be what is edited, with our micrometre document derived from it?): yes. Pascal's scene is edited; our micrometre document is always derived from it by one
   pure, deterministic function in `src/` and never edited by hand. Conditions: a property test
   for the round trip within 1 mm; the fixture node carries only the product id and version
   (unknown stays unknown and cannot be placed); engine, rules and catalog unchanged. Principle 3
   is updated in `CLAUDE.md` and `TEAM_RULES.md`.
-- 19: yes, WebGPU first. Without WebGPU a clear message, the 2D editor stays fully usable, no
+- 19 (WebGPU-first 3D; measured 49.9 fps NVIDIA, 48.2 Intel with 60 shelves): yes, WebGPU first. Without WebGPU a clear message, the 2D editor stays fully usable, no
   software rendering.
-- 20: yes. The Pascal editor is English only; start, catalog, quotes and the PDF stay Arabic and
+- 20 (no Arabic in the Pascal editor): yes. The Pascal editor is English only; start, catalog, quotes and the PDF stay Arabic and
   English.
 
 Answered on 2026-11-12 (questions 13 to 17). The owner asked Claude to decide after checking;
@@ -332,3 +324,8 @@ or the file named.
   - WebGPU gate with an Arabic/English message.
   - The Pascal page's CSP is ours plus 'wasm-unsafe-eval', connect-src data: and worker-src 'self' blob:; each one was proven necessary.
   - Tests: 936 Vitest; 140 e2e (4 new for Pascal; 2 bridge-list tests now include openPascal). The packaged app passes the Pascal and smoke tests.
+- 2026-11-13 Fixes after an independent review of PR #5:
+  - three's Basis texture decoder threw EvalError in its workers (it needs unsafe-eval, which is forbidden), and the first test missed it. A new e2e test reads page and worker errors (pageerror plus CDP Log). Textures are now off and not bundled (later item 21).
+  - The 223 textures downloaded from Pascal's server were removed from the branch history (rewritten, force-pushed with lease); only icons, sounds and the cursor from Pascal's MIT repository stay, with their sources in STACK.md.
+  - The WebGPU gate now asks for an adapter and a device exactly as Pascal does.
+  - New guide: docs/UPGRADING_PASCAL.md.

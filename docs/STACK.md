@@ -164,18 +164,30 @@ electron-vite like the rest of the renderer). Licences and dates from the npm re
 
 `next` is not installed: `.pnpmfile.cjs` removes it from the editor's peer list (pnpm would
 otherwise install Next.js), and four Vite aliases point its `next/image` imports at shims.
-Draco and Basis decoders are three's own (`three/examples/jsm/libs`, three 0.187.0, already
-adopted), copied next to the page at build time.
+The Draco decoder is three's own (`three/examples/jsm/libs/draco`, three 0.187.0, already
+adopted), copied next to the page at build time. three's Basis texture decoder is not shipped (it
+needs `unsafe-eval`; decision 0008).
 
-**Pascal's asset files** (`app/renderer/public/`: `icons/`, `material/`, `audios/`, `cursor.svg`,
-29.3 MB, 689 files). 466 come from Pascal's repository (`apps/editor/public`, commit 99ebcf8,
-2026-11-12); its MIT licence is copied as `LICENSE-pascal.txt`. The other 223 are the compressed
-`.ktx2` textures and thumbnails that `@pascal-app/core` 1.1.4 names but the repository holds only
-as JPG/WebP originals: downloaded once on 2026-11-13 from `https://editor.pascal.app` (the
-package's default asset host), the same files Pascal's own site uses. **Not verified:** where the
-texture images originally come from and whether a licence other than the repository's MIT covers
-them; no separate texture licence was found in the repository. Needs the owner before shipping to
-customers.
+**Pascal's asset files in the repository** (`app/renderer/public/`), checked 2026-11-13 against
+`pascalorg/editor` itself, at commit 99ebcf8 (2026-11-12):
+
+| Group | Files | Source | Licence, and the evidence |
+|---|---|---|---|
+| Icons | `icons/` (123 files: WebP and SVG; one README in `icons/fittings`) | `apps/editor/public/icons` | MIT. The repository's `LICENSE` (MIT, "Copyright (c) 2026 Pascal Group Inc.") covers the whole repository. The README says: "The editor, packages, CLI, and MCP server in this repository are MIT-licensed". No credits or third-party notice for these files anywhere in the repository |
+| Sounds | `audios/` (39 files, MP3 and one Logic Pro project file) | `apps/editor/public/audios` | MIT, same evidence. Several files carry the tag "Logic Pro 12.2", consistent with being made by Pascal's team; no credits file names another author |
+| Cursor | `cursor.svg` | `apps/editor/public/cursor.svg` | MIT, same evidence |
+| Licence | `LICENSE-pascal.txt` | the repository's `LICENSE` | MIT asks that this notice ship with copies |
+
+The only other licence in the repository, `docs/media/next-demo/LICENSE.md` (CC BY 4.0), covers
+demo videos and GIFs that we do not use. Two fonts in the editor package
+(`pdf-fonts/LICENSE-GeistMono.txt`, `LICENSE-LiberationSans.txt`) carry their own licences; they
+are only used by Pascal's PDF export.
+
+**Not in the repository: Pascal's textures.** `@pascal-app/core` 1.1.4 names `.ktx2` files for
+every texture. 223 of them exist only on Pascal's server (`editor.pascal.app`); Pascal's repository
+holds only the JPG/WebP originals for those. Where the texture images come from is not verified.
+They were in this branch for a day; the history was rewritten so that they never reach `main`.
+Textures are off (decision 0008).
 
 ## Spiked before adoption (Pascal editor)
 

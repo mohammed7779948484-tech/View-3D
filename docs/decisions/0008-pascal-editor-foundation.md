@@ -1,8 +1,9 @@
 # 0008 Pascal Editor packages as the 2D/3D editing layer
 
-**Status:** accepted (2026-11-13: the owner answered the three open points below, NOTES
-questions 18 to 20). Proposed 2026-11-12. Phase 1 is in progress; the packages count as adopted
-once phase 1 lands. Reverses "our own editor" (`../plans/M2-M4-plan.md` section 4).
+**Status:** accepted (the owner, 2026-11-13; his answers to NOTES questions 18 to 20 are below).
+Proposed 2026-11-12. **Phase 1 done** (2026-11-13, see "Phase 1 as built"); phases 2 to 5 to
+come. Reverses "our own editor" (`../plans/M2-M4-plan.md` section 4). Upgrading Pascal:
+`../UPGRADING_PASCAL.md`.
 
 **Decision.** Use Pascal Editor's published npm packages (`@pascal-app/core`, `viewer`, `editor`,
 `nodes`, one exact version, MIT) as the 2D/3D editing layer inside our own Electron +
@@ -48,7 +49,8 @@ replace it; `next` is not installed (checked: no `next` folder anywhere in `node
   Tailwind must scan it (`@source`). A Pascal release can break our build.
 - Pascal reaches the internet by default (textures, icons, Draco decoder; see results). V1 is
   fully offline (`0007`), so every one of these must be pointed at bundled local files.
-- Our Content Security Policy must be loosened in two places for Pascal to work (results).
+- Pascal's page needs three CSP entries beyond ours (none of them `unsafe-eval`; phase 1 below);
+  the main page's policy is unchanged.
 - Two models (scene and document) until the source-of-truth question is settled.
 - Package size grows (built host: 18.7 MB); the owner ruled size does not matter for a local app.
 
@@ -70,36 +72,68 @@ replace it; `next` is not installed (checked: no `next` folder anywhere in `node
   preload. Pascal's styles share colour names with ours, so its own page keeps them apart.
 - **Own origin.** The page is served as `view3d://app/pascal/index.html` by a privileged, secure,
   standard scheme (`app/main/pascal-protocol.ts`) that maps `/` to the built renderer folder.
-  Pascal's hard-coded `/icons/...` and `/material/...` paths then resolve to bundled files.
+  Pascal's hard-coded absolute paths (`/icons/...`, `/cursor.svg`) then resolve to bundled files.
   Anything outside the folder is "not found" (unit-tested, including encoded `..` and backslashes).
-- **WebGPU gate.** The start button asks for a WebGPU adapter first. Without one it shows "Pascal's
-  editor needs WebGPU..." (Arabic and English) and opens nothing; the 2D editor stays. The page
-  checks again before starting Pascal. Software WebGPU appears only with test switches
+- **WebGPU gate** (`app/renderer/pascal/webgpu-gate.ts`). It asks for exactly what Pascal asks
+  for, no less: an adapter with `featureLevel: 'compatibility'`, then a device with all the
+  adapter's features, each within Pascal's 4 s. Without a device Pascal would fall back to WebGL,
+  so the start button shows "Pascal's editor needs WebGPU..." (Arabic and English) and opens
+  nothing; the 2D editor stays. The Pascal page checks again before starting Pascal. A unit test
+  reads Pascal's own start-up code (`renderer-capability.js`), so an upgrade that asks for more
+  fails the build. Software WebGPU appears only with test switches
   (`--enable-unsafe-webgpu --use-webgpu-adapter=swiftshader`). Measured in Electron 45: with
-  `--disable-gpu` and no such switch, `requestAdapter()` returns null. Not covered: if Pascal gets
-  an adapter but its WebGPU start then fails, Pascal falls back to WebGL by itself.
+  `--disable-gpu` and no such switch, `requestAdapter()` returns null. Not covered: a device that
+  Pascal gets but whose renderer start then fails; Pascal would fall back to WebGL by itself.
+- **No textures in this batch** (independent review, 2026-11-13).
+  - The cause: three's texture decoder (`basis_transcoder.js`, Emscripten embind) builds functions
+    from strings. In the Pascal window its four workers threw "EvalError: Evaluating a string as
+    JavaScript violates ... 'unsafe-eval'". The first test missed it, because it read only the
+    page's console. Allowing `unsafe-eval` is forbidden.
+  - Alternatives compared:
+    - three ships no Basis decoder without eval.
+    - Pascal 1.1.4 names `.ktx2` files for every texture (412 paths in `core`'s material
+      library). Using the JPG/WebP originals would need a `pnpm patch` of those paths. 223 of the
+      originals are not in Pascal's repository at all, and the licence of the texture images is
+      not verified either.
+  - So, by the owner's rule: Pascal runs with its textures setting off (`setTextures(false)`),
+    no texture file and no Basis decoder is shipped, and the walls and floors are plain.
+  - Later item: textures come back only when (1) their licence is verified and (2) they decode
+    without `unsafe-eval` (for example, our own JPG/WebP set through a `pnpm patch`, or a
+    decoder built without eval).
+  - Pascal's view bar can still switch textures on; the files are then "not found", and nothing
+    goes online.
 - **Offline.**
-  - `configureViewer` points textures, icons, sounds and the Draco and Basis decoders at the
-    app's files.
+  - `configureViewer` points icons, sounds and the Draco decoder at the app's files. The texture
+    and Basis paths also point inside the app, so nothing would go online.
   - `useGLTF.setDecoderPath` covers one model that Pascal loads through drei's default Draco path
     (gstatic.com).
   - The Iconify icons Pascal names are bundled at build time; fetching is switched off.
+- **Assets in the repository.** `app/renderer/public` holds only Pascal's icons, sounds and
+  cursor, copied from its MIT repository, plus `LICENSE-pascal.txt`. The sources are in
+  `STACK.md`, and a unit test refuses any other file. This branch's history was rewritten so that
+  the textures downloaded from Pascal's server never reach `main`.
 - **Proven by `test/e2e/pascal.spec.ts`.**
-  - The shop shows (6 walls, metric, a WebGPU canvas).
+  - The shop shows (6 walls, metric, textures off, a WebGPU canvas).
   - The window is locked down.
-  - While Pascal loads, the main process sees no remote request, no local file fails, textures
-    (`.ktx2`) and the Basis decoder load from `view3d://`, and the page reports no CSP refusal.
+  - While Pascal loads:
+    - the main process sees no remote request;
+    - no local file fails;
+    - no texture or Basis decoder is requested;
+    - the page reports no CSP refusal.
+  - No error is reported in the page or any of its workers: `pageerror` plus CDP `Log`, which
+    reach the workers.
   - Without WebGPU: the message shows, no window opens, and the walls screen opens.
 - **CSP of the Pascal page.** The app's policy plus exactly three entries. Each was removed in
   turn and the test failed with the browser's refusal:
-  - `'wasm-unsafe-eval'`: "Compiling or instantiating WebAssembly module violates...";
+  - `'wasm-unsafe-eval'` (compiles WebAssembly; it does not allow eval of strings):
+    "Compiling or instantiating WebAssembly module violates...";
   - `connect-src data:`: "Fetch API cannot load data:model/gltf-binary...";
   - `worker-src 'self' blob:`: "Creating a worker from 'blob:view3d://app/...' violates...".
 
   `blob:` in `img-src` and `connect-src` (tried in the trial) is not needed. The main page's CSP
   is unchanged.
 - **Seen on the laptop.** NVIDIA and SwiftShader both draw the shop with "L shop 94.9 m²" in
-  metres.
+  metres (before textures were switched off; the later screenshots are listed in NOTES).
 - **Not done in phase 1.**
   - Pascal edits are not saved; phase 3 brings the adapter.
   - Pascal's item catalog still names furniture pictures on Pascal's servers. They are refused
