@@ -1,7 +1,8 @@
 # 0008 Pascal Editor packages as the 2D/3D editing layer
 
-**Status:** proposed (2026-11-12). Agreed in outline with the owner; nothing is adopted until
-phase 1 lands. Reverses "our own editor" (`../plans/M2-M4-plan.md` section 4) only once accepted.
+**Status:** accepted (2026-11-13: the owner answered the three open points below, NOTES
+questions 18 to 20). Proposed 2026-11-12. Phase 1 is in progress; the packages count as adopted
+once phase 1 lands. Reverses "our own editor" (`../plans/M2-M4-plan.md` section 4).
 
 **Decision.** Use Pascal Editor's published npm packages (`@pascal-app/core`, `viewer`, `editor`,
 `nodes`, one exact version, MIT) as the 2D/3D editing layer inside our own Electron +
@@ -21,16 +22,23 @@ stays ours.
 nodes never import it. Four Vite aliases to small shims (`next/image` renders a plain `<img>`)
 replace it; `next` is not installed (checked: no `next` folder anywhere in `node_modules`).
 
-## Open points (need the owner)
+## The owner's answers (2026-11-13)
 
-1. **Source of truth.** Today one integer-micrometre `DesignDocument` is the truth (CLAUDE.md
-   principle 3). With Pascal, the edited thing is Pascal's scene (floating-point metres). Proposal
-   on the table: Pascal's scene is edited, our document is derived from it by the adapter (within
-   1 mm). Not decided; needs the owner's explicit yes, because it changes a principle.
-2. **WebGPU-first 3D.** The viewer uses WebGPU with post-processing and falls back to WebGL only
-   without a WebGPU device. On this laptop WebGPU runs on both GPUs (results below). Accept it?
-3. **No Arabic in the Pascal editor** (owner ruling): its locales are en, ja, es, fr, zh-CN; our
-   own screens keep Arabic and RTL.
+1. **Source of truth: yes.** Pascal's scene is what is edited. Our integer-micrometre design
+   document is always derived from it by one pure, deterministic function in `src/` (no Pascal or
+   React dependency) and is never edited by hand. Principle 3 in `CLAUDE.md` and `TEAM_RULES.md`
+   now says this. Conditions:
+   - (a) a property test proves that the round trip scene -> document -> scene keeps every length
+     within 1 mm;
+   - (b) no invented dimensions: the fixture node carries only the product id and its version;
+     what is `unknown` stays `unknown` and cannot be placed;
+   - (c) the engine, the rules and the catalog in `src/` do not change.
+2. **WebGPU-first 3D: yes.** Without WebGPU the app shows a clear message and the 2D editor stays
+   fully usable. Software rendering is never turned on. Pascal itself falls back to WebGL when it
+   finds no WebGPU device (`initializeGpuRenderer` in `@pascal-app/viewer`), so the host checks
+   for a WebGPU adapter before Pascal starts.
+3. **Pascal editor in English only: yes.** Our own screens (start, catalog, quotes, the PDF) stay
+   in Arabic and English.
 
 ## Risks
 
@@ -59,10 +67,10 @@ replace it; `next` is not installed (checked: no `next` folder anywhere in `node
 Machine: Windows 11 Home 10.0.26200, Microsoft Edge 157.0.4341.42, Node 24.22.3 (fnm), pnpm
 10.33.0, Electron 45.3.0 (Chromium 156). Two GPUs: Intel Graphics (WebGPU `intel` / `xe-lpg`,
 PCI 0x7D67, driver 32.0.101.8826) and NVIDIA GeForce RTX 5070 Ti Laptop GPU (WebGPU `nvidia` /
-`blackwell`, driver 32.0.15.9191). Display 2560 x 1600 at 240 Hz. Note: `TEAM_RULES.md` says the
-owner's computer has integrated graphics only; this laptop also has a discrete GPU, and Chromium
-picks the NVIDIA one by default. Evidence (screenshots, logs) is in `..\pascal-evidence` next to
-the repository on the owner's laptop, not committed.
+`blackwell`, driver 32.0.15.9191). Display 2560 x 1600 at 240 Hz. This is the owner's laptop;
+Chromium picks the NVIDIA chip by default, and the Intel results are the ones that stand for
+weaker computers (`TEAM_RULES.md`, corrected 2026-11-13). Evidence (screenshots, logs) is in
+`..\pascal-evidence` next to the repository on the owner's laptop, not committed.
 
 **How speed is measured.** Pascal's viewer draws on its own clock and caps itself at **50 frames
 per second** (`maxFps = 50` in `<Viewer>`; `<Editor>` does not pass it, so a host cannot change
@@ -153,7 +161,9 @@ items, real product models (GLB), and the 2D view's speed.
   `node_modules/.pnpm` for one copy each.
 - Units come from the computer's time zone (Pacific here, so feet). The setting is saved in
   `localStorage["viewer-preferences"]` as `unit`; our host must set metric itself.
-- `<Editor>` has no `projectName` prop in 1.1.4. Without `sidebarTabs` the host has no Build
+- `<Editor>` does have a `projectName` prop in 1.1.4 (`projectName?: string | null`,
+  `packages/editor/src/components/editor/index.tsx` line 328; corrected 2026-11-13, the first
+  version of this record wrongly said it had none). Without `sidebarTabs` the host has no Build
   panel (Pascal's Rectangle, Walls, Door buttons live in its app, not in the package); the tools
   still work through their shortcuts. The 3D/2D switch buttons are not exposed with the role
   "button", so tests must find them by text.

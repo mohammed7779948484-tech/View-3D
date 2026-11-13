@@ -166,6 +166,17 @@ Running log and decisions. Checkpointed after every step so work survives a rest
     French, Chinese), while our own screens (start, catalog, quotes) stay in Arabic and English?
     Please confirm this still holds once you see it in the app.
 
+Answered by the owner on 2026-11-13 (questions 18 to 20; details in `decisions/0008`):
+- 18: yes. Pascal's scene is edited; our micrometre document is always derived from it by one
+  pure, deterministic function in `src/` and never edited by hand. Conditions: a property test
+  for the round trip within 1 mm; the fixture node carries only the product id and version
+  (unknown stays unknown and cannot be placed); engine, rules and catalog unchanged. Principle 3
+  is updated in `CLAUDE.md` and `TEAM_RULES.md`.
+- 19: yes, WebGPU first. Without WebGPU a clear message, the 2D editor stays fully usable, no
+  software rendering.
+- 20: yes. The Pascal editor is English only; start, catalog, quotes and the PDF stay Arabic and
+  English.
+
 Answered on 2026-11-12 (questions 13 to 17). The owner asked Claude to decide after checking;
 each answer is Claude's, with the evidence, and the owner can overrule any of them.
 - 14: the website text does not say, so the owner asked Claude to judge from the website photos

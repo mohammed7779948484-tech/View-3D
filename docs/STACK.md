@@ -168,7 +168,8 @@ must be bundled (details and gotchas in 0008).
 
 Risks: 1.1.4 was published on the day of the trial (1.1.0 two days earlier); the editor is
 compiled from source by our build; a second model (Pascal's scene, floating-point metres) beside
-our integer-micrometre document until the owner decides the source of truth.
+our integer-micrometre document. The owner decided on 2026-11-13: the scene is edited, the document
+is derived from it (principle 3); until phase 3 both exist side by side.
 
 ### Alternatives dropped
 
