@@ -25,6 +25,9 @@ for (const definition of builtinPlugin.nodes ?? []) {
 registerBundledLocales();
 // Pascal picks feet from the computer's time zone; the shop is measured in metres.
 useViewer.getState().setUnit('metric');
+// No textures in this batch (decisions/0008): three's texture decoder (Basis) needs eval, which the page's CSP
+// forbids, and the texture files' licence is not verified, so none is bundled. Pascal draws plain surfaces.
+useViewer.getState().setTextures(false);
 
 const root = document.getElementById('root');
 if (root === null) throw new Error('pascal/main.tsx: the #root element is missing from index.html');

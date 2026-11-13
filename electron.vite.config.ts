@@ -43,7 +43,10 @@ function pascalIcons(): Plugin {
   };
 }
 
-/** Three's Draco and Basis decoders, copied next to the page, so Pascal never loads them from gstatic or jsdelivr. */
+/**
+ * Three's Draco decoder, copied next to the page, so Pascal never loads it from gstatic. The Basis texture decoder
+ * is not shipped: it needs eval (CSP forbids it) and textures are off in this batch (decisions/0008).
+ */
 function threeDecoders(): Plugin {
   return {
     name: 'view3d-three-decoders',
@@ -52,7 +55,6 @@ function threeDecoders(): Plugin {
       const out = options.dir ?? resolve('out/renderer');
       const libs = resolve('node_modules/three/examples/jsm/libs');
       for (const file of ['draco_decoder.js', 'draco_decoder.wasm', 'draco_wasm_wrapper.js']) await cp(join(libs, 'draco', file), join(out, 'decoders', 'draco', file));
-      for (const file of ['basis_transcoder.js', 'basis_transcoder.wasm']) await cp(join(libs, 'basis', file), join(out, 'decoders', 'basis', file));
     },
   };
 }

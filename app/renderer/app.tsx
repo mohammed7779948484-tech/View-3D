@@ -27,6 +27,8 @@ import { Separator } from '@/components/ui/separator';
 import { AutoLayoutPanel } from './editor-2d/auto-layout-panel';
 import { OptionPicker } from './editor-2d/option-picker';
 import { View3D } from './view-3d/view-3d';
+import { webGpuReady } from './pascal/webgpu-gate';
+import type { GpuLike } from './pascal/webgpu-gate';
 import type { LayoutResult } from '../../src/layout/index';
 import {
   deletePlacement,
@@ -176,11 +178,9 @@ export function App() {
     setScreen('scan');
   }
 
-  /** Pascal's editor needs WebGPU (owner, 2026-11-13): without an adapter it says so and opens nothing; 2D stays. */
+  /** Pascal's editor needs WebGPU (owner, 2026-11-13): without the device Pascal would get, it says so and opens nothing; 2D stays. */
   async function openPascal(): Promise<void> {
-    const gpu = (navigator as Navigator & { gpu?: { requestAdapter(options?: { featureLevel?: string }): Promise<unknown> } }).gpu;
-    const adapter = await gpu?.requestAdapter({ featureLevel: 'compatibility' }).catch(() => null);
-    if (adapter === null || adapter === undefined) return setProblem({ message: t('pascal.noWebGpu'), details: [] });
+    if (!(await webGpuReady((navigator as Navigator & { gpu?: GpuLike }).gpu))) return setProblem({ message: t('pascal.noWebGpu'), details: [] });
     setProblem(null);
     bridge().openPascal();
   }
