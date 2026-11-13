@@ -146,6 +146,38 @@ old when added.
 Native `<select>` (shadcn NativeSelect) is kept instead of the Radix Select: it stays a real
 combobox, keyboard and RTL behave as the system does, and the tests drive it as one.
 
+## Spiked, not adopted (Pascal editor)
+
+Tried on the owner's Windows laptop on 2026-11-12 (`decisions/0008-pascal-editor-foundation.md`,
+status proposed). Versions, release dates and licences read from the npm registry the same day.
+Nothing here moves to "Adopted" until phase 1 of 0008 (the host in the packaged app) lands. The
+trial ran in folders next to the repository; no View-3D code or `package.json` changed.
+
+| Package | Version (released) | Licence | What the trial proved |
+|---|---|---|---|
+| @pascal-app/core | 1.1.4 (2026-11-12) | MIT | Scene graph, node registry, i18n; loads our L-shaped test shop (94.9 m², expected 94.94) |
+| @pascal-app/viewer | 1.1.4 (2026-11-12) | MIT | WebGPU 3D on both GPUs of the laptop: NVIDIA median 238.8 fps (display limit), Intel integrated median 81.5 fps while orbiting |
+| @pascal-app/editor | 1.1.4 (2026-11-12) | MIT | 2D and 3D editing, switch between them, draw a room; ships TypeScript source; built by Vite 8.3.7 with 4 `next` aliases and no `next` installed (0 errors, about 5 s) |
+| @pascal-app/nodes | 1.1.4 (2026-11-12) | MIT | The built-in node kinds (walls, zones, slabs, doors...) registered by our host |
+| @pascal-app/cli | 1.1.4 (2026-11-12) | MIT | Runs on Windows (127.6 MB runtime, WebGPU); a closed prebuilt app without plugin install, so for trying Pascal only |
+
+Electron 45.3.0 (locked-down window, our request filter): the host renders with WebGPU from
+`file://` when built with `base: './'`. Our CSP needs `'wasm-unsafe-eval'` and `connect-src data:`
+for it; Pascal's textures, some icons and its Draco decoder come from the internet by default and
+must be bundled (details and gotchas in 0008).
+
+Risks: 1.1.4 was published on the day of the trial (1.1.0 two days earlier); the editor is
+compiled from source by our build; a second model (Pascal's scene, floating-point metres) beside
+our integer-micrometre document until the owner decides the source of truth.
+
+### Alternatives dropped
+
+| Alternative | Why not |
+|---|---|
+| Our own editor (SVG 2D + R3F 3D, M2/M3 issues) | Rebuilds what Pascal maintains (walls, rooms, openings, 2D and 3D of one scene, dimensions, undo); our value is the catalog, rules and layout engine, which stay ours. The current editor stays until phase 5 of 0008 |
+| A Next.js host (Pascal's own app) | Pascal's packages use `next` only for `next/image` and image config; four aliases replace it. Electron + electron-vite stays (decision 0007) |
+| A fork of Pascal | Upgrades become our job. `pnpm patch` first; a fork only if a patch is not enough |
+
 ## Built ourselves (and why)
 
 | Capability | Why build |
