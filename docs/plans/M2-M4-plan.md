@@ -283,6 +283,14 @@ the record of why.
 Not measured: Pascal's frame rate on integrated graphics. What stays worth borrowing is ideas,
 not code: their dimension-drive interaction for typing a wall length while drawing.
 
+**Update 2026-11-12, see `../decisions/0008-pascal-editor-foundation.md` (proposed).** The owner
+reopened this choice: Pascal's packages (1.1.4) as the editing layer inside our Electron app, our
+engine connected by a plugin and an adapter. Tried on his laptop: it builds without Next.js, shows
+the L-shaped test shop in 2D and 3D, and keeps 46 to 50 fps on the integrated GPU with 60 shelf
+units (Pascal caps itself at 50; the target is 30); it needs
+CSP and offline-asset work in Electron. Until 0008 is accepted, this section and the plan above
+stand; the source-of-truth question (NOTES, question 18) needs the owner's yes first.
+
 ## 5. Where the decisions of 2026-11-11 land
 
 | Decision | Where |
