@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 7863.6 6681.8" width="7863.6mm" height="6681.8mm" font-family="DejaVu Sans, Arial, sans-serif">
 <rect x="0" y="0" width="7863.6" height="6681.8" fill="#ffffff"/>
 <text x="454.5" y="218.2" font-size="136.4" font-weight="bold" fill="#111111">Option 3 — Small shop, more products than fit (test fixtures)</text>
-<text x="454.5" y="372.7" font-size="77.3" fill="#444444">Floor area 20.00 m²  ·  6 fixtures  ·  Score 53.0 / 100  ·  Checkout at wall 3; island rows run from front to back.</text>
+<text x="454.5" y="372.7" font-size="77.3" fill="#444444">Floor area 20.00 m²  ·  6 fixtures  ·  Score 58.3 / 100  ·  Checkout at wall 3; island rows run from front to back.</text>
 <text x="454.5" y="490.9" font-size="77.3" font-weight="bold" fill="#b3261e">Contains test-only fixtures (not real products)</text>
 <polygon data-role="room-outline" data-plan-points="0.000,0.000 4000.000,0.000 4000.000,5000.000 0.000,5000.000" points="454.545,6090.909 4454.545,6090.909 4454.545,1090.909 454.545,1090.909" fill="#fbfaf7" stroke="none"/>
 <polygon data-access-zone="f01" points="3754.5,2605.9 1954.5,2605.9 1954.5,3805.9 3754.5,3805.9" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
@@ -75,13 +75,13 @@
 <rect x="4909.1" y="2404.5" width="100.0" height="72.7" fill="#4a90d9" fill-opacity="0.2" stroke="#333333" stroke-width="4.5"/>
 <text x="5054.5" y="2468.2" font-size="68.2" fill="#333333">Aisle / access space in front of fixtures</text>
 <text x="4909.1" y="2618.2" font-size="86.4" font-weight="bold" fill="#1b1b1b">Why this option</text>
-<text x="4909.1" y="2740.9" font-size="68.2" fill="#333333">15.0 / 45 Fixtures placed: 6 of 18 placed</text>
+<text x="4909.1" y="2740.9" font-size="68.2" fill="#333333">10.0 / 30 Fixtures placed: 6 of 18 placed</text>
 <text x="4909.1" y="2836.4" font-size="68.2" fill="#333333">4.9 / 12 Counter near the entrance: 3806 mm from the entrance</text>
 <text x="4909.1" y="2931.8" font-size="68.2" fill="#333333">8.0 / 8 Counter faces the entrance: the counter looks at the entrance</text>
 <text x="4909.1" y="3027.3" font-size="68.2" fill="#333333">5.0 / 10 Showcases with the counter: 1 of 2 in the checkout block</text>
 <text x="4909.1" y="3122.7" font-size="68.2" fill="#333333">10.0 / 10 Islands in rows: no islands in this layout</text>
-<text x="4909.1" y="3218.2" font-size="68.2" fill="#333333">6.7 / 10 Even use of the floor: fixtures in 6 of 9 parts of the floor</text>
-<text x="4909.1" y="3313.6" font-size="68.2" fill="#333333">3.5 / 5 Open view from the entrance: 3475 mm clear straight ahead of</text>
+<text x="4909.1" y="3218.2" font-size="68.2" fill="#333333">10.0 / 15 Even use of the floor: fixtures in 6 of 9 parts of the floor</text>
+<text x="4909.1" y="3313.6" font-size="68.2" fill="#333333">10.4 / 15 Open view from the entrance: 3475 mm clear straight ahead of</text>
 <text x="4909.1" y="3409.1" font-size="68.2" fill="#333333">the door</text>
 <text x="4909.1" y="3559.1" font-size="86.4" font-weight="bold" fill="#1b1b1b">Did not fit</text>
 <text x="4909.1" y="3681.8" font-size="68.2" fill="#b3261e">6 × TEST double-sided gondola</text>

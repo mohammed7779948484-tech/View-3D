@@ -38,7 +38,7 @@ for (const corner of ['0', '7']) {
     await page.getByRole('textbox', { name: 'Diagonal length' }).fill('500');
     await page.waitForTimeout(300); // a crash unmounts the table; give it time to happen
     await expect(page.getByRole('heading', { name: 'Type the walls' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Create the room' })).toBeEnabled();
+    await expect(page.getByRole('button', { name: 'Create the shop' })).toBeEnabled();
     expect(errors).toEqual([]);
   });
 }
@@ -132,7 +132,7 @@ test('the walls of an open room can be edited with lengths and angles', async ()
 
   await field('Wall 1 length').fill('500');
   await field('Wall 3 length').fill('500');
-  await page.getByRole('button', { name: 'Update the room' }).click();
+  await page.getByRole('button', { name: 'Update the shop' }).click();
   await expect(page.getByRole('textbox', { name: 'Project name' })).toBeVisible(FIRST);
 
   const updated = await h.saveAs();

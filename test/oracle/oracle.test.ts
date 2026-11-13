@@ -8,7 +8,7 @@ import type { DesignDocument, Room } from '../../src/core/index';
 import { autoLayout } from '../../src/layout/index';
 import { validateLayout } from '../../src/rules/index';
 import { angledWall, lShapeWithColumn, protectedDoorway, smallRectOverfull } from '../fixtures/rooms';
-import { testCounterLong, testGondolaDouble, testProducts, testShowcase, testWallShelf } from '../fixtures/products';
+import { testCounterLong, testGondolaDouble, testProducts, testShowcase, testShowcaseRear, testWallShelf } from '../fixtures/products';
 import { scenarios, benchmark, wallsFull } from '../layout/scenarios';
 import { makeDoc, place, rectRoom } from '../rules/helpers';
 import { judge } from './oracle';
@@ -159,5 +159,38 @@ describe('oracle and validator agree on hand-built layouts', () => {
     const doc = makeDoc(lShapeWithColumn, testProducts, [place('shelf', testWallShelf, 200, 3500, 270)]);
     expect(judged(doc).map((p) => p.kind)).toEqual(['window']);
     expect(validateLayout(doc).map((v) => v.rule)).toEqual(['window-blocked']);
+  });
+
+  describe('rear-access showcase (staff serve it from behind)', () => {
+    const products = [...testProducts, testShowcaseRear];
+
+    it('back flush to the wall: no staff space, for both', () => {
+      // Front faces -y; back edge y 6000 = the top wall; the staff floor would be y 6000..6915.
+      const doc = makeDoc(room6, products, [place('r', testShowcaseRear, 4500, 5750, 180)]);
+      const r = both(doc, case6);
+      expect(r.oracle).toContain('access');
+      expect(r.validator).toEqual(['access-blocked']);
+    });
+
+    it('back edge 915 mm off the wall, open at the side: fine for both', () => {
+      // Back edge y 5085, staff floor y 5085..6000, reachable round the right-hand end (x 5250..6000).
+      const doc = makeDoc(room6, products, [place('r', testShowcaseRear, 4500, 4835, 180)]);
+      expect(both(doc, case6)).toEqual({ oracle: [], validator: [] });
+    });
+
+    it('a plain showcase with its back flush to the wall is fine for both', () => {
+      const doc = makeDoc(room6, products, [place('s', testShowcase, 4500, 5750, 180)]);
+      expect(both(doc, case6)).toEqual({ oracle: [], validator: [] });
+    });
+
+    it('sealed in between two walls: staff cannot get behind it, for both', () => {
+      // 1500 mm wide room, entrance x 250..1250; the showcase spans wall to wall.
+      const doc = makeDoc(rectRoom(1500, 6000), products, [place('r', testShowcaseRear, 750, 4835, 180)]);
+      const c: Case = { keepClear: entranceZones(250, 1000, 6000), windows: [], entrance: bottomEntrance(250, 1000) };
+      const r = both(doc, c);
+      expect(r.oracle).toEqual(['unreachable']);
+      expect(r.validator).toEqual(['unreachable']);
+      expect(judge(doc, c.keepClear, c.windows, c.entrance)[0]!.detail).toBe('staff cannot get behind it');
+    });
   });
 });

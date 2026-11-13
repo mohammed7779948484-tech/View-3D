@@ -6,8 +6,10 @@
     "noProject": "No project is open.",
     "open": "Open a project",
     "typeWalls": "Type the walls",
-    "draw": "Draw the room",
-    "importScan": "Import a room scan"
+    "draw": "Draw the shop",
+    "importScan": "Import a shop scan",
+    "diagnostics": "Diagnostics",
+    "catalog": "Catalog"
   },
   "open": {
     "notJson": "This file is not a View-3D project: it is not valid JSON (line {{line}}).",
@@ -36,23 +38,24 @@
   },
   "plan": {
     "label": "Plan",
-    "corner": "Corner {{n}}"
+    "corner": "Corner {{n}}",
+    "entrance": "Entrance"
   },
   "room": {
-    "title": "Room",
+    "title": "Shop",
     "ceiling": "Ceiling height",
-    "problems": "Room problems",
-    "editRefused": "That change would turn the room inside out, so it was not made.",
+    "problems": "Shop problems",
+    "editRefused": "That change would turn the shop inside out, so it was not made.",
     "zeroWall": "Wall {{n}} has no length, so it has no direction to lengthen. Use \"Edit the walls\" instead."
   },
   "walls": {
     "title": "Type the walls",
-    "hint": "Go round the room turning left. For each wall, type its length and the inside angle where it ends: 90 for an ordinary corner, 270 for a corner that points into the room.",
+    "hint": "Go round the shop turning left. For each wall, type its length and the inside angle where it ends: 90 for an ordinary corner, 270 for a corner that points into the shop.",
     "length": "Wall {{n}} length",
     "angle": "Wall {{n}} end angle",
     "remove": "Remove wall {{n}}",
     "add": "Add a wall",
-    "incomplete": "Fill in every length and angle to check the room.",
+    "incomplete": "Fill in every length and angle to check the shop.",
     "closes": "The walls close.",
     "open": "The walls do not close: the last wall ends {{gap}} from the start.",
     "suspects": "One of these values is probably mistyped:",
@@ -64,16 +67,17 @@
     "diagonalLength": "Diagonal length",
     "diagonalOk": "The diagonal matches the drawing.",
     "diagonalOff": "The diagonal differs from the drawing by {{difference}}.",
-    "create": "Create the room",
+    "create": "Create the shop",
     "closesWithin": "The walls close: the last wall ended {{gap}} from the start, so it is drawn from the corners, not from its typed length.",
-    "update": "Update the room"
+    "update": "Update the shop"
   },
   "draw": {
-    "title": "Draw the room",
+    "title": "Draw the shop",
     "hint": "Click each corner in turn. Corners snap to a grid (10 cm on a large screen); type the exact lengths afterwards.",
-    "finish": "Finish the room",
+    "finish": "Finish the shop",
     "undoCorner": "Undo last corner",
-    "notARoom": "These corners do not make a room: the walls cross or a corner repeats."
+    "notARoom": "These corners do not make a shop: the walls cross or a corner repeats.",
+    "needCeiling": "Type the ceiling height to finish."
   },
   "common": {
     "back": "Back"
@@ -100,8 +104,8 @@
       "height": "Door height",
       "entrance": "Customer entrance",
       "swing": "Door opens",
-      "swingIn": "Into the room",
-      "swingOut": "Out of the room",
+      "swingIn": "Into the shop",
+      "swingOut": "Out of the shop",
       "swingNone": "Sliding or open",
       "hinge": "Hinge at",
       "hingeStart": "Start of the wall",
@@ -143,7 +147,7 @@
     }
   },
   "problems": {
-    "too-few-vertices": "The room needs at least 3 corners.",
+    "too-few-vertices": "The shop needs at least 3 corners.",
     "non-integer-coordinate": "A corner position is not a whole number of micrometres.",
     "coordinate-out-of-range": "A corner is more than 100 m from the origin.",
     "zero-length-edge": "Two corners in a row are the same point. Remove the repeated corner.",
@@ -151,13 +155,13 @@
     "clockwise": "The outline runs clockwise. List the corners counter-clockwise (reverse their order).",
     "atWall": "(at wall {{n}})",
     "atCorner": "(at corner {{n}})",
-    "opening-wall-missing": "{{kind}} \"{{id}}\" is on wall {{wall}}, but the room has only {{wallCount}} walls.",
+    "opening-wall-missing": "{{kind}} \"{{id}}\" is on wall {{wall}}, but the shop has only {{wallCount}} walls.",
     "opening-off-wall": "{{kind}} \"{{id}}\" is {{width}} wide and starts {{offset}} along wall {{wall}}, which is {{length}} long: it runs {{over}} past the end of the wall.",
     "opening-off-wall-position": "{{kind}} \"{{id}}\" does not lie on wall {{wall}}: check its position and width.",
     "openings-overlap": "{{kind}} \"{{id}}\" and {{other}} \"{{otherId}}\" overlap by {{shared}} on wall {{wall}}.",
     "opening-above-ceiling": "{{kind}} \"{{id}}\" reaches {{top}} above the floor, higher than the {{ceiling}} ceiling.",
-    "column-outside-room": "Column \"{{id}}\" is not completely inside the room.",
-    "no-entrance": "The room has no entrance. Mark one door as the entrance; aisles are checked from there."
+    "column-outside-room": "Column \"{{id}}\" is not completely inside the shop.",
+    "no-entrance": "The shop has no entrance. Mark one door as the entrance; aisles are checked from there."
   },
   "input": {
     "empty": "Type a length.",
@@ -176,7 +180,7 @@
     "use-a-point": "Use a point for decimals (90.5), not a comma."
   },
   "capture": {
-    "too-few-walls": "A room needs at least 3 walls.",
+    "too-few-walls": "A shop needs at least 3 walls.",
     "wall-length-not-positive": "Wall {{n}}: the length must be more than zero.",
     "not-an-integer": "Wall {{n}}: the length or the corner angle is not a whole number of micrometres or micro-degrees.",
     "corner-angle-out-of-range": "Corner at the end of wall {{n}}: the angle must be more than 0 and less than 360 degrees."
@@ -194,7 +198,7 @@
     "sill": "Window sill height",
     "addWindow": "Add the window",
     "leaveOut": "Leave the window out",
-    "use": "Use this room",
+    "use": "Use this shop",
     "findings": {
       "gap-closed": "A {{size}} gap at the end of wall {{wall}} was closed.",
       "gap-filled": "The scan has a {{size}} gap at wall {{wall}}; it is drawn as a straight wall. It may be a doorway: add the door in the editor.",
@@ -207,20 +211,293 @@
       "window-moved": "The window on wall {{wall}} ran past the end of the wall in the scan; it was moved {{moved}} to fit. Check it."
     },
     "errors": {
-      "not-json": "This file is not a room scan: it is not valid JSON.",
+      "not-json": "This file is not a shop scan: it is not valid JSON.",
       "not-roomtrace": "This file is not a RoomTrace scan.",
       "unsupported-version": "This RoomTrace file uses a format version that cannot be read (only version 2).",
       "unsupported-units": "Only RoomTrace files measured in metres can be read.",
-      "no-rooms": "The scan has no room in it.",
-      "several-rooms": "The scan has several rooms; import one room at a time.",
+      "no-rooms": "The scan has no shop in it.",
+      "several-rooms": "The scan has several shops; import one shop at a time.",
       "bad-wall": "A wall or window in the scan has no position or size.",
       "too-few-walls": "The scan has fewer than 3 walls.",
-      "outline-invalid": "The scanned walls do not make a room: they cross each other or repeat a corner.",
+      "outline-invalid": "The scanned walls do not make a shop: they cross each other or repeat a corner.",
       "no-height": "The scan has no ceiling or wall height."
     }
   },
   "files": {
     "readFailed": "The file \"{{file}}\" could not be read.",
     "writeFailed": "The file \"{{file}}\" could not be saved."
+  },
+  "diagnostics": {
+    "title": "Diagnostics",
+    "intro": "Measures how smoothly this computer draws the 3D view: the same shop with real products, drawn four ways. It takes about a minute. Please do not use the computer while it runs.",
+    "run": "Test 3D speed",
+    "back": "Back",
+    "running": "Testing setup {{setup}} ({{n}} of 4)…",
+    "noWebgl": "3D is not available on this computer (no WebGL 2). The 2D plan still works.",
+    "gpu": "Graphics",
+    "webgl2": "WebGL 2",
+    "screen": "Screen",
+    "pixelRatio": "pixel ratio",
+    "yes": "yes",
+    "no": "no",
+    "on": "on",
+    "off": "off",
+    "setup": "Setup",
+    "fixtures": "Fixtures",
+    "shadows": "Shadows",
+    "instanced": "One draw for all boxes",
+    "median": "Typical frame",
+    "p95": "Slowest 5 %",
+    "fps": "Frames per second",
+    "drawCalls": "Draw calls",
+    "triangles": "Triangles",
+    "pass": "Smooth enough: 30 frames per second or better with 60 fixtures.",
+    "fail": "Not smooth enough for 60 fixtures yet.",
+    "photo": "Please send a photo of this page.",
+    "layoutTitle": "Automatic layout",
+    "layoutIntro": "Runs the automatic layout on a 7 m x 5 m shop with 9 real products, in the background, and shows how long it took.",
+    "layoutRun": "Test layout speed",
+    "layoutRunning": "Laying out…",
+    "layoutDone": "Done in {{ms}} ms, {{options}} options.",
+    "layoutFailed": "The layout test failed: {{message}}"
+  },
+  "catalog": {
+    "title": "Catalog",
+    "intro": "The products you sell. Website products are marked unverified until you confirm them; a product with an unknown size is listed but cannot be placed.",
+    "add": "Add a product",
+    "back": "Back",
+    "addTitle": "New product",
+    "editTitle": "Edit {{name}}",
+    "name": "Name",
+    "category": "Category",
+    "placement": "Placement",
+    "width": "Width",
+    "depth": "Depth",
+    "height": "Height",
+    "widthOf": "Width, size {{n}}",
+    "depthOf": "Depth, size {{n}}",
+    "heightOf": "Height, size {{n}}",
+    "sizesHint": "Width runs along the front, depth from front to back. Type the unit, for example 48 in or 120 cm. Leave a size empty when you do not know it.",
+    "addSize": "Add another size",
+    "removeSize": "Remove size {{n}}",
+    "price": "Price (USD)",
+    "priceUnknown": "Price unknown",
+    "badPrice": "The price must be a number of dollars, for example 700 or 12.50.",
+    "noName": "The product needs a name.",
+    "save": "Save product",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "editOf": "Edit {{name}}",
+    "confirm": "Confirm",
+    "confirmOf": "Confirm {{name}}",
+    "remove": "Remove",
+    "removeOf": "Remove {{name}}",
+    "yesRemove": "Yes, remove",
+    "keep": "Keep it",
+    "unknownSize": "Size unknown: cannot be placed",
+    "unreadable": "The catalog file cannot be used, so it was left as it is: {{message}}",
+    "notSaved": "The catalog could not be saved: {{message}}",
+    "verification": {
+      "verified": "confirmed",
+      "unverified": "from the website, not confirmed",
+      "unknown": "size unknown"
+    },
+    "categories": {
+      "showcase": "Showcase",
+      "counter": "Counter",
+      "gondola": "Gondola",
+      "tower": "Tower",
+      "slatwall": "Slatwall",
+      "accessory": "Accessory"
+    },
+    "servedFrom": "Served from",
+    "servedFromOptions": {
+      "front": "The front (customer side)",
+      "rear": "The back (staff space behind it)"
+    },
+    "placements": {
+      "wall": "Against a wall",
+      "island": "Island",
+      "freestanding": "Anywhere on the floor",
+      "counter": "Sales counter"
+    },
+    "errors": {
+      "not-json": "The catalog file is not valid JSON.",
+      "not-a-catalog": "The catalog file is not a valid catalog.",
+      "invalid-product": "This product is not valid.",
+      "duplicate-id": "A product with this id already exists.",
+      "not-found": "This product is no longer in the catalog.",
+      "cannot-confirm-unknown": "A product with an unknown size cannot be confirmed; type its size first.",
+      "test-only": "Test products cannot enter the catalog."
+    }
+  },
+  "fixtures": {
+    "title": "Fixtures",
+    "place": "Place {{name}}",
+    "placeVariant": "Place {{name}}, {{size}}",
+    "noCatalog": "The catalog could not be read; open Catalog from the start screen.",
+    "clickToPlace": "Click on the plan where {{name}} should stand.",
+    "cancel": "Cancel",
+    "selected": "Selected fixture",
+    "x": "X",
+    "y": "Y",
+    "rotation": "Rotation",
+    "rotate": "Rotate 90°",
+    "duplicate": "Duplicate",
+    "delete": "Delete",
+    "refused": "That change was refused: it would make the project invalid."
+  },
+  "violations": {
+    "theEntrance": "the entrance",
+    "door": "door \"{{id}}\"",
+    "invalid-room": {
+      "default": "The shop has a problem; see the shop problems."
+    },
+    "unknown-product": {
+      "default": "Placement \"{{id}}\" refers to product \"{{product}}\" / \"{{variant}}\", which is not in the document."
+    },
+    "overlap": {
+      "default": "{{a}} and {{b}} overlap."
+    },
+    "outside-room": {
+      "default": "{{a}} is not fully inside the shop."
+    },
+    "column": {
+      "default": "{{a}} stands on column \"{{column}}\"."
+    },
+    "blocked-door": {
+      "default": "{{a}} blocks {{door}}.",
+      "door-swing": "{{a}} blocks {{door}}. The leaf of {{door}} sweeps this area when it opens.",
+      "door-approach": "{{a}} blocks {{door}}. People need clear floor in front of {{door}} to open it and walk through.",
+      "entrance-clear": "{{a}} blocks {{door}}. Customers need clear floor just inside the entrance.",
+      "decompression": "{{a}} blocks {{door}}. Customers arriving need open floor and a clear view straight in from the entrance."
+    },
+    "window-blocked": {
+      "default": "{{a}} is {{height}} high and stands in front of window \"{{window}}\", whose sill is at {{sill}}."
+    },
+    "wall-unit-not-on-wall": {
+      "default": "{{a}} is single-sided: its back must stand against a wall (clear of doors) or against the back of another single-sided unit."
+    },
+    "access-blocked": {
+      "default": "The space beside {{a}} needs {{required}} clear.",
+      "customer-front-wall": "The aisle in front of {{a}} needs {{required}} clear, but a wall is in the way.",
+      "customer-front-column": "The aisle in front of {{a}} needs {{required}} clear, but column \"{{column}}\" is in the way.",
+      "customer-front-fixture": "The aisle in front of {{a}} needs {{required}} clear, but {{b}} is in the way.",
+      "customer-back-wall": "The aisle behind {{a}} needs {{required}} clear, but a wall is in the way.",
+      "customer-back-column": "The aisle behind {{a}} needs {{required}} clear, but column \"{{column}}\" is in the way.",
+      "customer-back-fixture": "The aisle behind {{a}} needs {{required}} clear, but {{b}} is in the way.",
+      "staff-front-wall": "The staff space in front of {{a}} needs {{required}} clear, but a wall is in the way.",
+      "staff-front-column": "The staff space in front of {{a}} needs {{required}} clear, but column \"{{column}}\" is in the way.",
+      "staff-front-fixture": "The staff space in front of {{a}} needs {{required}} clear, but {{b}} is in the way.",
+      "staff-back-wall": "The staff space behind {{a}} needs {{required}} clear, but a wall is in the way.",
+      "staff-back-column": "The staff space behind {{a}} needs {{required}} clear, but column \"{{column}}\" is in the way.",
+      "staff-back-fixture": "The staff space behind {{a}} needs {{required}} clear, but {{b}} is in the way."
+    },
+    "aisle-too-narrow": {
+      "default": "The way from the entrance to {{a}} is narrower than {{required}} somewhere."
+    },
+    "unreachable": {
+      "default": "{{a}} cannot be reached.",
+      "customer": "Customers cannot walk from the entrance to {{a}}.",
+      "staff": "Staff cannot get behind {{a}}: the way in is narrower than {{required}}."
+    },
+    "main-aisle": {
+      "default": "The main aisle from the entrance to {{a}} is narrower than {{required}} somewhere."
+    }
+  },
+  "layoutProblems": {
+    "title": "Layout problems",
+    "none": "No layout problems."
+  },
+  "autoLayout": {
+    "title": "Automatic layout",
+    "hint": "How many of each product should the shop hold? The layout runs in the background; you can keep working or cancel it.",
+    "quantity": "Quantity of {{name}}",
+    "quantityVariant": "Quantity of {{name}}, {{size}}",
+    "run": "Run",
+    "cancel": "Cancel",
+    "progress": "Layout progress",
+    "cancelled": "Cancelled. Nothing was changed.",
+    "failed": "The automatic layout failed: {{message}}"
+  },
+  "unplaced": {
+    "reasons": {
+      "unknown-size": "its dimensions are not known yet",
+      "no-wall-long-enough": "no wall has a free stretch long enough for it",
+      "outside-room": "it would not stand fully inside the shop",
+      "column": "a column is in the way",
+      "blocked-door": "it would block a door or the clear zone inside the entrance",
+      "not-on-wall": "it must stand against a wall and the place is across a door",
+      "overlap": "another fixture is already there",
+      "window-blocked": "it is higher than the window sill it would stand in front of",
+      "own-access": "there is not enough aisle space left in front of it (at least {{secondary}} mm)",
+      "blocks-access": "it would block the aisle of a fixture that is already placed",
+      "faces-door": "its aisle would run through the approach of a door",
+      "unreachable": "it would cut part of the shop off from the entrance",
+      "aisle-too-narrow": "it would leave an aisle narrower than {{secondary}} mm",
+      "main-aisle": "it would narrow the main aisle to the counter below {{main}} mm",
+      "needs-partner": "it is single-sided and there is neither free wall nor a partner to stand back to back with",
+      "orphan": "it would stand alone, away from the rows, and no row has room for it"
+    },
+    "unknownSize": "Its dimensions are not known yet, so it cannot be placed. Confirm the size first.",
+    "nothingToTry": "There was no wall or free floor left to try it on.",
+    "triedOne": "Tried {{n}} position.",
+    "triedMany": "Tried {{n}} positions.",
+    "itFailed": "It failed because {{reason}}.",
+    "theyFailed": "They failed because {{reason}}.",
+    "mostFailed": "Most failed because {{first}}; then because {{rest}}.",
+    "then": "; then because ",
+    "part": "{{reason}} ({{n}})"
+  },
+  "options": {
+    "title": "Layout options",
+    "option": "Option {{rank}}",
+    "score": "{{score}} / 100",
+    "use": "Use option {{rank}}",
+    "didNotFit": "Did not fit",
+    "unplacedItem": "{{name}} x {{quantity}}",
+    "roomProblems": "The shop has problems, so no layout was made:",
+    "none": "No option could be made.",
+    "terms": {
+      "Fixtures placed": "Fixtures placed",
+      "Counter near the entrance": "Counter near the entrance",
+      "Counter faces the entrance": "Counter faces the entrance",
+      "Showcases with the counter": "Showcases with the counter",
+      "Islands in rows": "Islands in rows",
+      "Even use of the floor": "Even use of the floor",
+      "Open view from the entrance": "Open view from the entrance"
+    },
+    "show": "Show option {{rank}} on the plan",
+    "previewing": "Showing option {{rank}} on the plan. It is not used yet.",
+    "back": "Back to my layout",
+    "notes": {
+      "placed": "{{placed}} of {{requested}} placed",
+      "counter-missing": "no counter could be placed",
+      "counter-not-requested": "no counter requested",
+      "counter-distance": "{{distance}} from the entrance",
+      "counter-faces": "the counter looks at the entrance",
+      "counter-side-on": "the entrance is to one side of the counter",
+      "counter-away": "the counter does not look at the entrance",
+      "no-showcases": "no glass showcases in this layout",
+      "showcases-in-block": "{{inBlock}} of {{showcases}} in the checkout block",
+      "no-islands": "no islands in this layout",
+      "island-rows-one-one": "{{spots}} island spot in {{rows}} row",
+      "island-rows-one-many": "{{spots}} island spot in {{rows}} rows",
+      "island-rows-many-one": "{{spots}} island spots in {{rows}} row",
+      "island-rows-many-many": "{{spots}} island spots in {{rows}} rows",
+      "even-use": "fixtures in {{used}} of {{cells}} parts of the floor",
+      "open-view": "{{clear}} clear straight ahead of the door"
+    }
+  },
+  "view3d": {
+    "switch": "View",
+    "plan2d": "2D plan",
+    "view3d": "3D view",
+    "top": "Top view",
+    "corner": "Corner view",
+    "noWebgl": "3D is not available on this computer (no WebGL 2). The 2D plan still works."
+  },
+  "meta": {
+    "dir": "ltr"
   }
 }

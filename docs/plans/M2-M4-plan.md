@@ -152,10 +152,11 @@ sub-item gets its own failing test and its own pair of commits.
 - **10a. Split `src/layout/engine.ts` by phase** (checkout block, walls, island grid, search,
   scoring, report) with no change in output: the committed snapshots must stay byte-identical.
   Done first, so the items below land in small files.
-- **10b. Ranking rule.** Fixtures placed first stays the rule, **except** when two options
-  differ by exactly one fixture and the one with fewer has a complete checkout block (every
-  glass showcase in the block) while the other does not: then the complete checkout block wins.
-  Recorded in `../decisions/0003-rule-based-layout-engine.md`.
+- **10b. Ranking rule** (owner ruling 2026-11-11, replacing the first wording, which could
+  loop). Options are sorted by the key `placed + (complete checkout block ? 1 : 0)`, highest
+  first; on a tie a complete block wins, then the higher score. A complete checkout block means
+  the counter is placed and every requested glass showcase stands in its block. A fast-check
+  property proves the order never loops. Recorded in `../decisions/0003-rule-based-layout-engine.md`.
 - **10c. A real swap-and-relocate improvement pass** that fits more fixtures: remove and
   re-place already placed fixtures to make room for unplaced ones, with a fixed step budget (no
   clock), accepted only when the layout stays valid and the count or score rises. Proof: at
@@ -165,17 +166,56 @@ sub-item gets its own failing test and its own pair of commits.
 - **10e. L-shaped checkout blocks without a right-angled inside corner:** the block turns in
   open floor or at an angled corner.
 - **10f. Product "service side".** A new product field saying whether the fixture is served
-  from the front or from the rear. Rear-access showcases (for example the Extra View showcase,
-  which has rear sliding doors) need staff space behind them and must **never** stand with their
-  back to a wall. This touches the schema (`src/core`), the access zones and a new rule
-  (`src/rules`), the oracle, the engine and the catalog seed. Which real products are
-  rear-access is product data: the owner confirms each one.
-- **10g. Score weights** tuned with the owner on the gallery.
+  from the front or from the rear. Rear-access showcases (the three counter-height glass
+  showcases, judged from the website photos on 2026-11-12) need staff space behind them and must **never** stand with their
+  back to a wall. This touches the schema (`src/core`, optional `serviceSide: 'front' | 'rear'`),
+  the access zones (`src/rules`: a staff zone behind a rear-access product; no separate rule,
+  owner ruling 2026-11-11), the oracle and the engine. Which real products are rear-access is
+  product data: the owner confirms each one; until then no seed product carries the field.
+- **10g. Score weights** tuned with the owner on the gallery. The weights in code today are
+  45 placed, 12 counter near entrance, 8 counter facing, 10 showcases near counter, 10 rows,
+  10 even use, 5 open entrance.
+
+**Detail rulings (owner, 2026-11-11, M3 detail plan)**
+- Order: 10a, then the 3D and worker spikes, then issues 1 to 6, 7 to 9, 10b to 10g.
+- Catalog: one catalog file on the laptop (`userData/catalog.json`, read and written by
+  `app/main` through the preload bridge), filled on first start from the seed in the repository
+  (no network). Website products stay `unverified` until the owner presses Confirm; products he
+  types himself are `verified`. Projects keep their own embedded copy and never change when the
+  catalog does.
+- No drei (three.js's own camera controls); plain CSS with logical properties and the native
+  `<dialog>`, no Tailwind or shadcn.
+- 3D shows fixtures with a problem in red; the worded problem list sits beside both views.
+- Software 3D (SwiftShader) is not turned on by the shipped app; the tests start Electron with
+  `--enable-unsafe-swiftshader`. (Measured later the same day: a visible window falls back to
+  Chromium's own software WebGL without any switch; see `../STACK.md`.) With no WebGL the 3D view
+  says so and 2D keeps working.
+- The "Test 3D speed" benchmark lives on a Diagnostics page.
+
+**Corrections to the table above, found while planning (approved 2026-11-11)**
+- Issue 1 needs the catalog file above: `src/catalog` (file schema, pure edits), `app/main`
+  (the file), the preload bridge, `app/renderer/catalog`.
+- Issue 2: rotation in 90-degree steps relative to the nearest wall is a pure function in
+  `src/rules`; every edit is one shared command that the 3D view (issue 8) also calls.
+- Issue 3: a `Violation` gains `values` (numbers by name), like `RoomProblem`, so each message is
+  translated by code; the English messages stay as they are. `unknown-product` cannot occur in
+  the app (the schema refuses such a document), so it is tested in `src/rules` only.
+- Issue 4: `snapToWall` must not snap a back across a door (today it can, and the wall-unit rule
+  then refuses the result); `snapBackToBack` is new.
+- Issue 5: progress needs an optional `onProgress` callback in `src/layout`, which never changes
+  the result; cancel ends the worker.
+- Issue 6 needs a screen for choosing products and quantities for the automatic layout; picking
+  an option also embeds the option's products.
+- Issue 7: the 30 fps target on integrated graphics is proven only by the owner's benchmark run;
+  CI reports its own (software) numbers.
+- Issue 9: glTF's front is +Z, ours is local +y, which is -Z in the scene; the contract states
+  the fixed half turn applied when a model is placed.
+- 10a is guarded by a hash of the full `autoLayout` output per scenario, not only the SVGs.
 
 **Spikes before use:** three.js + React Three Fiber with the WebGL renderer on integrated
 graphics (instanced boxes, 60 fixtures, shadows off/on); a Web Worker built by electron-vite
-importing `src/layout`; glTF loading and bounding-box measurement; `three-mesh-bvh` only if
-picking is slow.
+importing `src/layout`, loaded from `file://` under the app's CSP; glTF loading and
+bounding-box measurement; `three-mesh-bvh` only if picking is slow.
 
 **Risks**
 - 3D on integrated graphics → WebGL, no post-processing, instancing; measured in the spike

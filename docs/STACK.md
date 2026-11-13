@@ -60,7 +60,7 @@ installer. Spikes: `test/spikes/libraries.test.ts` (Vitest) and `test/spikes/ele
 | Packaging | Electron Forge | Owner decision: electron-builder (one config for NSIS and fuses) |
 | Desktop shell | Tauri v2 | Needs Rust; decision 0007 |
 | Translation | lingui 5, react-intl 7 | i18next has `dir()` for RTL and loads plain JSON; either would also work |
-| State / undo | zustand 5.1 | A vanilla store with `subscribe` plus React's `useSyncExternalStore` is about 60 lines; immer 11.2.10 (MIT, 2026-11-10, spike in `libraries.test.ts`) gives structural sharing and frozen snapshots for undo |
+| State / undo | zustand 5.1 (not adopted) | A vanilla store with `subscribe` plus React's `useSyncExternalStore` is about 60 lines; immer 11.2.10 (MIT, 2026-11-10, spike in `libraries.test.ts`) gives structural sharing and frozen snapshots for undo |
 | UI kit | Tailwind 4 + shadcn/ui + Radix | Milestone 2 has only forms, buttons and selects: one stylesheet with CSS logical properties mirrors for Arabic without a dependency. Revisit when M3 needs dialogs, menus or popovers |
 | End-to-end tests | WebdriverIO + wdio-electron-service | Playwright is already the planned tool and has a project skill |
 
@@ -74,6 +74,77 @@ Risks recorded:
   Squirrel installers; we build NSIS, so the script is not needed.
 - Electron fuses: `runAsNode` and `NODE_OPTIONS` are off (checked: the packaged app ignores
   `ELECTRON_RUN_AS_NODE`); the inspector flags stay on so Playwright can drive the installed app.
+
+## Adopted in Milestone 3
+
+Versions and release dates read from the npm registry on 2026-11-11. Dev dependencies, bundled
+into the renderer by electron-vite.
+
+| Capability | Choice | Version (released) | Licence | Evidence | Why this one |
+|---|---|---|---|---|---|
+| 3D | three | 0.187.0 (2026-10-30) | MIT | spike `test/spikes/three.spec.ts`: WebGL2 scene of 60 real catalog products, every box read back from the scene graph within 1 mm and 1e-4 rad of the document | The plan's 3D library; WebGL renderer, no post-processing |
+| 3D in React | @react-three/fiber | 9.8.2 (2026-10-14) | MIT | same spike; React 19.3.1 is inside its peer range (>=19 <19.4) | The scene as JSX on our one document store; it brings zustand internally (not used by our code) |
+| 3D types | @types/three | 0.187.0 (2026-10-30) | MIT | `pnpm typecheck` | Matches three 0.187 |
+
+Not adopted: @react-three/drei 10.7.9 (owner ruling 2026-11-11: about 30 extra packages for helpers
+we do not need; three.js's own controls instead), WebGPURenderer (no gain for placeholder boxes on
+integrated graphics), three-mesh-bvh 0.9.18 (only if picking measures slow).
+
+**3D frame times, CI numbers** (this container, Linux, no GPU, Electron started with
+`--enable-unsafe-swiftshader`, renderer "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device
+(Subzero)))", 600 measured frames per setup after 30 warm-up frames, camera on a fixed circle):
+
+| Setup | Fixtures | Shadows | Instanced | Median | p95 | Draw calls | Triangles |
+|---|---|---|---|---|---|---|---|
+| A (the app's default) | 60 | off | yes | 16.7 ms | 17.4 ms | 2 | 722 |
+| B | 60 | on | yes | 16.5 ms | 18.6 ms | 3 | 1442 |
+| C | 60 | off | no | 16.5 ms | 17.4 ms | 61 | 722 |
+| D | 120 | off | yes | 16.7 ms | 17.4 ms | 2 | 1442 |
+
+GitHub CI (`ci.yml`, both runners also on SwiftShader): Ubuntu A 16.6 / 17.4 ms, B 17.0 / 19.9,
+C 16.8 / 17.3, D 16.7 / 17.2; Windows A 15.6 / 16.5 ms, B 15.7 / 16.3, C 15.8 / 16.7, D 15.6 / 16.3
+(median / p95; that runner's display refreshes at 64 Hz).
+
+**Layout engine in a Web Worker** (no library): `app/renderer/worker/layout.worker.ts`, built by
+electron-vite as its own file (`new Worker(new URL(...), { type: 'module' })`), loads from `file://`
+under the app's Content Security Policy with no change to it. Spike `test/spikes/worker.spec.ts`:
+the worker's JSON is byte-identical (SHA-256) to `autoLayout` called directly in Node 22, so
+Electron's V8 and Node's V8 give the same layout. 200 ms in the worker against 273 ms in Node for
+the 9-product test shop (this container). The owner can time it on his laptop: Diagnostics, "Test
+layout speed".
+
+Frame times are measured between animation frames, so they cannot go below the display's refresh
+interval (16.7 ms at 60 Hz): every setup here holds 60 frames per second even in software. These are
+CI numbers, not the owner's laptop. His laptop is measured with Diagnostics, "Test 3D speed" (one
+click; it shows PASS when setup A's median is at most 33.3 ms and its p95 at most 50 ms, the 30
+frames per second target). Not measured yet: his integrated graphics.
+
+Risks: three adds about 1.2 MB to the renderer bundle (3.3 MB in all); it loads from disk, so the
+start is not affected noticeably. Without a GPU, a visible Electron 45 window still gets WebGL from
+Chromium's own software fallback (SwiftShader), measured 2026-11-11; the app adds no switch for it
+(owner ruling) and does not block it either. Only with the GPU and the software rasterizer both
+disabled (`--disable-gpu --disable-software-rasterizer`, which the no-WebGL test uses) is there no
+WebGL at all; 3D then says it is not available and 2D keeps working. Correction: an earlier probe
+used a hidden window, which has no fallback, and wrongly concluded "no WebGL without a GPU".
+
+## Adopted before Milestone 4 (owner ruling 2026-11-12: reverses rulings 4 and 5)
+
+The owner asked for a more professional interface built with ready-made components. Personal,
+local use: open-source licences are no obstacle. Versions pinned exactly, each at least two weeks
+old when added.
+
+| Capability | Choice | Version (released) | Licence | Evidence | Why this one |
+|---|---|---|---|---|---|
+| Styling | tailwindcss, @tailwindcss/vite | 4.3.3 (2026-07-16) | MIT | `pnpm build`; every e2e test passes on the restyled screens | Utility classes for shadcn/ui; the Vite plugin needs no config file |
+| UI components | shadcn/ui (copied source in `app/renderer/components/ui`, style new-york, radix base, RTL classes) | CLI 4.23.0 | MIT | Button, Card, Input, Label, NativeSelect, Separator, Badge, Alert, Checkbox, Field, Progress, ScrollArea, Tooltip | Accessible, consistent components; the source is ours to change |
+| Primitives | radix-ui | 1.8.1 (2026-10-14) | MIT | used by the shadcn components | shadcn's radix base |
+| Variants / class merging | class-variance-authority, clsx, tailwind-merge | 0.7.1, 2.1.1, 3.7.0 | Apache-2.0 / MIT / MIT | `cn()` in `app/renderer/lib/utils.ts` | What shadcn components expect |
+| Animations | tw-animate-css | 1.4.0 (2026-02-28) | MIT | imported in globals.css | shadcn's animation utilities |
+| Icons | lucide-react | 1.66.0 (2026-10-31) | ISC | toolbar and start screen | shadcn's icon library; inline SVG, works offline |
+| 3D helpers | @react-three/drei | 10.7.9 (2026-09-25) | MIT | 3D view | Camera controls, edges, labels and soft shadows without writing them; nothing loaded from the network (no Environment presets, no CDN fonts) |
+
+Native `<select>` (shadcn NativeSelect) is kept instead of the Radix Select: it stays a real
+combobox, keyboard and RTL behave as the system does, and the tests drive it as one.
 
 ## Built ourselves (and why)
 
@@ -117,10 +188,8 @@ agent only; nothing is imported by `src/` or `test/`. Project docs win over them
 | Capability | Proposal | Alternatives |
 |---|---|---|
 | 2D editor | Plain SVG + React | react-konva 19.3 (fallback), pixi.js 8 (258 kB gz), fabric 7, tldraw 5 (not free in production) |
-| 3D | three r187 + @react-three/fiber 9.8, WebGL renderer | WebGPURenderer: no benefit for placeholder boxes on integrated graphics |
-| State / undo | zustand 5.1 + immer 11, undo as a stack of whole-document snapshots (owner 2026-11-11) | zundo 2.3.0 (stale since 2024-11), jotai 3, redux toolkit |
 | PDF | Electron/Chromium `printToPDF` from our own HTML + SVG sheet (Chromium shapes Arabic and handles RTL) | Fallback only: pdfkit 0.20 + bidi-js + embedded Arabic font, or jspdf 4.2 + svg2pdf.js |
 | Scan import (DXF fallback) | Deferred (owner 2026-11-11): no DXF reader until a real DXF sample from a chosen scan app exists | dxf-parser 1.1.2 (last published 2022-06) |
-| UI kit | shadcn + Radix + Tailwind 4 logical properties (react-i18next adopted above) | lingui, react-intl, Mantine 9, MUI 9 |
+| UI kit | Not adopted for M3 (owner 2026-11-11): plain CSS with logical properties and the native `<dialog>` | shadcn + Radix + Tailwind 4, Mantine 9, MUI 9 |
 
 Removed from V1 on 2026-11-11 (owner decision, see `decisions/0007-local-electron-desktop-app.md`): vite-plugin-pwa / serwist, IndexedDB outbox, File System Access API, a QR library, any hosting.

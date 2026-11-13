@@ -222,3 +222,27 @@ describe('catalog helpers', () => {
     expect(isPlaceable(wood, 'default')).toBe(false);
   });
 });
+
+describe('service side of the seed products', () => {
+  // Owner's decision (2026-11-12): judged from the website photos, not stated in the product text.
+  const rearIds = ['nhf-6ft-extra-view-showcase', 'nhf-6ft-full-view-led-lights-showcase', 'nhf-s'];
+
+  it.each(rearIds)('%s is served from the rear and says the rear was judged from the photo', (id) => {
+    const product = seedProducts.find((p) => p.id === id);
+    expect(product, id).toBeDefined();
+    expect(product?.serviceSide, id).toBe('rear');
+    const judged = (product?.flags ?? []).some((f) => /photo/i.test(f) && /back/i.test(f));
+    expect(judged, `${id} needs a flag with "photo" and "back"`).toBe(true);
+  });
+
+  it('every other seed product (incl. the hinged-door stand nhf-s-1) has no serviceSide key', () => {
+    const others = seedProducts.filter((p) => !rearIds.includes(p.id));
+    expect(others.map((p) => p.id).sort()).toEqual(
+      ['nhf-c', 'nhf-cigarette-display-stand-with-led-lights', 'nhf-dip-and-cigarettes-rack-with-led-lights', 'nhf-g', 'nhf-jan', 'nhf-s-1'],
+    );
+    for (const product of others) {
+      expect(product.serviceSide, product.id).toBeUndefined();
+      expect('serviceSide' in product, product.id).toBe(false);
+    }
+  });
+});

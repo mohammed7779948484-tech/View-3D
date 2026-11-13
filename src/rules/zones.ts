@@ -167,7 +167,8 @@ export function adjacentRect(rect: OrientedRect, side: 'front' | 'back', depthUm
  * The floor that must stay walkable next to a fixture.
  * - wall and freestanding: customers in front (the product's front clearance, at least a secondary aisle);
  * - island: customers in front and behind (a secondary aisle each);
- * - counter: customers in front (the main aisle) and staff behind (staff space).
+ * - counter: customers in front (the main aisle) and staff behind (staff space);
+ * - a product served from the rear (`serviceSide: 'rear'`): also staff behind (staff space).
  */
 export function accessZones(
   placement: Placement,
@@ -189,8 +190,10 @@ export function accessZones(
     case 'counter':
       return [zone('customer', 'front', config.mainAisleUm), zone('staff', 'back', config.staffSpaceUm)];
     case 'wall':
-    case 'freestanding':
-      return [zone('customer', 'front', Math.max(product.clearances.frontUm, config.secondaryAisleUm))];
+    case 'freestanding': {
+      const front = zone('customer', 'front', Math.max(product.clearances.frontUm, config.secondaryAisleUm));
+      return product.serviceSide === 'rear' ? [front, zone('staff', 'back', config.staffSpaceUm)] : [front];
+    }
   }
 }
 

@@ -11,6 +11,7 @@ import { fileURLToPath } from 'node:url';
 import { parseDesignDocument } from '../../src/core/index';
 import type { OpenResult, SaveRequest, SaveResult } from '../shared/project-api';
 import { readProjectFile, writeProjectFile } from './project-files';
+import { loadCatalogFile, saveCatalogFile } from './catalog-file';
 
 const RENDERER_HTML = join(import.meta.dirname, '../renderer/index.html');
 const PRELOAD = join(import.meta.dirname, '../preload/index.cjs');
@@ -124,6 +125,14 @@ ipcMain.handle('project:save', (event, request: unknown) => {
   const window = BrowserWindow.fromWebContents(event.sender);
   if (!fromOurPage(event) || window === null || !isSaveRequest(request)) throw new Error('project:save: refused');
   return saveProject(window, request);
+});
+ipcMain.handle('catalog:load', (event) => {
+  if (!fromOurPage(event)) throw new Error('catalog:load: refused');
+  return loadCatalogFile(app.getPath('userData'));
+});
+ipcMain.handle('catalog:save', (event, text: unknown) => {
+  if (!fromOurPage(event) || typeof text !== 'string' || text.length > MAX_PROJECT_TEXT) throw new Error('catalog:save: refused');
+  return saveCatalogFile(app.getPath('userData'), text);
 });
 ipcMain.on('window:close', (event) => {
   if (!fromOurPage(event)) return;

@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import {
   DesignDocumentSchema,
   ProductSchema,
@@ -8,6 +10,7 @@ import {
   parseDesignDocument,
 } from '../../src/core/index';
 import type { DesignDocument, ParseResult } from '../../src/core/index';
+import { testShowcaseRear } from '../fixtures/products';
 
 const MM = 1000;
 
@@ -317,5 +320,82 @@ describe('part schemas', () => {
     expect(RoomSchema.safeParse(doc.room).success).toBe(true);
     expect(ProductSchema.safeParse(doc.products[0]).success).toBe(true);
     expect(DesignDocumentSchema.safeParse(doc).success).toBe(true);
+  });
+});
+
+describe('ProductSchema: serviceSide (which side the staff serve a fixture from)', () => {
+  // serviceSide 'rear' is only valid on a freestanding product, so the base is one (a synthetic test product).
+  const freestanding: Record<string, unknown> = { ...testShowcaseRear };
+  delete freestanding['serviceSide'];
+  const withServiceSide = (value: unknown) => ({ ...freestanding, serviceSide: value });
+
+  it("keeps 'rear' on a product", () => {
+    const result = ProductSchema.safeParse(withServiceSide('rear'));
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data.serviceSide).toBe('rear');
+  });
+
+  it("keeps 'front' on a product", () => {
+    const result = ProductSchema.safeParse(withServiceSide('front'));
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data.serviceSide).toBe('front');
+  });
+
+  it("refuses any other value, such as 'side'", () => {
+    expect(ProductSchema.safeParse(withServiceSide('side')).success).toBe(false);
+  });
+
+  it('a document with a rear product parses and keeps the field', () => {
+    const doc = validDocument();
+    doc.products[1] = withServiceSide('rear');
+    const result = parseDesignDocument(doc);
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.document.products[1]!.serviceSide).toBe('rear');
+  });
+
+  it('a product without the field still parses and gets no key added (absent means front)', () => {
+    const result = ProductSchema.safeParse(freestanding);
+    expect(result.success).toBe(true);
+    if (result.success) expect('serviceSide' in result.data).toBe(false);
+  });
+
+  it('a document from Milestone 1 still parses, unchanged', () => {
+    const raw = JSON.parse(readFileSync(resolve(import.meta.dirname, '../fixtures/m1-document.json'), 'utf8')) as unknown;
+    const result = parseDesignDocument(raw);
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.document).toEqual(raw);
+      expect(result.document.schemaVersion).toBe(1);
+      for (const product of result.document.products) expect('serviceSide' in product).toBe(false);
+    }
+  });
+});
+
+describe("ProductSchema: serviceSide 'rear' only for freestanding products", () => {
+  const base = validDocument().products[0]!;
+  const as = (placement: string, serviceSide?: string) => ({
+    ...base,
+    placement,
+    ...(serviceSide === undefined ? {} : { serviceSide }),
+  });
+
+  it("refuses 'rear' on a wall product (it must stand back to a wall, a rear staff zone forbids that)", () => {
+    expect(ProductSchema.safeParse(as('wall', 'rear')).success).toBe(false);
+  });
+
+  it("refuses 'rear' on an island and on a counter product (it would be silently ignored)", () => {
+    expect(ProductSchema.safeParse(as('island', 'rear')).success).toBe(false);
+    expect(ProductSchema.safeParse(as('counter', 'rear')).success).toBe(false);
+  });
+
+  it("accepts 'rear' on a freestanding product (testShowcaseRear)", () => {
+    expect(ProductSchema.safeParse(testShowcaseRear).success).toBe(true);
+  });
+
+  it("accepts 'front' or no serviceSide for every placement", () => {
+    for (const placement of ['wall', 'island', 'counter', 'freestanding']) {
+      expect(ProductSchema.safeParse(as(placement, 'front')).success, placement).toBe(true);
+      expect(ProductSchema.safeParse(as(placement)).success, placement).toBe(true);
+    }
   });
 });

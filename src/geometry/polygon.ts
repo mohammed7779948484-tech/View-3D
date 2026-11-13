@@ -125,7 +125,7 @@ export type OutlineProblem = {
 export function validateRoomOutline(outline: readonly Point[]): OutlineProblem[] {
   const n = outline.length;
   if (n < 3) {
-    return [{ code: 'too-few-vertices', message: `A room outline needs at least 3 corners; got ${n}.` }];
+    return [{ code: 'too-few-vertices', message: `A shop outline needs at least 3 corners; got ${n}.` }];
   }
   const problems: OutlineProblem[] = [];
   for (let i = 0; i < n; i++) {
@@ -168,7 +168,7 @@ export function validateRoomOutline(outline: readonly Point[]): OutlineProblem[]
   if (!isCounterClockwise(outline)) {
     problems.push({
       code: 'clockwise',
-      message: 'The outline is clockwise; corners must be listed counter-clockwise (room interior on the left of each wall).',
+      message: 'The outline is clockwise; corners must be listed counter-clockwise (shop interior on the left of each wall).',
     });
   }
   return problems;

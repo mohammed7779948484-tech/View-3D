@@ -17,6 +17,15 @@ No random numbers, no clock, no AI.
 4. Search: for every counter wall (best three) and row direction (two), every combination of
    wall order, grid start side and island order is built in full and the best is kept.
 5. Options are ranked by fixtures placed, then by an explained score out of 100.
+   **Amended by the owner on 2026-11-11 (M3 issue 10b):** the sort key is
+   `placed + (complete checkout block ? 1 : 0)`, highest first; on a tie a complete block wins,
+   then the higher score. A complete checkout block means the counter is placed and every
+   requested glass showcase stands in its block. This keeps the owner's exception (one fixture
+   fewer with a complete block beats one more without) and is a total order: the first wording
+   ("placed first, except when two options differ by exactly one ...") could loop, for example
+   10 placed incomplete with a high score > 10 placed complete with a low score > 9 placed complete
+   > the first one. A fast-check property proves the order never loops. Status: implemented in
+   M3 issue 10b (`src/layout/rank.ts`); it moved one pair of options in one test shop.
 6. Every rejected position is counted by reason; what did not fit is reported with the causes
    most positions failed on.
 

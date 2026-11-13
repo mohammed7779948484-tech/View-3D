@@ -27,11 +27,12 @@ from the folder's index, not from files inside another folder.
 |---|---|---|
 | `src/core` | Units and the design-document schema | `toUm`, `fromUm`, `formatLength`, `DesignDocumentSchema`, `parseDesignDocument`, `migrate`, types `DesignDocument`, `Room`, `Opening`, `Product`, `Variant`, `Placement` |
 | `src/geometry` | Exact 2D geometry on integer micrometres | `cross`, `orientation`, `area2`, `pointInPolygon`, `validateRoomOutline`, `wallSegments`, `rectCorners`, `rectsOverlap`, `rectInsidePolygon`, `rectIntersectsPolygon`, `minClearance`, `openingSegment`, `doorSwingZone`, `insetPolygon`, `offsetPolygon`, `unionPolygons`, `differencePolygons`, `intersectPolygons` |
-| `src/catalog` | The real product list and helpers | `seedProducts`, `findProduct`, `isPlaceable` |
-| `src/rules` | Planning numbers and every validity rule | `defaultConfig`, `configSources`, `validateRoom`, `normalizeOutline`, `keepClearZones`, `accessZones`, `validateLayout`, `walkingViolations`, `snapToWall` |
+| `src/catalog` | The real product list, the owner's catalog file and its edits | `seedProducts`, `findProduct`, `isPlaceable`, `seedCatalog`, `parseCatalog`, `serializeCatalog`, `ownerProduct`, `addProduct`, `updateProduct`, `removeProduct`, `confirmProduct` |
+| `src/rules` | Planning numbers, every validity rule, and turning or snapping a fixture by hand | `defaultConfig`, `configSources`, `validateRoom`, `normalizeOutline`, `keepClearZones`, `accessZones`, `validateLayout`, `walkingViolations`, `snapToWall`, `quarterTurn` |
 | `src/layout` | Automatic layout | `autoLayout`, `describeObstacles`, types `LayoutRequest`, `LayoutOption`, `LayoutResult` |
 | `src/render-svg` | The 2D plan as SVG; PNG export | `renderPlanSvg` (portable), `svgToPng` in `png.ts` (Node only) |
 | `src/import-scan` | Room scans: one adapter per scan app (RoomTrace JSON v2), shared normalization | `importRoomTrace`, `readRoomTrace`, `normalizeScan` |
+| `src/model-contract` | The model contract for product 3D files (`docs/MODEL_CONTRACT.md`) | `validateModel`, types `ModelProblem`, `ModelResult` |
 | `src/capture` | A room typed wall by wall and its checks | `wallsToOutline`, `outlineToWalls`, `checkClosure`, `checkDiagonal`, `suspectsMatchingDiagonal`, `sanityWarnings` |
 
 ## 3. Dependency direction
@@ -47,12 +48,13 @@ layout      -> core, geometry, rules
 render-svg  -> core, geometry
 capture     -> core, geometry, rules
 import-scan -> core, geometry, rules
+model-contract -> core
 ```
 
 - Nothing under `src/` imports from `test/`.
 - `clipper2-ts` is imported only by `src/geometry/clip.ts`; `@resvg/resvg-js` only by
   `src/render-svg/png.ts`. A wrapped library has one importer so it can be replaced in one place.
-- `core`, `geometry`, `catalog`, `rules`, `layout`, `capture` and `import-scan` are portable: no Node built-ins and no
+- `core`, `geometry`, `catalog`, `rules`, `layout`, `capture`, `import-scan` and `model-contract` are portable: no Node built-ins and no
   DOM. They must run unchanged in a browser, a Web Worker and Node.
 - `rules` does not import `catalog`: rules work on the products embedded in the document.
 
@@ -64,11 +66,11 @@ this section together.
 | You are adding | Put it in | And |
 |---|---|---|
 | A planning number (an aisle width, a depth) | `src/rules/config.ts` with its source in `configSources` | No number inline anywhere else |
-| A validity rule | `src/rules/validate.ts` (a new `RuleId`); walking-type rules in `walkingViolations` | A "violates" and a "passes" test in `test/rules`, an oracle case in `test/oracle`, and the engine's local check in `src/layout/engine.ts` if the engine must respect it while placing |
+| A validity rule | `src/rules/validate.ts` (a new `RuleId`); walking-type rules in `walkingViolations` | A "violates" and a "passes" test in `test/rules`, an oracle case in `test/oracle`, and the engine's local check (`localObstacle` in `src/layout/state.ts`) if the engine must respect it while placing |
 | A check on the room itself | `src/rules/room.ts` (`validateRoom`) | A test per case in `test/rules/room.test.ts` |
 | A new kind of fixture behaviour | A field on `Product` in `src/core/schema.ts` (bump nothing unless old documents break; see section 5), then `accessZones` in `src/rules/zones.ts`, then the engine phase that places it | Seed and test fixtures updated |
 | A real product | `src/catalog/seed.ts`, website values only, `unverified` until the owner confirms | The table in `test/catalog/seed.test.ts` |
-| A layout behaviour | `src/layout/engine.ts`, as a phase or a search dimension | A scenario in `test/layout/scenarios.ts`, a quality test, regenerated snapshots |
+| A layout behaviour | `src/layout`, in the file of its phase (`cash-wrap.ts`, `walls.ts`, `island-grid.ts`, `score.ts`, `report.ts`) or as a search dimension in `search.ts`; shared state and checks in `state.ts`, public types in `types.ts`; no file over 400 lines (`test/architecture/layout-files.test.ts`) | A scenario in `test/layout/scenarios.ts`, a quality test, regenerated snapshots and `test/layout/golden-hashes.json` |
 | A drawing change | `src/render-svg/plan.ts` | `test/render-svg`, regenerated snapshots |
 | A new export (PDF, BOM, quote) | A new folder `src/export-<name>` that reads the document (and `render-svg` for the plan) | Its arrow added in section 3 and in the architecture test |
 | Geometry | `src/geometry`, integer in and out | Property tests with fixed seeds |
@@ -138,7 +140,8 @@ Decided in outline (owner, 2026-11-11, `decisions/0007-local-electron-desktop-ap
 in `plans/M2-M4-plan.md`. Built so far: `app/main` (the window, locked down; dialogs and file
 access in `project-files.ts`), `app/preload` (the bridge), `app/shared` (types only: the bridge's
 requests and results) and `app/renderer` (`state/`, `storage/`, `i18n/`, the start and project
-screens). The rest below is still planned.
+screens; `components/ui/` holds the shadcn/ui components, `lib/utils.ts` their `cn()` helper, and
+`globals.css` the Tailwind theme; renderer code imports them as `@/...`). The rest below is still planned.
 
 V1 is a laptop-only, fully local **Electron** desktop app (electron-vite + electron-builder).
 
@@ -147,14 +150,22 @@ app/                          the desktop app                         imports ->
   main/                       Electron main process: windows, native open/save dialogs,
                               all disk access, printToPDF (M4)
   preload/                    the narrow, typed API the renderer may call (no Node in the renderer):
-                              window.view3d = openProject, saveProject, onCloseRequested, closeWindow
+                              window.view3d = openProject, openScan, saveProject, onCloseRequested,
+                              closeWindow, loadCatalog, saveCatalog (catalog.json in userData, M3)
   shared/                     types only, imported by main, preload and renderer
   renderer/                   the UI (React)
-    state/                    the open document + undo history (the only mutable copy)
+    state/                    the open document + undo history (the only mutable copy); placement-commands.ts:
+                              every fixture edit as one recipe, called by both the 2D plan and the 3D view
     editor-2d/                plan editor (room capture, manual layout)
-    view-3d/                  3D view of the same document
-    worker/                   runs src/layout off the UI thread
-    catalog/  storage/  i18n/ owner's catalog, project files (via preload), Arabic/English
+    view-3d/                  3D view of the same document: units.ts is the only µm -> metre conversion;
+                              boxes.ts derives the boxes from the document; scene-probe.tsx reads them
+                              back from the scene graph for tests (window.__view3dScene)
+    diagnostics/              the owner's one-click 3D speed test (M3)
+    worker/                   runs src/layout off the UI thread: layout.worker.ts answers with the JSON
+                              text, so the page gets autoLayout's exact bytes; run-layout.ts starts and cancels a run
+    catalog/                  the owner's catalog screen and product form (M3); the file itself is
+                              read and written by app/main/catalog-file.ts
+    storage/  i18n/           project files (via preload), Arabic/English
 src/                          the engine (this document)              never imports app/
   capture/        (M2)        wall-by-wall entry, closure and diagonal checks   -> core, geometry, rules
                               (rules for its tolerances in src/rules/config.ts)

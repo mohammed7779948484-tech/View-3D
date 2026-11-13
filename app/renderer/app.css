@@ -1,55 +1,5 @@
-/* One accent, tape-measure yellow, only on dimensions: the measurement is the truth. */
-:root {
-  --ink: #27313b;
-  --paper: #f6f7f5;
-  --grid: #c9ced3;
-  --tape: #f4c430;
-  --ok: #2e7d4f;
-  --problem: #b83a26;
-  --muted: #5d6873;
-  font-family: 'Segoe UI Variable', 'Segoe UI', Tahoma, system-ui, sans-serif;
-  font-size: 15px;
-  line-height: 1.45;
-  color: var(--ink);
-  background: var(--paper);
-  font-variant-numeric: tabular-nums;
-}
-* { box-sizing: border-box; }
-body { margin: 0; }
-main { padding-block: 0 2rem; padding-inline: 1.25rem; }
-h1 { font-size: 1.15rem; font-weight: 650; letter-spacing: 0.01em; margin: 0; }
-h2 { font-size: 1.05rem; font-weight: 600; margin-block: 0 0.5rem; }
-.app-header {
-  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-  padding-block: 0.75rem; margin-block-end: 1rem; border-block-end: 2px solid var(--ink);
-}
-.unit { display: flex; gap: 0.5rem; align-items: center; }
-button, select, input { font: inherit; color: inherit; }
-button {
-  border: 1px solid var(--ink); background: white; border-radius: 4px;
-  padding-block: 0.35rem; padding-inline: 0.8rem; cursor: pointer;
-}
-button.primary { background: var(--ink); color: white; }
-button.quiet { border-color: transparent; background: transparent; text-decoration: underline; }
-button:disabled { opacity: 0.45; cursor: default; }
-:focus-visible { outline: 3px solid var(--tape); outline-offset: 2px; }
-input, select { border: 1px solid var(--grid); border-radius: 4px; padding-block: 0.3rem; padding-inline: 0.5rem; background: white; }
-input[aria-invalid='true'] { border-color: var(--problem); }
-.actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-block: 1rem; }
-.start { max-inline-size: 36rem; }
-.workspace { display: grid; grid-template-columns: minmax(18rem, 24rem) 1fr; gap: 1.25rem; align-items: start; }
-.panel { max-inline-size: 30rem; }
-.hint { color: var(--muted); max-inline-size: 60ch; }
-.field { display: grid; gap: 0.15rem; margin-block-end: 0.5rem; }
-.field-error, [role='alert'] { color: var(--problem); margin: 0; }
-.wall-rows { padding-inline-start: 1.25rem; }
-.wall-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 0.5rem; align-items: end; }
-.status { font-weight: 600; }
-.status.ok { color: var(--ok); }
-.suspects { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
-.diagonal { border: 1px solid var(--grid); border-radius: 4px; margin-block: 1rem; }
-.warnings, .room-problems { color: var(--problem); }
-.project-name { display: flex; gap: 0.5rem; align-items: center; }
+/* Plan and 3D drawing styles (svg classes). Everything else is Tailwind + shadcn/ui (globals.css). */
+:root { --ink: #27313b; --paper: #f6f7f5; --grid: #c9ced3; --tape: #f4c430; --ok: #2e7d4f; --problem: #b83a26; --muted: #5d6873; }
 .plan { inline-size: 100%; block-size: 70vh; background: white; border: 1px solid var(--grid); border-radius: 4px; }
 .plan-room { fill: #eef1f3; stroke: var(--ink); stroke-width: 3px; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
 .plan-room.open { fill: none; }
@@ -59,12 +9,24 @@ input[aria-invalid='true'] { border-color: var(--problem); }
   fill: var(--ink); text-anchor: middle; dominant-baseline: middle; font-weight: 600;
   paint-order: stroke; stroke: var(--tape); stroke-width: 0.6em; stroke-linejoin: round;
 }
-[role='dialog'] { border: 2px solid var(--ink); background: white; padding: 1rem; max-inline-size: 28rem; border-radius: 4px; }
-@media (max-width: 900px) { .workspace { grid-template-columns: 1fr; } }
 .plan-door { stroke: var(--paper); stroke-width: 7px; vector-effect: non-scaling-stroke; }
+.plan-door-swing { fill: none; stroke: #b5651d; stroke-width: 1.5px; stroke-dasharray: 4 3; vector-effect: non-scaling-stroke; pointer-events: none; }
+.plan-entrance { fill: #b5651d; text-anchor: middle; dominant-baseline: middle; font-weight: 700; pointer-events: none; }
+.plan-wall-badge { fill: white; stroke: var(--ink); stroke-width: 1.5px; vector-effect: non-scaling-stroke; }
+.plan-wall-number { fill: var(--ink); text-anchor: middle; dominant-baseline: central; font-weight: 700; }
+.plan-fixture-label { fill: var(--ink); text-anchor: middle; dominant-baseline: middle; pointer-events: none; }
 .plan-window { stroke: #7fb2d6; stroke-width: 6px; vector-effect: non-scaling-stroke; }
 .plan-column { fill: var(--ink); }
-.items { list-style: none; padding: 0; display: grid; gap: 0.25rem; }
-.items li { display: flex; justify-content: space-between; gap: 0.5rem; align-items: baseline; }
-.item-form { border: 1px solid var(--grid); border-radius: 4px; }
-.check { display: flex; gap: 0.5rem; align-items: center; margin-block: 0.5rem; }
+.stage { block-size: 50vh; border: 1px solid var(--grid); border-radius: 4px; background: white; }
+.plan-fixture { fill: #dfe7ee; stroke: var(--ink); stroke-width: 1.5px; vector-effect: non-scaling-stroke; cursor: move; }
+.plan-fixture.selected { fill: #fbe9a8; stroke-width: 2.5px; }
+.plan-fixture-front { stroke: var(--ink); stroke-width: 4px; vector-effect: non-scaling-stroke; pointer-events: none; }
+.plan-column .plan { max-block-size: calc(100vh - 5rem); }
+.plan-fixture.problem { fill: #f6c9c1; stroke: var(--problem); }
+.plan-fixture.problem.selected { fill: #f3b0a4; }
+.view-3d .stage { block-size: 70vh; }
+.plan-grid line { stroke: #e3e7ea; stroke-width: 1px; vector-effect: non-scaling-stroke; }
+.plan-draw-preview { stroke: var(--ink); stroke-width: 2px; stroke-dasharray: 6 4; vector-effect: non-scaling-stroke; pointer-events: none; }
+.plan-draw-preview-length { pointer-events: none; }
+.plan-scale line { stroke: var(--ink); stroke-width: 3px; vector-effect: non-scaling-stroke; }
+.plan-scale text { fill: var(--ink); text-anchor: middle; }

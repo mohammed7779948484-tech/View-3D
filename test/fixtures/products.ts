@@ -120,6 +120,22 @@ export const testShowcase = testProduct({
   clearanceMm: [600, 0, 0],
 });
 
+/**
+ * Freestanding glass showcase with rear sliding doors: staff serve it from behind. Like
+ * `testShowcase` in size. NOT in `testProducts`, so the existing scenarios do not change.
+ */
+export const testShowcaseRear: Product = {
+  ...testProduct({
+    id: 'test-showcase-rear',
+    name: 'TEST rear-access showcase',
+    category: 'showcase',
+    placement: 'freestanding',
+    sizeMm: [1500, 500, 1000],
+    clearanceMm: [600, 0, 0],
+  }),
+  serviceSide: 'rear',
+};
+
 /** Freestanding square bin, reachable from every side. */
 export const testBin = testProduct({
   id: 'test-bin',

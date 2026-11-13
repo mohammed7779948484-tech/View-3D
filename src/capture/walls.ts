@@ -67,7 +67,7 @@ export function walk(walls: readonly CapturedWall[], count: number): { points: {
 /** Problems with the typed values themselves, in wall order; [] when they can be drawn. */
 export function captureProblems(walls: readonly CapturedWall[]): CaptureProblem[] {
   if (walls.length < MIN_WALLS) {
-    return [{ code: 'too-few-walls', message: `A room needs at least ${MIN_WALLS} walls; ${walls.length} were entered.` }];
+    return [{ code: 'too-few-walls', message: `A shop needs at least ${MIN_WALLS} walls; ${walls.length} were entered.` }];
   }
   const problems: CaptureProblem[] = [];
   walls.forEach((wall, index) => {

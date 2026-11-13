@@ -8,7 +8,7 @@ export type SaveResult =
   | { status: 'cancelled' }
   | { status: 'saved'; fileName: string }
   | { status: 'failed'; code: 'write-failed'; fileName: string; message: string };
-export type ProjectBridge = {
+export type ProjectBridge = CatalogBridge & {
   /** Asks for a project file with the native dialog and returns its text. */
   openProject(): Promise<OpenResult>;
   /** Asks for a room-scan file with the native dialog and returns its text; it never becomes the project file. */
@@ -19,4 +19,14 @@ export type ProjectBridge = {
   onCloseRequested(listener: () => void): () => void;
   /** Closes the window without asking again. */
   closeWindow(): void;
+};
+
+/** The owner's catalog file (`<userData>/catalog.json`); created from the website seed on first start. */
+export type CatalogLoadResult = { status: 'loaded'; text: string } | { status: 'failed'; code: 'read-failed' | 'not-a-catalog'; message: string };
+export type CatalogSaveResult = { status: 'saved' } | { status: 'failed'; code: 'not-a-catalog' | 'write-failed'; message: string };
+export type CatalogBridge = {
+  /** The catalog file's text; a file that is not a valid catalog is reported and never rewritten. */
+  loadCatalog(): Promise<CatalogLoadResult>;
+  /** Replaces the catalog file with this text, only when it is a valid catalog. */
+  saveCatalog(text: string): Promise<CatalogSaveResult>;
 };

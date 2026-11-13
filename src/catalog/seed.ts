@@ -43,6 +43,10 @@ const UNKNOWN_SIZE: Variant = {
   heightUm: null,
 };
 
+/** The site's text does not say; the owner asked Claude to judge from the photos (2026-11-12). */
+const FLAG_REAR_FROM_PHOTO =
+  'served from the back: judged from the website photo (the back glass panes overlap like sliding doors); the page text does not say';
+
 export const seedProducts: readonly Product[] = [
   {
     id: 'nhf-6ft-extra-view-showcase',
@@ -54,8 +58,9 @@ export const seedProducts: readonly Product[] = [
     priceCents: 70000,
     verification: 'unverified',
     source: { url: `${SITE}6ft-extra-view-showcase`, dimensionsAsWritten: '72″L x 22″W x 38″H' },
-    flags: [FLAG_CLEARANCES],
+    flags: [FLAG_CLEARANCES, FLAG_REAR_FROM_PHOTO],
     testOnly: false,
+    serviceSide: 'rear',
   },
   {
     id: 'nhf-6ft-full-view-led-lights-showcase',
@@ -70,8 +75,9 @@ export const seedProducts: readonly Product[] = [
       url: `${SITE}6ft-full-view-led-lights-showcase`,
       dimensionsAsWritten: '72″L x 20″W x 38″/42”H',
     },
-    flags: ['title says 4 FT but the page text says 72 in; the owner says 72 in, pending his final confirmation', FLAG_CLEARANCES],
+    flags: ['title says 4 FT but the page text says 72 in; the owner says 72 in, pending his final confirmation', FLAG_CLEARANCES, FLAG_REAR_FROM_PHOTO],
     testOnly: false,
+    serviceSide: 'rear',
   },
   {
     id: 'nhf-c',
@@ -153,8 +159,9 @@ export const seedProducts: readonly Product[] = [
     priceCents: 55000,
     verification: 'unknown',
     source: { url: `${SITE}s`, dimensionsAsWritten: null },
-    flags: [FLAG_NO_DIMENSIONS, FLAG_CLEARANCES],
+    flags: [FLAG_NO_DIMENSIONS, FLAG_CLEARANCES, FLAG_REAR_FROM_PHOTO],
     testOnly: false,
+    serviceSide: 'rear',
   },
   {
     id: 'nhf-cigarette-display-stand-with-led-lights',

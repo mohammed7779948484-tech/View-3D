@@ -1,0 +1,354 @@
+diff --git a/src/layout/cash-wrap.ts b/src/layout/cash-wrap.ts
+index bdb0786..6477d6c 100644
+--- a/src/layout/cash-wrap.ts
++++ b/src/layout/cash-wrap.ts
+@@ -2,7 +2,7 @@
+ // Phase a: the checkout block
+ import type { Point, WallSegment } from '../geometry/index';
+ import type { LayoutRequest } from './types';
+-import { bigFirst, dist, freshState, isShowcase, q, tryPlaceGroup } from './state';
++import { bigFirst, dist, freshState, isShowcase, q, round, tryPlaceGroup } from './state';
+ import type { Pose, State, Unit, UnitGroup } from './state';
+ import { entranceInfo, poseAtWall, wallStops } from './walls';
+ import type { Entrance } from './walls';
+@@ -92,8 +92,82 @@ export function placeCashWrap(state: State, wall: WallSegment, counters: readonl
+   return false;
+ }
+ 
+-/** Phase a for one counter wall. Returns the state after it (or with nothing placed when there is no counter). */
+-export function cashWrapPhase(request: LayoutRequest, units: readonly UnitGroup[], counterWall: number | null): State {
++/** Open-floor checkout block: grid step and reach in front of the entrance (M3 issue 10d). */
++const FREE_GRID_UM = 200_000;
++const FREE_REACH_UM = 5_000_000;
++/**
++ * The grid is shifted off whole millimetres, so no gap between the block and a fixture placed
++ * later lands exactly on a minimum (shop sizes are whole millimetres): a turned room rounds its
++ * corners to 1 um, and an exact tie would then fit in one orientation and not in the other.
++ */
++const FREE_OFFSET_UM = 1_000;
++const QUARTER_UDEG = 90_000_000;
++const FULL_UDEG = 360_000_000;
++
++/**
++ * Counter and showcases as one straight block in open floor in front of the entrance, staff
++ * space behind (M3 issue 10d). Positions run on a grid in the entrance's own frame (along the
++ * entrance wall, and into the room), so a turned room gives the same block. Tried in this
++ * order: the block facing the entrance, then side on, then with its back to it; within each,
++ * nearest the entrance first. All showcases first, then one fewer, down to the counter alone.
++ */
++export function placeFreeCashWrap(state: State, counters: readonly Unit[], showcases: readonly Unit[], entrance: Entrance): boolean {
++  const wall = state.walls[entrance.wallIndex]!;
++  const d = wall.direction;
++  // Quarter turns from the entrance wall's own angle: k = 2 faces the entrance, 1 and 3 side on, 0 back to it.
++  const turnVectors = [
++    { x: d.x, y: d.y },
++    { x: -d.y, y: d.x },
++    { x: -d.x, y: -d.y },
++    { x: d.y, y: -d.x },
++  ];
++  const turns = [2, 1, 3, 0];
++  const counter = counters[0]!;
++  const steps = Math.floor(FREE_REACH_UM / FREE_GRID_UM);
++  for (let n = showcases.length; n >= 0; n--) {
++    const used = showcases.slice(0, n);
++    const orders = n === 0 ? [[...counters]] : [[...counters, ...used], [...used, ...counters]];
++    const candidates: { group: { unit: Unit; pose: Pose }[]; turn: number; near: number; order: number; a: number; h: number }[] = [];
++    turns.forEach((k, turn) => {
++      const x = turnVectors[k]!; // the block's line
++      const f = { x: -x.y, y: x.x }; // its front
++      const rotationUdeg = (((wall.angleUdeg + k * QUARTER_UDEG) % FULL_UDEG) + FULL_UDEG) % FULL_UDEG;
++      orders.forEach((order, o) => {
++        const total = widthOf(order);
++        for (let i = -steps; i <= steps; i++) {
++          for (let j = 1; j <= steps; j++) {
++            const a = i * FREE_GRID_UM + FREE_OFFSET_UM;
++            const h = j * FREE_GRID_UM + FREE_OFFSET_UM;
++            // The middle of the block's back line.
++            const bx = entrance.point.x + wall.inwardNormal.x * h + d.x * a;
++            const by = entrance.point.y + wall.inwardNormal.y * h + d.y * a;
++            let t = -total / 2;
++            const group = order.map((unit) => {
++              const along = t + unit.widthUm / 2;
++              t += unit.widthUm;
++              const off = unit.depthUm / 2;
++              return { unit, pose: { center: { x: round(bx + x.x * along + f.x * off), y: round(by + x.y * along + f.y * off) }, rotationUdeg } };
++            });
++            const c = group.find((g) => g.unit === counter)!.pose.center;
++            candidates.push({ group, turn, near: q(dist(c, entrance.point)), order: o, a: i, h: j });
++          }
++        }
++      });
++    });
++    candidates.sort((p, r) => p.turn - r.turn || p.near - r.near || p.order - r.order || p.h - r.h || p.a - r.a);
++    for (const c of candidates) {
++      const placed = tryPlaceGroup(state, c.group, null);
++      if (placed !== null) {
++        state.cashWrap = placed;
++        return true;
++      }
++    }
++  }
++  return false;
++}
++
++/** Phase a for one counter wall ('free': open floor). Returns the state after it (or with nothing placed when there is no counter). */
++export function cashWrapPhase(request: LayoutRequest, units: readonly UnitGroup[], counterWall: number | 'free' | null): State {
+   const state = freshState(request, units);
+   if (counterWall === null) return state;
+   const entrance = entranceInfo(state.room, state.walls);
+@@ -101,6 +175,7 @@ export function cashWrapPhase(request: LayoutRequest, units: readonly UnitGroup[
+     units.filter((g) => test(g.unit)).sort(bigFirst).flatMap((g) => Array.from({ length: g.quantity }, () => g.unit));
+   const counters = expand((u) => u.product.placement === 'counter');
+   if (counters.length === 0) return state;
+-  placeCashWrap(state, state.walls[counterWall]!, counters, expand(isShowcase), entrance);
++  if (counterWall === 'free') placeFreeCashWrap(state, counters, expand(isShowcase), entrance);
++  else placeCashWrap(state, state.walls[counterWall]!, counters, expand(isShowcase), entrance);
+   return state;
+ }
+diff --git a/src/layout/search.ts b/src/layout/search.ts
+index 351ffe8..fdb10b5 100644
+--- a/src/layout/search.ts
++++ b/src/layout/search.ts
+@@ -124,7 +124,13 @@ export function autoLayout(request: LayoutRequest, options: LayoutOptions = {}):
+   const problems = validateRoom(request.room);
+   if (problems.length > 0) return { options: [], problems };
+   const { units, unknown } = expandUnits(request);
+-  const wallsForCounter: (number | null)[] = counterWalls(request, units);
++  const wallsForCounter: (number | 'free' | null)[] = counterWalls(request, units);
++  // The open-floor block (M3 issue 10d, answer 16 (a)) takes the place of the last counter wall,
++  // so the search does the same number of blocks; it is tried only when it fits.
++  if (wallsForCounter.length > 0 && cashWrapPhase(request, units, 'free').cashWrap.length > 0) {
++    if (wallsForCounter.length >= COUNTER_WALLS_TRIED) wallsForCounter.pop();
++    wallsForCounter.push('free');
++  }
+   if (wallsForCounter.length === 0) wallsForCounter.push(null);
+ 
+   const kept: RunResult[] = [];
+@@ -147,11 +153,14 @@ export function autoLayout(request: LayoutRequest, options: LayoutOptions = {}):
+         const kinds = units.filter((g) => (afterWall.left.get(g.unit.key) ?? 0) > 0).length;
+         for (const start of SEARCH.start) {
+           for (const islands of kinds > 1 ? SEARCH.islands : SEARCH.islands.slice(0, 1)) {
+-            const id = `counter-${counterWall === null ? 'none' : `wall-${counterWall}`}_rows-${rows}`;
++            const free = counterWall === 'free';
++            const id = `counter-${counterWall === null ? 'none' : free ? 'free' : `wall-${counterWall}`}_rows-${rows}`;
++            const where = counterWall === null ? 'No counter' : free ? 'Checkout in open floor near the entrance' : `Checkout at wall ${counterWall + 1}`;
+             const strategy: LayoutStrategy = {
+               id,
+-              description: `${counterWall === null ? 'No counter' : `Checkout at wall ${counterWall + 1}`}; island rows run ${rows === 'across' ? 'from front to back' : 'parallel to the entrance wall'}.`,
+-              counterWall,
++              description: `${where}; island rows run ${rows === 'across' ? 'from front to back' : 'parallel to the entrance wall'}.`,
++              counterWall: free ? null : counterWall,
++              counterFree: free,
+               rows,
+               walls,
+               start,
+diff --git a/src/layout/types.ts b/src/layout/types.ts
+index 72abeb6..e40f3b9 100644
+--- a/src/layout/types.ts
++++ b/src/layout/types.ts
+@@ -55,8 +55,10 @@ export type MeasuredAisle = { from: Point; to: Point; widthUm: number; kind: 'ma
+ export type LayoutStrategy = {
+   id: string;
+   description: string;
+-  /** Wall the checkout block stands at (with staff space between), or null without a counter. */
++  /** Wall the checkout block stands at (with staff space between), or null without a counter or in open floor. */
+   counterWall: number | null;
++  /** The checkout block stands in open floor near the entrance (M3 issue 10d); counterWall is then null. */
++  counterFree: boolean;
+   /** Island rows run along the entrance wall, or across the shop from front to back. */
+   rows: 'along' | 'across';
+   /** The placement order the search kept for this option. */
+diff --git a/test/layout/free-counter.test.ts b/test/layout/free-counter.test.ts
+new file mode 100644
+index 0000000..16e16d6
+--- /dev/null
++++ b/test/layout/free-counter.test.ts
+@@ -0,0 +1,188 @@
++/**
++ * Issue M3-10d: the checkout block (counter plus showcases in one straight line) may also stand
++ * in open floor near the entrance, not only parallel to a wall.
++ *
++ * ORACLE: the hand-worked room below (distances from the drawing, in mm), validateLayout, and the
++ * independent judge in test/oracle (keep-clear areas written out by hand, as in oracle.test.ts).
++ * The brute-force search (200 mm grid, quarter turns) found valid counter spots 1947 mm (angled
++ * entrance, counter alone) and 1789 mm (glass shop) from the entrance. With its showcase in the
++ * same line the nearest valid block centre on the angled entrance is about 3100 mm, so that bound
++ * is 3200 mm (not 3000, which came from the counter alone); the glass shop bound is 2500 mm.
++ * Decision (a), docs/NOTES.md 2026-11-12 (16): the open-floor block stands IN PLACE OF the third
++ * counter wall, so the number of blocks (and the time) does not change. The angled entrance is judged by validateLayout only: its keep-clear areas on an angled wall
++ * are not worked out by hand in test/oracle.
++ */
++import { describe, expect, it } from 'vitest';
++import type { DesignDocument, Opening, Point, Room } from '../../src/core/index';
++import { toUm } from '../../src/core/index';
++import { autoLayout } from '../../src/layout/index';
++import type { LayoutOption, LayoutRequest } from '../../src/layout/index';
++import { validateLayout } from '../../src/rules/index';
++import { judge } from '../oracle/oracle';
++import type { Box, KeepClear } from '../oracle/oracle';
++import { testCounterLong, testGondolaDouble, testShowcase, testWallShelf } from '../fixtures/products';
++import { angledEntrance, angledEntranceRoom, scenarios, wallsFull } from './scenarios';
++
++const mm = (v: number): number => toUm(v, 'mm');
++const item = (product: (typeof testCounterLong), quantity: number) => ({ product, variantId: product.variants[0]!.id, quantity });
++const box = (x0: number, y0: number, x1: number, y1: number): Box => ({ x0: mm(x0), y0: mm(y0), x1: mm(x1), y1: mm(y1) });
++
++/** Entrance midpoint from the room alone: the opening's wall, offset + width / 2 along the wall. */
++function entranceMidpoint(room: Room): Point {
++  const o = room.openings.find((x) => x.kind === 'door' && x.door?.isEntrance === true)!;
++  const a = room.outline[o.wallIndex]!;
++  const b = room.outline[(o.wallIndex + 1) % room.outline.length]!;
++  const len = Math.hypot(b.x - a.x, b.y - a.y);
++  const t = (o.offsetUm + o.widthUm / 2) / len;
++  return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
++}
++const counterCentre = (doc: DesignDocument): Point =>
++  doc.placements.find((p) => p.productId === testCounterLong.id)!.center;
++const distanceMm = (a: Point, b: Point): number => Math.hypot(a.x - b.x, a.y - b.y) / 1000;
++const freeOptions = (options: readonly LayoutOption[]) => options.filter((o) => o.strategy.counterFree);
++
++// ---- the glass-fronted corner shop: 8000 x 6000, entrance at x 3500..4500 on the bottom wall ----
++const win = (id: string, wallIndex: number, offset: number, width: number): Opening => ({
++  id, kind: 'window', wallIndex, offsetUm: mm(offset), widthUm: mm(width), heightUm: mm(2000), sillHeightUm: mm(300),
++});
++const glassRoom: Room = {
++  outline: [{ x: 0, y: 0 }, { x: mm(8000), y: 0 }, { x: mm(8000), y: mm(6000) }, { x: 0, y: mm(6000) }],
++  ceilingHeightUm: mm(3000),
++  columns: [],
++  openings: [
++    { id: 'entrance', kind: 'door', wallIndex: 0, offsetUm: mm(3500), widthUm: mm(1000), heightUm: mm(2100), sillHeightUm: 0, door: { isEntrance: true, swing: 'in', hinge: 'start' } },
++    win('w0a', 0, 0, 3400),
++    win('w0b', 0, 4600, 3400),
++    win('w1', 1, 0, 3500),
++    win('w3', 3, 2500, 3500),
++  ],
++};
++const glassShop: LayoutRequest = {
++  id: 'glass-corner-shop',
++  name: 'Glass-fronted corner shop (test fixtures)',
++  room: glassRoom,
++  items: [item(testCounterLong, 1), item(testShowcase, 2), item(testGondolaDouble, 2), item(testWallShelf, 2)],
++};
++/**
++ * Keep-clear by hand for the entrance x 3500..4500 on the bottom wall, hinged left, swinging in:
++ * swing quarter disc r 1000 at (3500, 0); approach x 3500..5000 (width + 455), 1525 deep;
++ * decompression x 3500..4500, min(3000, 6000 / 3) = 2000 deep.
++ */
++const glassKeepClear: KeepClear[] = [
++  { name: 'entrance swing', boxes: [], discs: [{ cx: mm(3500), cy: 0, r: mm(1000), within: box(3500, 0, 4500, 1000) }] },
++  { name: 'entrance approach', boxes: [box(3500, 0, 5000, 1525)], discs: [] },
++  { name: 'entrance decompression', boxes: [box(3500, 0, 4500, 2000)], discs: [] },
++];
++/**
++ * Window bands (600 mm into the room). Wall 0 runs along y = 0 from x = 0: x 0..3400 and 4600..8000.
++ * Wall 1 runs up x = 8000: offset 0..3500 is y 0..3500. Wall 3 runs down x = 0 from (0, 6000):
++ * offset 2500..6000 is y 3500..0.
++ */
++const glassWindows = [
++  { name: 'w0a', band: box(0, 0, 3400, 600), sillUm: mm(300) },
++  { name: 'w0b', band: box(4600, 0, 8000, 600), sillUm: mm(300) },
++  { name: 'w1', band: box(7400, 0, 8000, 3500), sillUm: mm(300) },
++  { name: 'w3', band: box(0, 0, 600, 3500), sillUm: mm(300) },
++];
++
++describe('free-standing checkout block: angled entrance', () => {
++  const result = autoLayout(angledEntrance);
++  const mid = entranceMidpoint(angledEntranceRoom);
++
++  it('has an option with the counter in open floor, at most 3200 mm from the entrance', () => {
++    const free = freeOptions(result.options);
++    expect(free.length).toBeGreaterThan(0);
++    for (const o of free) {
++      expect(o.strategy.counterWall).toBeNull();
++      expect(o.strategy.id.startsWith('counter-free_')).toBe(true);
++    }
++    const nearest = Math.min(...free.map((o) => distanceMm(counterCentre(o.document), mid)));
++    expect(nearest).toBeLessThanOrEqual(3200);
++  });
++
++  it('every option passes validateLayout', () => {
++    expect(result.options.length).toBeGreaterThan(0);
++    for (const o of result.options) expect(validateLayout(o.document), o.strategy.id).toEqual([]);
++  });
++
++  it('is deterministic: two runs give identical JSON', () => {
++    expect(JSON.stringify(autoLayout(angledEntrance))).toBe(JSON.stringify(result));
++  });
++});
++
++describe('free-standing checkout block: glass-fronted corner shop', () => {
++  const options = autoLayout(glassShop).options;
++  const mid = entranceMidpoint(glassRoom);
++
++  it('the entrance midpoint is (4000, 0) mm', () => {
++    expect(mid).toEqual({ x: mm(4000), y: 0 });
++  });
++
++  it('has a counter-free option with the counter at most 2500 mm from the entrance', () => {
++    const free = freeOptions(options);
++    expect(free.length).toBeGreaterThan(0);
++    for (const o of free) {
++      expect(o.strategy.counterWall).toBeNull();
++      expect(o.strategy.id.startsWith('counter-free_')).toBe(true);
++    }
++    const nearest = Math.min(...free.map((o) => distanceMm(counterCentre(o.document), mid)));
++    expect(nearest).toBeLessThanOrEqual(2500);
++  });
++
++  it('every option passes validateLayout and the independent oracle', () => {
++    expect(options.length).toBeGreaterThan(0);
++    for (const o of options) {
++      expect(validateLayout(o.document), o.strategy.id).toEqual([]);
++      expect(judge(o.document, glassKeepClear, glassWindows, { at: { x: mm(4000), y: 0 }, inward: { x: 0, y: 1 } }), o.strategy.id).toEqual([]);
++    }
++  });
++
++  it('option 1 places at least as many fixtures as any option', () => {
++    const counts = options.map((o) => o.document.placements.length);
++    expect(counts[0]).toBe(Math.max(...counts));
++  });
++});
++
++describe('free-standing checkout block: only with a counter', () => {
++  it('a request without a counter has no counterFree option', () => {
++    const noCounter: LayoutRequest = { ...wallsFull, id: 'walls-full-no-counter', items: wallsFull.items.filter((i) => i.product.placement !== 'counter') };
++    expect(noCounter.items.length).toBe(wallsFull.items.length - 1);
++    const options = autoLayout(noCounter).options;
++    expect(options.length).toBeGreaterThan(0);
++    for (const o of options) {
++      expect(o.strategy.counterFree, o.strategy.id).toBe(false);
++      expect(o.strategy.id.startsWith('counter-none_')).toBe(true);
++    }
++  });
++
++  it.each([...scenarios, angledEntrance, wallsFull].map((r) => [r.id, r] as const))(
++    '%s: counterFree is a boolean on every option, and true implies no counter wall',
++    (_id, request) => {
++      const options = autoLayout(request).options;
++      expect(options.length).toBeGreaterThan(0);
++      for (const o of options) {
++        expect(typeof o.strategy.counterFree, o.strategy.id).toBe('boolean');
++        if (o.strategy.counterFree) {
++          expect(o.strategy.counterWall).toBeNull();
++          expect(o.strategy.id.startsWith('counter-free_')).toBe(true);
++        } else if (o.strategy.counterWall !== null) {
++          expect(o.strategy.id.startsWith(`counter-wall-${o.strategy.counterWall}_`)).toBe(true);
++        }
++      }
++    },
++  );
++});
++
++describe('free-standing checkout block: same number of search blocks as today', () => {
++  /** By hand: 3 counter walls tried x 2 row directions = 6 with a counter; one null block x 2 = 2 without. */
++  it.each([...scenarios, angledEntrance, wallsFull].map((r) => [r.id, r] as const))(
++    '%s: onProgress total is 6 with a counter, 2 without',
++    (_id, request) => {
++      const totals: number[] = [];
++      autoLayout(request, { onProgress: (_d: number, t: number) => void totals.push(t) });
++      const hasCounter = request.items.some((i) => i.product.placement === 'counter');
++      expect(totals.length).toBeGreaterThan(0);
++      for (const t of totals) expect(t).toBe(hasCounter ? 6 : 2);
++    },
++  );
++});

@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14181.8 8690.9" width="14181.8mm" height="8690.9mm" font-family="DejaVu Sans, Arial, sans-serif">
 <rect x="0" y="0" width="14181.8" height="8690.9" fill="#ffffff"/>
 <text x="727.3" y="349.1" font-size="218.2" font-weight="bold" fill="#111111">Option 2 — Shop with an angled wall (test fixtures)</text>
-<text x="727.3" y="596.4" font-size="123.6" fill="#444444">Floor area 44.00 m²  ·  11 fixtures  ·  Score 93.3 / 100  ·  Checkout at wall 5; island rows run from front to back.</text>
+<text x="727.3" y="596.4" font-size="123.6" fill="#444444">Floor area 44.00 m²  ·  11 fixtures  ·  Score 87.0 / 100  ·  Checkout at wall 5; island rows run from front to back.</text>
 <text x="727.3" y="785.5" font-size="123.6" font-weight="bold" fill="#b3261e">Contains test-only fixtures (not real products)</text>
 <polygon data-role="room-outline" data-plan-points="0.000,0.000 8000.000,0.000 8000.000,2000.000 6000.000,6000.000 0.000,6000.000" points="727.273,7745.455 8727.273,7745.455 8727.273,5745.455 6727.273,1745.455 727.273,1745.455" fill="#fbfaf7" stroke="none"/>
 <polygon data-access-zone="f01" points="2142.3,2945.5 2142.3,4445.5 3057.3,4445.5 3057.3,2945.5" fill="#4a90d9" fill-opacity="0.10" stroke="none"/>
@@ -116,12 +116,12 @@
 <rect x="9454.5" y="4189.1" width="160.0" height="116.4" fill="#4a90d9" fill-opacity="0.2" stroke="#333333" stroke-width="7.3"/>
 <text x="9687.3" y="4290.9" font-size="109.1" fill="#333333">Aisle / access space in front of fixtures</text>
 <text x="9454.5" y="4530.9" font-size="138.2" font-weight="bold" fill="#1b1b1b">Why this option</text>
-<text x="9454.5" y="4727.3" font-size="109.1" fill="#333333">45.0 / 45 Fixtures placed: 11 of 11 placed</text>
+<text x="9454.5" y="4727.3" font-size="109.1" fill="#333333">30.0 / 30 Fixtures placed: 11 of 11 placed</text>
 <text x="9454.5" y="4880.0" font-size="109.1" fill="#333333">9.1 / 12 Counter near the entrance: 2456 mm from the entrance</text>
 <text x="9454.5" y="5032.7" font-size="109.1" fill="#333333">7.4 / 8 Counter faces the entrance: the counter looks at the entrance</text>
 <text x="9454.5" y="5185.5" font-size="109.1" fill="#333333">10.0 / 10 Showcases with the counter: 2 of 2 in the checkout block</text>
 <text x="9454.5" y="5338.2" font-size="109.1" fill="#333333">10.0 / 10 Islands in rows: 3 island spots in 1 row</text>
-<text x="9454.5" y="5490.9" font-size="109.1" fill="#333333">10.0 / 10 Even use of the floor: fixtures in 8 of 8 parts of the floor</text>
-<text x="9454.5" y="5643.6" font-size="109.1" fill="#333333">1.8 / 5 Open view from the entrance: 2190 mm clear straight ahead of</text>
+<text x="9454.5" y="5490.9" font-size="109.1" fill="#333333">15.0 / 15 Even use of the floor: fixtures in 8 of 8 parts of the floor</text>
+<text x="9454.5" y="5643.6" font-size="109.1" fill="#333333">5.5 / 15 Open view from the entrance: 2190 mm clear straight ahead of</text>
 <text x="9454.5" y="5796.4" font-size="109.1" fill="#333333">the door</text>
 </svg>

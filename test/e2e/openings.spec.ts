@@ -14,7 +14,7 @@ const FIRST = { timeout: 5000 };
 const bareL = { ...lShapeWithColumn, columns: [], openings: [] };
 
 const field = (page: Page, name: string) => page.getByRole('textbox', { name, exact: true });
-const problems = (page: Page) => page.getByRole('list', { name: 'Room problems' });
+const problems = (page: Page) => page.getByRole('list', { name: 'Shop problems' });
 
 type DoorForm = { wall: string; at: string; width: string; height: string; entrance?: boolean };
 
@@ -27,7 +27,7 @@ async function addDoor(page: Page, d: DoorForm): Promise<void> {
   await field(page, 'Door width').fill(d.width);
   await field(page, 'Door height').fill(d.height);
   if (d.entrance === true) await page.getByRole('checkbox', { name: 'Customer entrance' }).check();
-  await page.getByRole('combobox', { name: 'Door opens' }).selectOption({ label: 'Into the room' });
+  await page.getByRole('combobox', { name: 'Door opens' }).selectOption({ label: 'Into the shop' });
   await page.getByRole('combobox', { name: 'Hinge at' }).selectOption({ label: 'Start of the wall' });
   await page.getByRole('button', { name: 'Add the door' }).click();
 }
@@ -115,7 +115,7 @@ test('a column that crosses a wall is refused', async () => {
   const page = await h.launch();
   await h.openRoom(bareL);
   await addColumn(page, { width: '40', depth: '40', x: '880', y: '100' });
-  await expect(page.getByRole('alert')).toContainText('is not completely inside the room', FIRST);
+  await expect(page.getByRole('alert')).toContainText('is not completely inside the shop', FIRST);
   await expect(page.getByRole('button', { name: 'Remove column 1' })).toHaveCount(0);
 });
 
@@ -123,7 +123,7 @@ test('a door on a wall that does not exist is refused', async () => {
   const page = await h.launch();
   await h.openRoom(bareL);
   await addDoor(page, { wall: '7', at: '100', width: '100', height: '210' });
-  await expect(page.getByRole('alert')).toContainText('the room has only 6 walls', FIRST);
+  await expect(page.getByRole('alert')).toContainText('the shop has only 6 walls', FIRST);
   await expect(page.getByRole('button', { name: 'Remove door 1' })).toHaveCount(0);
 });
 

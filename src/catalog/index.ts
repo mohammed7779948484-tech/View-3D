@@ -2,6 +2,7 @@
 import type { Product } from '../core/index';
 
 export { seedProducts } from './seed';
+export * from './catalog-file';
 
 /** Finds a product by id, or undefined. */
 export function findProduct(products: readonly Product[], productId: string): Product | undefined {

@@ -30,7 +30,7 @@ async function stubOpen(path: string): Promise<void> {
     dialog.showOpenDialog = (async () => ({ canceled: false, filePaths: [p] })) as typeof dialog.showOpenDialog;
   }, path);
 }
-async function importScan(page: Page, path: string = SAMPLE, label = 'Import a room scan'): Promise<void> {
+async function importScan(page: Page, path: string = SAMPLE, label = 'Import a shop scan'): Promise<void> {
   await stubOpen(path);
   const button = page.getByRole('button', { name: label });
   await expect(button).toBeVisible(FIRST);
@@ -45,7 +45,7 @@ const findings = (page: Page) => page.getByRole('list', { name: 'What the scan d
 const sill = (page: Page) => page.getByRole('textbox', { name: 'Window sill height' });
 const addWindow = (page: Page) => page.getByRole('button', { name: 'Add the window' });
 const leaveOut = (page: Page) => page.getByRole('button', { name: 'Leave the window out' });
-const useRoom = (page: Page) => page.getByRole('button', { name: 'Use this room' });
+const useRoom = (page: Page) => page.getByRole('button', { name: 'Use this shop' });
 
 type Tree = { [key: string]: string | Tree };
 function arabic(key: string): string {
@@ -65,8 +65,8 @@ test('the sample: review, decide the window, use the room, and the saved room is
   const items = findings(page).getByRole('listitem');
   await expect(items).toHaveCount(5, FIRST);
   const text = (await items.allInnerTexts()).join('\n');
-  expect(text).toContain('811 mm');
-  expect(text).toContain('471 mm');
+  expect(text).toContain('81.1 cm');
+  expect(text).toContain('47.1 cm');
   expect(text.toLowerCase()).toContain('sill');
   await expect(useRoom(page)).toBeDisabled();
   await expect(page.getByRole('button', { name: 'Back' })).toBeVisible();
@@ -78,7 +78,7 @@ test('the sample: review, decide the window, use the room, and the saved room is
 
   await expect(page.locator('svg[aria-label="Plan"]')).toBeVisible(FIRST);
   await expect(page.getByRole('heading', { name: 'Check the scan' })).toBeHidden();
-  await expect(page.getByRole('list', { name: 'Room problems' })).toContainText('no entrance', FIRST);
+  await expect(page.getByRole('list', { name: 'Shop problems' })).toContainText('no entrance', FIRST);
 
   const saved = await h.saveAs();
   expect(saved.room.outline).toHaveLength(7);
@@ -102,7 +102,7 @@ test('leaving the window out gives a room with no openings', async () => {
   await leaveOut(page).click();
   await expect(useRoom(page)).toBeEnabled();
   await useRoom(page).click();
-  await expect(page.getByRole('list', { name: 'Room problems' })).toBeVisible(FIRST);
+  await expect(page.getByRole('list', { name: 'Shop problems' })).toBeVisible(FIRST);
   const saved = await h.saveAs();
   expect(saved.room.openings).toEqual([]);
   expect(saved.room.outline).toHaveLength(7);
@@ -128,7 +128,7 @@ test('a file that is not a readable RoomTrace scan is explained and the start sc
   writeFileSync(broken, 'not json');
   await importScan(page, broken);
   await expect(page.getByRole('alert')).toBeVisible(FIRST);
-  await expect(page.getByRole('button', { name: 'Import a room scan' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Import a shop scan' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Check the scan' })).toBeHidden();
 
   const newer = join(h.dir, 'newer.json');
@@ -137,17 +137,17 @@ test('a file that is not a readable RoomTrace scan is explained and the start sc
   await importScan(page, newer);
   await expect(page.getByRole('alert')).toBeVisible(FIRST);
   await expect(page.getByRole('alert')).not.toContainText('line 1');
-  await expect(page.getByRole('button', { name: 'Import a room scan' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Import a shop scan' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Check the scan' })).toBeHidden();
 });
 
-test('the bridge gains exactly one function, openScan', async () => {
+test('the bridge has openScan and nothing unexpected', async () => {
   const page = await h.launch();
   const keys = await page.evaluate(() => {
     const bridge = (globalThis as unknown as { view3d?: Record<string, unknown> }).view3d;
     return bridge === undefined ? null : Object.keys(bridge).sort();
   });
-  expect(keys).toEqual(['closeWindow', 'onCloseRequested', 'openProject', 'openScan', 'saveProject']);
+  expect(keys).toEqual(['closeWindow', 'loadCatalog', 'onCloseRequested', 'openProject', 'openScan', 'saveCatalog', 'saveProject']);
 });
 
 test('in Arabic the review heading and the findings are in Arabic', async () => {
