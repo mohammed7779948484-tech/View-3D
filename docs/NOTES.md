@@ -152,19 +152,35 @@ Running log and decisions. Checkpointed after every step so work survives a rest
     first. Recommended: decide 16 first; then 10e is built only if one of your shops shows a split
     checkout block next to an angled corner.
 
-18. Pascal editor (`decisions/0008`), source of truth: should Pascal's scene be what you edit, with
-    our measured design document (whole micrometres) worked out from it every time (within 1 mm)?
-    This changes principle 3 ("one JSON design document is the single source of truth"), so it
-    needs your yes. Nothing is built until you answer.
+21. Later item (not for now): textures in Pascal's 3D. They are off since 2026-11-13
+    (`decisions/0008`, "No textures in this batch"). They need two things first: (1) texture
+    images whose licence is verified, and (2) a way to decode them without `unsafe-eval`. Two
+    ways: our own JPG/WebP set through a `pnpm patch` of Pascal's material paths, or a texture
+    decoder built without eval. Pascal works without them: walls and floors are plain.
 
-19. Pascal's 3D uses WebGPU first. On your laptop it worked on both graphics chips, inside an
-    Electron window like ours: with 60 shelf units it drew 49.9 frames per second on NVIDIA and
-    48.2 on the Intel built-in chip while turning the camera (Pascal never goes above 50; the
-    target is 30). Accept WebGPU-first 3D for the app?
+22. Open problem, to fix in phase 2 (owner, 2026-11-13): on Ubuntu CI the Pascal page once reported
+    "Instance dropped in popErrorScope" twice (CI run 43522790928 on commit d7a4409, test "no error
+    in the Pascal page or its workers"). Seen once in 6 Ubuntu runs; never on Windows CI or the
+    owner's laptop.
+    - Known: three's WebGPU backend calls `device.popErrorScope().then(...)` without a `catch`. When
+      the device or its connection is lost while pipelines are being built, the page gets this
+      unhandled error.
+    - Not found: why the connection is lost on Ubuntu. Not reproduced on the laptop by killing
+      Chromium's GPU process during and after loading, or with one CPU core.
+    - The test's failure message now names the canvas kind, Pascal's "[viewer]" log and any
+      Chromium child process that ended, so the next failure carries its evidence.
+    - Next: reproduce on Linux (WSL Ubuntu 24.04 is on the laptop, with xvfb-run).
 
-20. Keep Arabic out of the Pascal editor (your ruling: it ships English, Japanese, Spanish,
-    French, Chinese), while our own screens (start, catalog, quotes) stay in Arabic and English?
-    Please confirm this still holds once you see it in the app.
+Answered by the owner on 2026-11-13 (questions 18 to 20; details in `decisions/0008`):
+- 18 (should Pascal's scene be what is edited, with our micrometre document derived from it?): yes. Pascal's scene is edited; our micrometre document is always derived from it by one
+  pure, deterministic function in `src/` and never edited by hand. Conditions: a property test
+  for the round trip within 1 mm; the fixture node carries only the product id and version
+  (unknown stays unknown and cannot be placed); engine, rules and catalog unchanged. Principle 3
+  is updated in `CLAUDE.md` and `TEAM_RULES.md`.
+- 19 (WebGPU-first 3D; measured 49.9 fps NVIDIA, 48.2 Intel with 60 shelves): yes, WebGPU first. Without WebGPU a clear message, the 2D editor stays fully usable, no
+  software rendering.
+- 20 (no Arabic in the Pascal editor): yes. The Pascal editor is English only; start, catalog, quotes and the PDF stay Arabic and
+  English.
 
 Answered on 2026-11-12 (questions 13 to 17). The owner asked Claude to decide after checking;
 each answer is Claude's, with the evidence, and the owner can overrule any of them.
@@ -316,3 +332,13 @@ or the file named.
 - 2026-11-12 UI rebuilt on Tailwind + shadcn/ui (start screen, title bar, toolbar, cards; same roles and names, so the e2e suite proves it); 3D with drei: walls open at doors and windows, fixture names, contact shadows; score notes worded per code in the chosen language and unit. 919 Vitest, 136 e2e.
 - 2026-11-12 Pascal editor trial on the owner's Windows laptop (decision 0008, proposed; branch claude/pascal-foundation): CLI 1.1.4 runs (WebGPU); our Vite host with packages 1.1.4 and no next builds in about 5 s with 0 errors and shows the L-shaped test shop (94.9 m2) in 2D and 3D; (speed figures first written here were browser frames; corrected in the next line). In a locked-down Electron 45 window it renders from file:// with base './', but our CSP blocks WebAssembly and a data: fetch (scene crash) and Pascal fetches textures, icons and the Draco decoder from the internet by default. Open questions 18-20 added. Docs only.
 - 2026-11-12 Pascal speed re-measured on the owner's request, counting the frames Pascal really draws (WebGPU getCurrentTexture calls), not browser frames. Pascal caps itself at 50 fps. In a locked-down Electron 45 window with the L-shaped shop plus 60 bookshelf units, orbiting 3 x 5 s on the charger: NVIDIA 49.9 fps, Intel integrated 48.2 fps (19 of 720 frames over 33 ms); Edge on Intel 46.3 fps; walls only 49.4 to 50 everywhere. Slowest run 45.9 fps (target 30). The earlier 238.8 and 81.5 fps were browser animation frames. Table in decision 0008.
+- 2026-11-13 Owner answered 18-20 (principle 3 now: Pascal's scene is edited, our document derived). Phase 1 of 0008 built on branch claude/pascal-phase-1:
+  - Pascal's editor opens in its own locked-down window from the start screen. It is served as view3d://app/, offline: textures, icons, sounds and decoders are bundled (223 KTX2 textures downloaded once from editor.pascal.app; their original licence is not verified).
+  - WebGPU gate with an Arabic/English message.
+  - The Pascal page's CSP is ours plus 'wasm-unsafe-eval', connect-src data: and worker-src 'self' blob:; each one was proven necessary.
+  - Tests: 936 Vitest; 140 e2e (4 new for Pascal; 2 bridge-list tests now include openPascal). The packaged app passes the Pascal and smoke tests.
+- 2026-11-13 Fixes after an independent review of PR #5:
+  - three's Basis texture decoder threw EvalError in its workers (it needs unsafe-eval, which is forbidden), and the first test missed it. A new e2e test reads page and worker errors (pageerror plus CDP Log). Textures are now off and not bundled (later item 21).
+  - The 223 textures downloaded from Pascal's server were removed from the branch history (rewritten, force-pushed with lease); only icons, sounds and the cursor from Pascal's MIT repository stay, with their sources in STACK.md.
+  - The WebGPU gate now asks for an adapter and a device exactly as Pascal does.
+  - New guide: docs/UPGRADING_PASCAL.md.

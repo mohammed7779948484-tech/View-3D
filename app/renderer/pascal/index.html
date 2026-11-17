@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="dark">
+  <head>
+    <meta charset="utf-8" />
+    <!--
+      Pascal's window (decisions/0008, phase 1). The app's policy (../index.html) plus only what Pascal needs,
+      each one shown necessary by test/e2e/pascal.spec.ts (it fails on any CSP refusal):
+      - script-src 'wasm-unsafe-eval': to compile its WebAssembly (Basis, Draco decoders);
+      - connect-src data:: Pascal fetches one 3D model from a data: URL;
+      - worker-src 'self' blob:: three's texture and model decoders start their workers from blob: URLs
+        (without it: "Creating a worker from 'blob:view3d://app/...' violates ... script-src").
+      Nothing remote: every source is this app's own files.
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; style-src 'self'; img-src 'self' data:; connect-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <title>View-3D: Pascal editor (preview)</title>
+  </head>
+  <body class="dark">
+    <div id="root"></div>
+    <script type="module" src="./main.tsx"></script>
+  </body>
+</html>

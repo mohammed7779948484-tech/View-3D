@@ -1,0 +1,15 @@
+/* Pascal's own page: its theme stays out of the app's page, whose colour names are the same (decisions/0008). */
+@import "tailwindcss";
+@import "@pascal-app/viewer/ui/theme.css";
+/* Pascal's components carry their Tailwind classes in their sources: scan them. */
+@source "../../../node_modules/@pascal-app/editor/src";
+@source "../../../node_modules/@pascal-app/viewer/dist";
+@source "../../../node_modules/@pascal-app/nodes/dist";
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  background: #171717;
+}

@@ -9,7 +9,8 @@
     "draw": "Draw the shop",
     "importScan": "Import a shop scan",
     "diagnostics": "Diagnostics",
-    "catalog": "Catalog"
+    "catalog": "Catalog",
+    "pascal": "Pascal editor (preview)"
   },
   "open": {
     "notJson": "This file is not a View-3D project: it is not valid JSON (line {{line}}).",
@@ -488,6 +489,9 @@
       "even-use": "fixtures in {{used}} of {{cells}} parts of the floor",
       "open-view": "{{clear}} clear straight ahead of the door"
     }
+  },
+  "pascal": {
+    "noWebGpu": "Pascal's editor needs WebGPU, which this computer does not offer. The 2D plan editor works as usual."
   },
   "view3d": {
     "switch": "View",

@@ -147,7 +147,7 @@ test('the bridge has openScan and nothing unexpected', async () => {
     const bridge = (globalThis as unknown as { view3d?: Record<string, unknown> }).view3d;
     return bridge === undefined ? null : Object.keys(bridge).sort();
   });
-  expect(keys).toEqual(['closeWindow', 'loadCatalog', 'onCloseRequested', 'openProject', 'openScan', 'saveCatalog', 'saveProject']);
+  expect(keys).toEqual(['closeWindow', 'loadCatalog', 'onCloseRequested', 'openPascal', 'openProject', 'openScan', 'saveCatalog', 'saveProject']);
 });
 
 test('in Arabic the review heading and the findings are in Arabic', async () => {
